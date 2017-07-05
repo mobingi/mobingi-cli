@@ -9,7 +9,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "mocli",
-	Short: "",
+	Short: "Mobingi API command line interface.",
 	Long:  `Mobingi API command line interface.`,
 }
 
