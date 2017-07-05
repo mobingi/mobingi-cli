@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/flowerinthenight/mocli.svg?branch=master)](https://travis-ci.org/mobingilabs/mocli)
+[![Build Status](https://travis-ci.org/mobingilabs/mocli.svg?branch=master)](https://travis-ci.org/mobingilabs/mocli)
 
 # mocli
 
