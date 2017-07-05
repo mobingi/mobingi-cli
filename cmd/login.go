@@ -17,7 +17,7 @@ var loginCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().String("client-id", "", "client id")
-	loginCmd.Flags().String("client-secret", "", "client secret")
-	loginCmd.Flags().String("grant-type", "client_credentials", "grant type")
+	loginCmd.Flags().StringP("client-id", "i", "", "client id")
+	loginCmd.Flags().StringP("client-secret", "s", "", "client secret")
+	loginCmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type")
 }

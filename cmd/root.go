@@ -21,5 +21,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().String("token", "", "access token for API access")
+	rootCmd.PersistentFlags().StringP("token", "t", "", "access token for API access")
 }
