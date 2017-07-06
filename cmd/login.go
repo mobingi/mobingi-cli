@@ -32,7 +32,10 @@ func login(cmd *cobra.Command, args []string) {
 	token, err := ioutil.ReadFile(cred)
 	if err != nil {
 		log.Println(err)
-		ioutil.WriteFile(hd+`/.mocli/credentials`, []byte("hello"), 0644)
+		err = ioutil.WriteFile(cred, []byte("hello"), 0644)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	log.Println(string(token))
