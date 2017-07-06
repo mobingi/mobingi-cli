@@ -3,10 +3,17 @@ package cmd
 import (
 	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
+)
+
+const (
+	credFolder = ".mocli"
+	credFile   = "credentials"
 )
 
 var loginCmd = &cobra.Command{
@@ -24,18 +31,16 @@ func init() {
 }
 
 func login(cmd *cobra.Command, args []string) {
-	log.Println("login here")
 	hd, _ := homedir.Dir()
 	log.Println("home:", hd)
-	cred := hd + `/.mocli/credentials`
+	folder := filepath.Join(hd, credFolder)
+	cred := filepath.Join(folder, credFile)
+	log.Println(folder, cred)
 
 	token, err := ioutil.ReadFile(cred)
 	if err != nil {
-		log.Println(err)
-		err = ioutil.WriteFile(cred, []byte("hello"), 0644)
-		if err != nil {
-			log.Println(err)
-		}
+		os.MkdirAll(folder, os.ModePerm)
+		ioutil.WriteFile(cred, []byte("hello"), 0644)
 	}
 
 	log.Println(string(token))
