@@ -1,6 +1,12 @@
 package cmd
 
 import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -16,4 +22,18 @@ func init() {
 }
 
 func list(cmd *cobra.Command, args []string) {
+	token, err := util.GetToken()
+	if err != nil {
+		util.PrintErrorAndExit("Cannot read token. See `login` for information on how to login.", 1)
+	}
+
+	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
+	resp, body, errs := c.GetSafe(c.RootUrl+"/alm/stack", fmt.Sprintf("%s", token))
+	if errs != nil {
+		log.Println("Error(s):", errs)
+		os.Exit(1)
+	}
+
+	log.Println(resp)
+	log.Println(string(body))
 }
