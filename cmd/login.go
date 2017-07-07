@@ -47,7 +47,7 @@ func login(cmd *cobra.Command, args []string) {
 	var m map[string]interface{}
 	var user, pass string
 	var p *authPayload
-	c := cli.New()
+	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 
 	if util.GetCliStringFlag(cmd, "grant-type") == "client_credentials" {
 		p = &authPayload{
@@ -59,7 +59,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	if util.GetCliStringFlag(cmd, "grant-type") == "password" {
 		user, pass = util.GetUserPassword()
-		fmt.Println("\n")
+		fmt.Println("\n") // new line after the password input
 		p = &authPayload{
 			ClientId:     util.GetCliStringFlag(cmd, "client-id"),
 			ClientSecret: util.GetCliStringFlag(cmd, "client-secret"),

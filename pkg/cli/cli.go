@@ -15,9 +15,9 @@ type Config struct {
 	Requester *gorequest.SuperAgent // http requester
 }
 
-func New() *Config {
+func New(ver string) *Config {
 	return &Config{
-		RootUrl:   BaseUrl + "/v2",
+		RootUrl:   BaseUrl + "/" + ver,
 		Requester: gorequest.New(),
 	}
 }
