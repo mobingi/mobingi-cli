@@ -1,19 +1,14 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
-	"github.com/mitchellh/go-homedir"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
-)
-
-const (
-	credFolder = ".mocli"
-	credFile   = "credentials"
 )
 
 var loginCmd = &cobra.Command{
@@ -21,6 +16,14 @@ var loginCmd = &cobra.Command{
 	Short: "",
 	Long:  `Placeholder for the documentation.`,
 	Run:   login,
+}
+
+type authPayload struct {
+	ClientId     string `json:"client_id,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"`
+	GrantType    string `json:"grant_type,omitempty"`
+	Username     string `json:"username,omitempty"`
+	Password     string `json:"password,omitempty"`
 }
 
 func init() {
@@ -31,20 +34,68 @@ func init() {
 }
 
 func login(cmd *cobra.Command, args []string) {
-	hd, _ := homedir.Dir()
-	log.Println("home:", hd)
-	folder := filepath.Join(hd, credFolder)
-	cred := filepath.Join(folder, credFile)
-	log.Println(folder, cred)
-
-	token, err := ioutil.ReadFile(cred)
-	if err != nil {
-		os.MkdirAll(folder, os.ModePerm)
-		ioutil.WriteFile(cred, []byte("hello"), 0644)
+	if util.GetCliStringFlag(cmd, "client-id") == "" {
+		log.Println("Client id not provided. See `help login` for more information.")
+		os.Exit(1)
 	}
 
-	log.Println(string(token))
+	if util.GetCliStringFlag(cmd, "client-secret") == "" {
+		log.Println("Client secret not provided. See `help login` for more information.")
+		os.Exit(1)
+	}
 
-	user, pass := util.GetUserPassword()
-	log.Println(user, pass)
+	var m map[string]interface{}
+	var user, pass string
+	var p *authPayload
+	c := cli.New()
+
+	if util.GetCliStringFlag(cmd, "grant-type") == "client_credentials" {
+		p = &authPayload{
+			ClientId:     util.GetCliStringFlag(cmd, "client-id"),
+			ClientSecret: util.GetCliStringFlag(cmd, "client-secret"),
+			GrantType:    util.GetCliStringFlag(cmd, "grant-type"),
+		}
+	}
+
+	if util.GetCliStringFlag(cmd, "grant-type") == "password" {
+		user, pass = util.GetUserPassword()
+		fmt.Println("\n")
+		p = &authPayload{
+			ClientId:     util.GetCliStringFlag(cmd, "client-id"),
+			ClientSecret: util.GetCliStringFlag(cmd, "client-secret"),
+			GrantType:    util.GetCliStringFlag(cmd, "grant-type"),
+			Username:     user,
+			Password:     pass,
+		}
+	}
+
+	// should not be nil when `grant_type` is valid
+	if p == nil {
+		util.PrintErrorAndExit("Invalid argument(s). See `help` for more information.", 1)
+	}
+
+	resp, body, errs := c.PostJSON(c.RootUrl+"/access_token", p)
+	if errs != nil {
+		log.Println("Error(s):", errs)
+		os.Exit(1)
+	}
+
+	err := json.Unmarshal(body, &m)
+	if err != nil {
+		util.PrintErrorAndExit(err.Error(), 1)
+	}
+
+	serr := util.BuildRequestError(resp, m)
+	if serr != "" {
+		util.PrintErrorAndExit(serr, 1)
+	}
+
+	token, found := m["access_token"]
+	if !found {
+		util.PrintErrorAndExit("Internal error.", 1)
+	}
+
+	// always overwrite file
+	util.SaveToken(fmt.Sprintf("%s", token))
+	log.Println("Login successful.")
 }

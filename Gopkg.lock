@@ -15,6 +15,24 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/moul/http2curl"
+  packages = ["."]
+  revision = "4e24498b31dba4683efb9d35c1c8a91e2eda28c8"
+
+[[projects]]
+  name = "github.com/parnurzeal/gorequest"
+  packages = ["."]
+  revision = "a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3"
+  version = "v0.2.15"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "8c6fa02d2225de0f9bdcb7ca912556f68d172d8c"
@@ -25,9 +43,33 @@
   packages = ["."]
   revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "a48ac81e47fd6f9ed1258f3b60ae9e75f93cb7ed"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["idna","publicsuffix"]
+  revision = "054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "6faef541c73732f438fb660a212750a9ba9f9362"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/text"
+  packages = ["internal/gen","internal/triegen","internal/ucd","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
+  revision = "cfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fb78e5aaaa18d29492e815c3e8a4bfe896f6f8d1e23ea2815d36491734bf5226"
+  inputs-digest = "6a4ae9a039d5b0f4a82c6c8b66dcccd8eb136687cdca26c2365059bf32bc0c25"
   solver-name = "gps-cdcl"
   solver-version = 1
