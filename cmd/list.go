@@ -45,4 +45,5 @@ func list(cmd *cobra.Command, args []string) {
 	log.Println(resp)
 	log.Println(string(body))
 	log.Println(stacks)
+	log.Println(len(stacks))
 }
