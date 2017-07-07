@@ -19,7 +19,3 @@ func Execute() {
 		os.Exit(-1)
 	}
 }
-
-func init() {
-	rootCmd.PersistentFlags().StringP("token", "t", "", "access token for API access")
-}

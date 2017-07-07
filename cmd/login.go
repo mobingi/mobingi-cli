@@ -13,8 +13,8 @@ import (
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Login to Mobingi API.",
-	Long:  `login to Mobingi API.`,
+	Short: "login to Mobingi API",
+	Long:  `Login to Mobingi API server.`,
 	Run:   login,
 }
 
