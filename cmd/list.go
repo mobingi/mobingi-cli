@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -34,6 +36,13 @@ func list(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
+	var stacks []stack.Stack
+	err = json.Unmarshal(body, &stacks)
+	if err != nil {
+		log.Println(err)
+	}
+
 	log.Println(resp)
 	log.Println(string(body))
+	log.Println(stacks)
 }
