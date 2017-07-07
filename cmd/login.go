@@ -14,7 +14,7 @@ import (
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "login to Mobingi API",
-	Long:  `Login to Mobingi API server.`,
+	Long:  `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to enter your username and password.`,
 	Run:   login,
 }
 
@@ -28,8 +28,8 @@ type authPayload struct {
 
 func init() {
 	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().StringP("client-id", "i", "", "client id")
-	loginCmd.Flags().StringP("client-secret", "s", "", "client secret")
+	loginCmd.Flags().StringP("client-id", "i", "", "client id (required)")
+	loginCmd.Flags().StringP("client-secret", "s", "", "client secret (required)")
 	loginCmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type (valid values: 'client_credentials', 'password')")
 }
 

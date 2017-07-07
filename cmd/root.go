@@ -19,3 +19,7 @@ func Execute() {
 		os.Exit(-1)
 	}
 }
+
+func init() {
+	rootCmd.PersistentFlags().StringP("api-version", "v", "v2", "API version")
+}
