@@ -39,7 +39,16 @@ func list(cmd *cobra.Command, args []string) {
 	var stacks []stack.Stack
 	err = json.Unmarshal(body, &stacks)
 	if err != nil {
-		log.Println(err)
+		var m map[string]interface{}
+		err = json.Unmarshal(body, &m)
+		if err != nil {
+			util.PrintErrorAndExit("Internal error.", 1)
+		}
+
+		serr := util.BuildRequestError(resp, m)
+		if serr != "" {
+			util.PrintErrorAndExit(serr, 1)
+		}
 	}
 
 	log.Println(resp)
