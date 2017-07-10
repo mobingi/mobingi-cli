@@ -3,6 +3,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/buger/goterm"
+  packages = ["."]
+  revision = "bc6c333206f446a53cac4db5d2e6a4316139d737"
+
+[[projects]]
+  branch = "master"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
@@ -70,6 +76,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6a4ae9a039d5b0f4a82c6c8b66dcccd8eb136687cdca26c2365059bf32bc0c25"
+  inputs-digest = "544356c87ab118c8180a2ca4f75965315a341fae84e798e2c5d753d7e909afa1"
   solver-name = "gps-cdcl"
   solver-version = 1
