@@ -62,9 +62,15 @@ func list(cmd *cobra.Command, args []string) {
 			timestr = t.Format(time.RFC1123)
 		}
 
-		fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, timestr)
+		platform := "?"
+		if s.Configuration.Aws != "" {
+			platform = "AWS"
+		}
+
+		fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, platform, s.StackStatus, s.Configuration.Region, timestr)
 	}
 
 	term.Print(stbl)
 	term.Flush()
+	// log.Println(string(body))
 }
