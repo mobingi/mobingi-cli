@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	tm "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -51,8 +52,12 @@ func list(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	log.Println(resp)
-	log.Println(string(body))
-	log.Println(stacks)
-	log.Println(len(stacks))
+	totals := tm.NewTable(0, 10, 5, ' ', 0)
+	fmt.Fprintf(totals, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
+	for _, s := range stacks {
+		fmt.Fprintf(totals, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, s.CreateTime)
+	}
+
+	tm.Print(totals)
+	tm.Flush()
 }
