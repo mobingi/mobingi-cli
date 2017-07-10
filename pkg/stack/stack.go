@@ -160,7 +160,6 @@ type Instance struct {
 	EnaSupport            string                `json:"enaSupport,omitempty"`
 }
 
-// Separate struct due to `describe` output's stack_output not being an array.
 type ListStack struct {
 	AuthToken     string        `json:"auth_token,omitempty"`
 	Configuration Configuration `json:"configuration,omitempty"`

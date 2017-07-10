@@ -70,5 +70,4 @@ func describe(cmd *cobra.Command, args []string) {
 
 	term.Print(stbl)
 	term.Flush()
-	// log.Println(string(body))
 }
