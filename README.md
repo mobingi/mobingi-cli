@@ -7,7 +7,7 @@ Command line interface for Mobingi API.
 
 ### Build
 
-This tool uses [`dep`](https://github.com/golang/dep) for dependency management. Install `dep` via
+This tool uses [`dep`](https://github.com/golang/dep) for dependency management. You can install `dep` via
 
 ```
 $ go get -u github.com/golang/dep/cmd/dep
@@ -16,6 +16,5 @@ $ go get -u github.com/golang/dep/cmd/dep
 To build the tool, run
 
 ```
-$ dep ensure -v
 $ go build -v
 ```
