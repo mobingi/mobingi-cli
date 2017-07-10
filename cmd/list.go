@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	tm "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -52,12 +53,18 @@ func list(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	totals := tm.NewTable(0, 10, 5, ' ', 0)
-	fmt.Fprintf(totals, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
+	st := tm.NewTable(0, 10, 5, ' ', 0)
+	fmt.Fprintf(st, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
 	for _, s := range stacks {
-		fmt.Fprintf(totals, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, s.CreateTime)
+		timestr := s.CreateTime
+		t, err := time.Parse(time.RFC3339, s.CreateTime)
+		if err == nil {
+			timestr = t.Format(time.RFC1123)
+		}
+
+		fmt.Fprintf(st, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, timestr)
 	}
 
-	tm.Print(totals)
+	tm.Print(st)
 	tm.Flush()
 }
