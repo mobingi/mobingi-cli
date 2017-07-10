@@ -53,8 +53,8 @@ func list(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	st := tm.NewTable(0, 10, 5, ' ', 0)
-	fmt.Fprintf(st, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
+	stbl := tm.NewTable(0, 10, 5, ' ', 0)
+	fmt.Fprintf(stbl, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
 	for _, s := range stacks {
 		timestr := s.CreateTime
 		t, err := time.Parse(time.RFC3339, s.CreateTime)
@@ -62,9 +62,9 @@ func list(cmd *cobra.Command, args []string) {
 			timestr = t.Format(time.RFC1123)
 		}
 
-		fmt.Fprintf(st, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, timestr)
+		fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, timestr)
 	}
 
-	tm.Print(st)
+	tm.Print(stbl)
 	tm.Flush()
 }
