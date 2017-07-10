@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -62,45 +61,45 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	for _, s := range stacks {
-		l1 := term.NewTable(0, 10, 1, ' ', 0)
-		fmt.Fprintf(l1, "Stack ID:\t%s\n", s.StackId)
-		fmt.Fprintf(l1, "Stack name:\t%s\n", s.Nickname)
-		fmt.Fprintf(l1, "Stack type:\t%s\n", s.Configuration.Type)
-		fmt.Fprintf(l1, "Region:\t%s\n", s.Configuration.Region)
-		fmt.Fprintf(l1, "Architecture:\t%s\n", s.Configuration.Architecture)
-		fmt.Fprintf(l1, "Code:\t%s\n", s.Configuration.Code)
-		fmt.Fprintf(l1, "Image:\t%s\n", s.Configuration.Image)
-		fmt.Fprintf(l1, "Instances count:\t%d\n", len(s.Instances))
+		// l1 := term.NewTable(0, 10, 1, ' ', 0)
+		fmt.Fprintf(os.Stdout, "Stack ID       : %s\n", s.StackId)
+		fmt.Fprintf(os.Stdout, "Stack name     : %s\n", s.Nickname)
+		fmt.Fprintf(os.Stdout, "Stack type     : %s\n", s.Configuration.Type)
+		fmt.Fprintf(os.Stdout, "Region         : %s\n", s.Configuration.Region)
+		fmt.Fprintf(os.Stdout, "Architecture   : %s\n", s.Configuration.Architecture)
+		fmt.Fprintf(os.Stdout, "Code           : %s\n", s.Configuration.Code)
+		fmt.Fprintf(os.Stdout, "Image          : %s\n", s.Configuration.Image)
+		fmt.Fprintf(os.Stdout, "Instances count: %d\n", len(s.Instances))
 		for i, v := range s.Instances {
-			fmt.Fprintf(l1, "  Index:\t[%d]\n", i)
-			fmt.Fprintf(l1, "  Instance ID:\t%s\n", v.InstanceId)
-			fmt.Fprintf(l1, "  Instance type:\t%s\n", v.InstanceType)
-			fmt.Fprintf(l1, "  Virtualization type:\t%s\n", v.VirtualizationType)
-			fmt.Fprintf(l1, "  Public IP:\t%s\n", v.PublicIpAddress)
-			fmt.Fprintf(l1, "  Public DNS name:\t%s\n", v.PublicDnsName)
-			fmt.Fprintf(l1, "  Private IP:\t%s\n", v.PrivateIpAddress)
-			fmt.Fprintf(l1, "  Private DNS name:\t%s\n", v.PrivateDnsName)
-			fmt.Fprintf(l1, "  Architecture:\t%s\n", v.Architecture)
-			fmt.Fprintf(l1, "  Hypervisor:\t%s\n", v.Hypervisor)
-			fmt.Fprintf(l1, "  Image ID:\t%s\n", v.ImageId)
-			fmt.Fprintf(l1, "  Monitoring state:\t%s\n", v.Monitoring.State)
-			fmt.Fprintf(l1, "  State:\t[%s], %s\n", v.State.Code, v.State.Name)
-			fmt.Fprintf(l1, "  Availability zone:\t%s\n", v.Placement.AvailabilityZone)
-			fmt.Fprintf(l1, "  Root device name:\t%s\n", v.RootDeviceName)
-			fmt.Fprintf(l1, "  Root device type:\t%s\n", v.RootDeviceType)
-			fmt.Fprintf(l1, "  VPC ID:\t%s\n", v.VpcId)
-			fmt.Fprintf(l1, "\t\n")
+			fmt.Fprintf(os.Stdout, "  Index              : [%d]\n", i)
+			fmt.Fprintf(os.Stdout, "  Instance ID        : %s\n", v.InstanceId)
+			fmt.Fprintf(os.Stdout, "  Instance type      : %s\n", v.InstanceType)
+			fmt.Fprintf(os.Stdout, "  Virtualization type: %s\n", v.VirtualizationType)
+			fmt.Fprintf(os.Stdout, "  Public IP          : %s\n", v.PublicIpAddress)
+			fmt.Fprintf(os.Stdout, "  Public DNS name    : %s\n", v.PublicDnsName)
+			fmt.Fprintf(os.Stdout, "  Private IP         : %s\n", v.PrivateIpAddress)
+			fmt.Fprintf(os.Stdout, "  Private DNS name   : %s\n", v.PrivateDnsName)
+			fmt.Fprintf(os.Stdout, "  Architecture       : %s\n", v.Architecture)
+			fmt.Fprintf(os.Stdout, "  Hypervisor         : %s\n", v.Hypervisor)
+			fmt.Fprintf(os.Stdout, "  Image ID           : %s\n", v.ImageId)
+			fmt.Fprintf(os.Stdout, "  Monitoring state   : %s\n", v.Monitoring.State)
+			fmt.Fprintf(os.Stdout, "  State              : [%s], %s\n", v.State.Code, v.State.Name)
+			fmt.Fprintf(os.Stdout, "  Availability zone  : %s\n", v.Placement.AvailabilityZone)
+			fmt.Fprintf(os.Stdout, "  Root device name   : %s\n", v.RootDeviceName)
+			fmt.Fprintf(os.Stdout, "  Root device type   : %s\n", v.RootDeviceType)
+			fmt.Fprintf(os.Stdout, "  VPC ID             : %s\n", v.VpcId)
+			fmt.Fprintf(os.Stdout, "\n")
 		}
 
-		fmt.Fprintf(l1, "Status:\t%s\n", s.StackStatus)
+		fmt.Fprintf(os.Stdout, "Status         : %s\n", s.StackStatus)
 		timestr := s.CreateTime
 		t, err := time.Parse(time.RFC3339, s.CreateTime)
 		if err == nil {
 			timestr = t.Format(time.RFC1123)
 		}
 
-		fmt.Fprintf(l1, "Time created:\t%s\n", timestr)
-		term.Print(l1)
-		term.Flush()
+		fmt.Fprintf(os.Stdout, "Time created   : %s\n", timestr)
+		// term.Print(l1)
+		// term.Flush()
 	}
 }
