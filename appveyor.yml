@@ -19,6 +19,6 @@ install:
   - go env
 
 build_script:
-  - go get -u github.com/golang/dep/cmd/dep
-  - dep ensure -v
+  # - go get -u github.com/golang/dep/cmd/dep
+  # - dep ensure -v
   - go build -v
