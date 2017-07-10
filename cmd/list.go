@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	tm "github.com/buger/goterm"
+	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -53,7 +53,7 @@ func list(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	stbl := tm.NewTable(0, 10, 5, ' ', 0)
+	stbl := term.NewTable(0, 10, 5, ' ', 0)
 	fmt.Fprintf(stbl, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
 	for _, s := range stacks {
 		timestr := s.CreateTime
@@ -65,6 +65,6 @@ func list(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, "AWS", s.StackStatus, s.Configuration.Region, timestr)
 	}
 
-	tm.Print(stbl)
-	tm.Flush()
+	term.Print(stbl)
+	term.Flush()
 }
