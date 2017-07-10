@@ -21,13 +21,31 @@ const (
 	credFile   = "credentials" // we store access token here
 )
 
-func GetUserPassword() (string, string) {
+func GetClientId() string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Client ID: ")
+	id, _ := reader.ReadString('\n')
+	return strings.TrimSpace(id)
+}
+
+func GetClientSecret() string {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Client secret: ")
+	secret, _ := reader.ReadString('\n')
+	return strings.TrimSpace(secret)
+}
+
+func GetUsername() string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Username: ")
 	user, _ := reader.ReadString('\n')
+	return strings.TrimSpace(user)
+}
+
+func GetPassword() string {
 	fmt.Print("Password: ")
 	pass, _ := terminal.ReadPassword(int(syscall.Stdin))
-	return strings.TrimSpace(user), string(pass)
+	return string(pass)
 }
 
 func SaveToken(token string) error {

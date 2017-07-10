@@ -31,17 +31,30 @@ func init() {
 	loginCmd.Flags().StringP("client-id", "i", "", "client id (required)")
 	loginCmd.Flags().StringP("client-secret", "s", "", "client secret (required)")
 	loginCmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type (valid values: 'client_credentials', 'password')")
+	loginCmd.Flags().StringP("username", "u", "", "user name")
+	loginCmd.Flags().StringP("password", "p", "", "password")
 }
 
 func login(cmd *cobra.Command, args []string) {
-	if util.GetCliStringFlag(cmd, "client-id") == "" {
-		log.Println("Client id not provided. See `help login` for more information.")
+	id := util.GetCliStringFlag(cmd, "client-id")
+	secret := util.GetCliStringFlag(cmd, "client-secret")
+
+	if id == "" {
+		id = util.GetClientId()
+	}
+
+	if id == "" {
+		log.Println("Client id cannot be empty.")
 		os.Exit(1)
 	}
 
-	if util.GetCliStringFlag(cmd, "client-secret") == "" {
-		log.Println("Client secret not provided. See `help login` for more information.")
-		os.Exit(1)
+	if secret == "" {
+		secret = util.GetClientSecret()
+	}
+
+	if secret == "" {
+		log.Println("Client secret cannot be empty.")
+		secret = util.GetClientSecret()
 	}
 
 	var m map[string]interface{}
@@ -51,18 +64,38 @@ func login(cmd *cobra.Command, args []string) {
 
 	if util.GetCliStringFlag(cmd, "grant-type") == "client_credentials" {
 		p = &authPayload{
-			ClientId:     util.GetCliStringFlag(cmd, "client-id"),
-			ClientSecret: util.GetCliStringFlag(cmd, "client-secret"),
+			ClientId:     id,
+			ClientSecret: secret,
 			GrantType:    util.GetCliStringFlag(cmd, "grant-type"),
 		}
 	}
 
 	if util.GetCliStringFlag(cmd, "grant-type") == "password" {
-		user, pass = util.GetUserPassword()
+		// user, pass = util.GetUserPassword()
+		user = util.GetCliStringFlag(cmd, "username")
+		if user == "" {
+			user = util.GetUsername()
+		}
+
+		if user == "" {
+			log.Println("Username cannot be empty.")
+			os.Exit(1)
+		}
+
+		pass = util.GetCliStringFlag(cmd, "password")
+		if pass == "" {
+			pass = util.GetPassword()
+		}
+
+		if pass == "" {
+			log.Println("Password cannot be empty.")
+			os.Exit(1)
+		}
+
 		fmt.Println("\n") // new line after the password input
 		p = &authPayload{
-			ClientId:     util.GetCliStringFlag(cmd, "client-id"),
-			ClientSecret: util.GetCliStringFlag(cmd, "client-secret"),
+			ClientId:     id,
+			ClientSecret: secret,
 			GrantType:    util.GetCliStringFlag(cmd, "grant-type"),
 			Username:     user,
 			Password:     pass,
