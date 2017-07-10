@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -60,14 +61,46 @@ func describe(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	stbl := term.NewTable(0, 10, 5, ' ', 0)
-	fmt.Fprintf(stbl, "INSTANCE ID\tINSTANCE TYPE\tPUBLIC IP\tPRIVATE IP\n")
 	for _, s := range stacks {
-		for _, i := range s.Instances {
-			fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\n", i.InstanceId, i.InstanceType, i.PublicIpAddress, i.PrivateIpAddress)
+		l1 := term.NewTable(0, 10, 1, ' ', 0)
+		fmt.Fprintf(l1, "Stack ID:\t%s\n", s.StackId)
+		fmt.Fprintf(l1, "Stack name:\t%s\n", s.Nickname)
+		fmt.Fprintf(l1, "Stack type:\t%s\n", s.Configuration.Type)
+		fmt.Fprintf(l1, "Region:\t%s\n", s.Configuration.Region)
+		fmt.Fprintf(l1, "Architecture:\t%s\n", s.Configuration.Architecture)
+		fmt.Fprintf(l1, "Code:\t%s\n", s.Configuration.Code)
+		fmt.Fprintf(l1, "Image:\t%s\n", s.Configuration.Image)
+		fmt.Fprintf(l1, "Instances count:\t%d\n", len(s.Instances))
+		for i, v := range s.Instances {
+			fmt.Fprintf(l1, "  Index:\t[%d]\n", i)
+			fmt.Fprintf(l1, "  Instance ID:\t%s\n", v.InstanceId)
+			fmt.Fprintf(l1, "  Instance type:\t%s\n", v.InstanceType)
+			fmt.Fprintf(l1, "  Virtualization type:\t%s\n", v.VirtualizationType)
+			fmt.Fprintf(l1, "  Public IP:\t%s\n", v.PublicIpAddress)
+			fmt.Fprintf(l1, "  Public DNS name:\t%s\n", v.PublicDnsName)
+			fmt.Fprintf(l1, "  Private IP:\t%s\n", v.PrivateIpAddress)
+			fmt.Fprintf(l1, "  Private DNS name:\t%s\n", v.PrivateDnsName)
+			fmt.Fprintf(l1, "  Architecture:\t%s\n", v.Architecture)
+			fmt.Fprintf(l1, "  Hypervisor:\t%s\n", v.Hypervisor)
+			fmt.Fprintf(l1, "  Image ID:\t%s\n", v.ImageId)
+			fmt.Fprintf(l1, "  Monitoring state:\t%s\n", v.Monitoring.State)
+			fmt.Fprintf(l1, "  State:\t[%s], %s\n", v.State.Code, v.State.Name)
+			fmt.Fprintf(l1, "  Availability zone:\t%s\n", v.Placement.AvailabilityZone)
+			fmt.Fprintf(l1, "  Root device name:\t%s\n", v.RootDeviceName)
+			fmt.Fprintf(l1, "  Root device type:\t%s\n", v.RootDeviceType)
+			fmt.Fprintf(l1, "  VPC ID:\t%s\n", v.VpcId)
+			fmt.Fprintf(l1, "\t\n")
 		}
-	}
 
-	term.Print(stbl)
-	term.Flush()
+		fmt.Fprintf(l1, "Status:\t%s\n", s.StackStatus)
+		timestr := s.CreateTime
+		t, err := time.Parse(time.RFC3339, s.CreateTime)
+		if err == nil {
+			timestr = t.Format(time.RFC1123)
+		}
+
+		fmt.Fprintf(l1, "Time created:\t%s\n", timestr)
+		term.Print(l1)
+		term.Flush()
+	}
 }
