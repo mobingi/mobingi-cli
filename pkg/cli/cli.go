@@ -36,3 +36,7 @@ func (c *Config) PostJSON(url string, i interface{}) (gorequest.Response, []byte
 
 	return c.Requester.Post(url).Send(string(payload)).EndBytes()
 }
+
+func (c *Config) DeleteSafe(url, token string) (gorequest.Response, []byte, []error) {
+	return c.Requester.Delete(url).Set("Authorization", "Bearer "+token).EndBytes()
+}
