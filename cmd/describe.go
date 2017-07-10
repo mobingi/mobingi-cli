@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -14,33 +13,41 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list all stack",
-	Long:  `List all stack.`,
-	Run:   list,
+var describeCmd = &cobra.Command{
+	Use:   "describe",
+	Short: "display stack details",
+	Long:  `Display stack details.`,
+	Run:   describe,
 }
 
 func init() {
-	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(describeCmd)
+	describeCmd.Flags().String("id", "", "stack id")
 }
 
-func list(cmd *cobra.Command, args []string) {
+func describe(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
 		util.PrintErrorAndExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
+	id := util.GetCliStringFlag(cmd, "id")
+	if id == "" {
+		util.PrintErrorAndExit("Stack id cannot be empty.", 1)
+	}
+
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-	resp, body, errs := c.GetSafe(c.RootUrl+"/alm/stack", fmt.Sprintf("%s", token))
+	ep := c.RootUrl + "/alm/stack/" + fmt.Sprintf("%s", id)
+	resp, body, errs := c.GetSafe(ep, fmt.Sprintf("%s", token))
 	if errs != nil {
 		log.Println("Error(s):", errs)
 		os.Exit(1)
 	}
 
-	var stacks []stack.ListStack
+	var stacks []stack.DescribeStack
 	err = json.Unmarshal(body, &stacks)
 	if err != nil {
+		log.Println(err)
 		var m map[string]interface{}
 		err = json.Unmarshal(body, &m)
 		if err != nil {
@@ -54,22 +61,14 @@ func list(cmd *cobra.Command, args []string) {
 	}
 
 	stbl := term.NewTable(0, 10, 5, ' ', 0)
-	fmt.Fprintf(stbl, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
+	fmt.Fprintf(stbl, "INSTANCE ID\tINSTANCE TYPE\tPUBLIC IP\tPRIVATE IP\n")
 	for _, s := range stacks {
-		timestr := s.CreateTime
-		t, err := time.Parse(time.RFC3339, s.CreateTime)
-		if err == nil {
-			timestr = t.Format(time.RFC1123)
+		for _, i := range s.Instances {
+			fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\n", i.InstanceId, i.InstanceType, i.PublicIpAddress, i.PrivateIpAddress)
 		}
-
-		platform := "?"
-		if s.Configuration.AWS != "" {
-			platform = "AWS"
-		}
-
-		fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, platform, s.StackStatus, s.Configuration.Region, timestr)
 	}
 
 	term.Print(stbl)
 	term.Flush()
+	// log.Println(string(body))
 }
