@@ -129,6 +129,10 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	// always overwrite file
-	util.SaveToken(fmt.Sprintf("%s", token))
+	err = util.SaveToken(fmt.Sprintf("%s", token))
+	if err != nil {
+		util.PrintErrorAndExit(err.Error(), 1)
+	}
+
 	log.Println("Login successful.")
 }
