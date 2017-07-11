@@ -117,7 +117,7 @@ func login(cmd *cobra.Command, args []string) {
 		util.ErrorExit(err.Error(), 1)
 	}
 
-	serr := util.BuildRequestError(resp, m)
+	serr := util.ResponseError(resp, m)
 	if serr != "" {
 		util.ErrorExit(serr, 1)
 	}

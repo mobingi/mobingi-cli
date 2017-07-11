@@ -81,7 +81,7 @@ func ErrorExit(err string, code int) {
 	os.Exit(code)
 }
 
-func BuildRequestError(r gorequest.Response, m map[string]interface{}) string {
+func ResponseError(r gorequest.Response, m map[string]interface{}) string {
 	var err string
 	if r.StatusCode != 200 {
 		err = err + "[" + r.Status + "]"
