@@ -107,7 +107,6 @@ func describe(cmd *cobra.Command, args []string) {
 
 		log.Println(fmt.Sprintf("%+v", stacks))
 	case "json":
-		log.Println(string(body))
 		mi, err := json.MarshalIndent(stacks, "", "  ")
 		if err != nil {
 			util.PrintErrorAndExit(err.Error(), 1)
