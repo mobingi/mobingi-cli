@@ -289,6 +289,18 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 				break
 			}
 
+			stackouts, ok := value.([]StackOutput)
+			if ok {
+				for _, slice := range stackouts {
+					PrintR(w, &slice, lvl+1)
+					if len(stackouts) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
 			// when slice type is not explicitly specified in our conversion
 			fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
 		}
