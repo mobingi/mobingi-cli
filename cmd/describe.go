@@ -105,7 +105,8 @@ func describe(cmd *cobra.Command, args []string) {
 }
 
 // printStackText prints the field: value of the input struct recursively. Recursion level
-// is provided for indention in printing.
+// is provided for indention in printing. For slices, we have to do an explicit type assertion
+// to get the underlying slice from reflect.
 func printStackText(w io.Writer, s interface{}, lvl int) {
 	cnt := lvl * 2
 	pad := ""
@@ -131,15 +132,32 @@ func printStackText(w io.Writer, s interface{}, lvl int) {
 			printStackText(w, v.Interface(), lvl+1)
 		case reflect.Slice:
 			fmt.Fprintf(w, "%s[%s]\n", pad, field)
-			slices, ok := value.([]stack.Instance)
+			instances, ok := value.([]stack.Instance)
 			if ok {
-				for _, slice := range slices {
+				for _, slice := range instances {
 					printStackText(w, &slice, lvl+1)
-					fmt.Fprintf(w, "\n")
+					if len(instances) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
 				}
-			} else {
-				fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
+
+				break
 			}
+
+			mappings, ok := value.([]stack.BlockDeviceMappings)
+			if ok {
+				for _, slice := range mappings {
+					printStackText(w, &slice, lvl+1)
+					if len(mappings) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			// when slice type is not explicitly specified in our conversion
+			fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
 		}
 	}
 }
