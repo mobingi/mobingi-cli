@@ -18,3 +18,37 @@ To build the tool, run
 ```
 $ go build -v
 ```
+
+### Usage
+
+#### Login
+
+This is the first command you need to run to use the other commands. To login, run
+
+```
+$ mocli login --client-id=value --client-secret=value
+```
+
+This will create a file `<home_folder/.mocli/credentials` that contains the API token to be used for your subsequent queries.
+
+#### List stacks
+
+To list your running stacks, run
+
+```
+$ mocli list
+```
+
+By default, this will list your task in a tabular form with minimal information. If you want to display more information, run
+
+```
+$ mocli list --fmt=text
+```
+
+or
+
+```
+$ mocli list --fmt=json
+```
+
+You can also save the output to a file by adding the option `--out=[full_path_to_file]`. If your path contains a whitespace, enclose the value with double-quotes.
