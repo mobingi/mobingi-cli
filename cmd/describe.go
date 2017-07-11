@@ -156,6 +156,54 @@ func printStackText(w io.Writer, s interface{}, lvl int) {
 				break
 			}
 
+			networks, ok := value.([]stack.NetworkInterface)
+			if ok {
+				for _, slice := range networks {
+					printStackText(w, &slice, lvl+1)
+					if len(networks) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			groups, ok := value.([]stack.Group)
+			if ok {
+				for _, slice := range groups {
+					printStackText(w, &slice, lvl+1)
+					if len(groups) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			ipaddrs, ok := value.([]stack.PrivateIpAddress)
+			if ok {
+				for _, slice := range ipaddrs {
+					printStackText(w, &slice, lvl+1)
+					if len(ipaddrs) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			tags, ok := value.([]stack.Tag)
+			if ok {
+				for _, slice := range tags {
+					printStackText(w, &slice, lvl+1)
+					if len(tags) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
 			// when slice type is not explicitly specified in our conversion
 			fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
 		}
