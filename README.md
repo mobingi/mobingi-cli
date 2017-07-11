@@ -52,3 +52,13 @@ $ mocli list --fmt=json
 ```
 
 You can also save the output to a file by adding the option `--out=[full_path_to_file]`. If your path contains a whitespace, enclose the value with double-quotes.
+
+#### Describe a stack
+
+To describe a specific stack, run
+
+```
+$ mocli describe --id=value
+```
+
+You can get the stack id from the `list` subcommand. This command also supports `text` and `json` output formats via the `--fmt=[text|json]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
