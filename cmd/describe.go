@@ -17,8 +17,9 @@ import (
 var describeCmd = &cobra.Command{
 	Use:   "describe",
 	Short: "display stack details",
-	Long:  `Display stack details.`,
-	Run:   describe,
+	Long: `Display stack details. If you specify the '--out=[filename]' option,
+make sure you provide the full path of the file.`,
+	Run: describe,
 }
 
 func init() {
@@ -106,6 +107,7 @@ func describe(cmd *cobra.Command, args []string) {
 		}
 
 		log.Println(fmt.Sprintf("%+v", stacks))
+
 	case "json":
 		mi, err := json.MarshalIndent(stacks, "", "  ")
 		if err != nil {
