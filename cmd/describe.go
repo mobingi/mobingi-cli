@@ -18,15 +18,16 @@ var describeCmd = &cobra.Command{
 	Use:   "describe",
 	Short: "display stack details",
 	Long: `Display stack details. If you specify the '--out=[filename]' option,
-make sure you provide the full path of the file.`,
+make sure you provide the full path of the file. If the path has
+space(s) in it, make sure to surround it with double quotes.`,
 	Run: describe,
 }
 
 func init() {
 	rootCmd.AddCommand(describeCmd)
-	describeCmd.Flags().String("id", "", "stack id")
-	describeCmd.Flags().String("fmt", "text", "output format (valid values: text, json)")
-	describeCmd.Flags().String("out", "", "full file path to write the output")
+	describeCmd.Flags().StringP("id", "i", "", "stack id")
+	describeCmd.Flags().StringP("fmt", "f", "text", "output format (valid values: text, json)")
+	describeCmd.Flags().StringP("out", "o", "", "full file path to write the output")
 }
 
 func describe(cmd *cobra.Command, args []string) {
