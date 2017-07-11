@@ -21,28 +21,28 @@ const (
 	credFile   = "credentials" // we store access token here
 )
 
-func GetClientId() string {
+func ClientId() string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Client ID: ")
 	id, _ := reader.ReadString('\n')
 	return strings.TrimSpace(id)
 }
 
-func GetClientSecret() string {
+func ClientSecret() string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Client secret: ")
 	secret, _ := reader.ReadString('\n')
 	return strings.TrimSpace(secret)
 }
 
-func GetUsername() string {
+func Username() string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Username: ")
 	user, _ := reader.ReadString('\n')
 	return strings.TrimSpace(user)
 }
 
-func GetPassword() string {
+func Password() string {
 	fmt.Print("Password: ")
 	pass, _ := terminal.ReadPassword(int(syscall.Stdin))
 	return string(pass)
@@ -76,7 +76,7 @@ func GetCliStringFlag(cmd *cobra.Command, f string) string {
 	return s
 }
 
-func PrintErrorAndExit(err string, code int) {
+func ErrorExit(err string, code int) {
 	log.Println("Error:", err)
 	os.Exit(code)
 }

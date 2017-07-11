@@ -28,7 +28,7 @@ func init() {
 func list(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.PrintErrorAndExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
@@ -44,12 +44,12 @@ func list(cmd *cobra.Command, args []string) {
 		var m map[string]interface{}
 		err = json.Unmarshal(body, &m)
 		if err != nil {
-			util.PrintErrorAndExit("Internal error.", 1)
+			util.ErrorExit("Internal error.", 1)
 		}
 
 		serr := util.BuildRequestError(resp, m)
 		if serr != "" {
-			util.PrintErrorAndExit(serr, 1)
+			util.ErrorExit(serr, 1)
 		}
 	}
 

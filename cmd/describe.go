@@ -35,12 +35,12 @@ func init() {
 func describe(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.PrintErrorAndExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.PrintErrorAndExit("Stack id cannot be empty.", 1)
+		util.ErrorExit("Stack id cannot be empty.", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
@@ -58,12 +58,12 @@ func describe(cmd *cobra.Command, args []string) {
 		var m map[string]interface{}
 		err = json.Unmarshal(body, &m)
 		if err != nil {
-			util.PrintErrorAndExit("Internal error.", 1)
+			util.ErrorExit("Internal error.", 1)
 		}
 
 		serr := util.BuildRequestError(resp, m)
 		if serr != "" {
-			util.PrintErrorAndExit(serr, 1)
+			util.ErrorExit(serr, 1)
 		}
 	}
 
@@ -74,7 +74,7 @@ func describe(cmd *cobra.Command, args []string) {
 		if f != "" {
 			fp, err := os.Create(f)
 			if err != nil {
-				util.PrintErrorAndExit(err.Error(), 1)
+				util.ErrorExit(err.Error(), 1)
 			}
 
 			defer fp.Close()
@@ -86,7 +86,7 @@ func describe(cmd *cobra.Command, args []string) {
 	case "json":
 		mi, err := json.MarshalIndent(stacks, "", "  ")
 		if err != nil {
-			util.PrintErrorAndExit(err.Error(), 1)
+			util.ErrorExit(err.Error(), 1)
 		}
 
 		// this should be a prettified JSON output
@@ -96,7 +96,7 @@ func describe(cmd *cobra.Command, args []string) {
 		if f != "" {
 			err = ioutil.WriteFile(f, mi, 0644)
 			if err != nil {
-				util.PrintErrorAndExit(err.Error(), 1)
+				util.ErrorExit(err.Error(), 1)
 			}
 
 			log.Println(fmt.Sprintf("Output written to %s.", f))

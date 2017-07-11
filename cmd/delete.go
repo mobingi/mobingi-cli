@@ -26,12 +26,12 @@ func init() {
 func delete(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.PrintErrorAndExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.PrintErrorAndExit("Stack id cannot be empty.", 1)
+		util.ErrorExit("Stack id cannot be empty.", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
@@ -45,12 +45,12 @@ func delete(cmd *cobra.Command, args []string) {
 	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
 	if err != nil {
-		util.PrintErrorAndExit("Internal error.", 1)
+		util.ErrorExit("Internal error.", 1)
 	}
 
 	status, found := m["status"]
 	if !found {
-		util.PrintErrorAndExit("Cannot read status.", 1)
+		util.ErrorExit("Cannot read status.", 1)
 	}
 
 	log.Println(fmt.Sprintf("[%s] %s", resp.Status, status))

@@ -40,7 +40,7 @@ func login(cmd *cobra.Command, args []string) {
 	secret := util.GetCliStringFlag(cmd, "client-secret")
 
 	if id == "" {
-		id = util.GetClientId()
+		id = util.ClientId()
 	}
 
 	if id == "" {
@@ -49,12 +49,12 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	if secret == "" {
-		secret = util.GetClientSecret()
+		secret = util.ClientSecret()
 	}
 
 	if secret == "" {
 		log.Println("Client secret cannot be empty.")
-		secret = util.GetClientSecret()
+		secret = util.ClientSecret()
 	}
 
 	var m map[string]interface{}
@@ -71,10 +71,9 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	if util.GetCliStringFlag(cmd, "grant-type") == "password" {
-		// user, pass = util.GetUserPassword()
 		user = util.GetCliStringFlag(cmd, "username")
 		if user == "" {
-			user = util.GetUsername()
+			user = util.Username()
 		}
 
 		if user == "" {
@@ -84,7 +83,7 @@ func login(cmd *cobra.Command, args []string) {
 
 		pass = util.GetCliStringFlag(cmd, "password")
 		if pass == "" {
-			pass = util.GetPassword()
+			pass = util.Password()
 		}
 
 		if pass == "" {
@@ -104,7 +103,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	// should not be nil when `grant_type` is valid
 	if p == nil {
-		util.PrintErrorAndExit("Invalid argument(s). See `help` for more information.", 1)
+		util.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
 	resp, body, errs := c.PostJSON(c.RootUrl+"/access_token", p)
@@ -115,23 +114,23 @@ func login(cmd *cobra.Command, args []string) {
 
 	err := json.Unmarshal(body, &m)
 	if err != nil {
-		util.PrintErrorAndExit(err.Error(), 1)
+		util.ErrorExit(err.Error(), 1)
 	}
 
 	serr := util.BuildRequestError(resp, m)
 	if serr != "" {
-		util.PrintErrorAndExit(serr, 1)
+		util.ErrorExit(serr, 1)
 	}
 
 	token, found := m["access_token"]
 	if !found {
-		util.PrintErrorAndExit("Internal error.", 1)
+		util.ErrorExit("Internal error.", 1)
 	}
 
 	// always overwrite file
 	err = util.SaveToken(fmt.Sprintf("%s", token))
 	if err != nil {
-		util.PrintErrorAndExit(err.Error(), 1)
+		util.ErrorExit(err.Error(), 1)
 	}
 
 	log.Println("Login successful.")
