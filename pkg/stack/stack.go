@@ -1,5 +1,11 @@
 package stack
 
+import (
+	"fmt"
+	"io"
+	"reflect"
+)
+
 type Configuration struct {
 	AWS                 string `json:"AWS,omitempty"`
 	AWSAccountName      string `json:"AWS_ACCOUNT_NAME,omitempty"`
@@ -181,4 +187,110 @@ type DescribeStack struct {
 	StackOutputs  StackOutput   `json:"stack_outputs,omitempty"`
 	StackStatus   string        `json:"stack_status,omitempty"`
 	UserId        string        `json:"user_id,omitempty"`
+}
+
+// PrintR prints the `field: value` of the input struct recursively. Recursion level `lvl`
+// is provided for indention in printing. For slices, we have to do an explicit type assertion
+// to get the underlying slice from reflect.
+func PrintR(w io.Writer, s interface{}, lvl int) {
+	cnt := lvl * 2
+	pad := ""
+	for x := 0; x < cnt; x++ {
+		pad += " "
+	}
+
+	rt := reflect.TypeOf(s).Elem()
+	rv := reflect.ValueOf(s).Elem()
+
+	for i := 0; i < rt.NumField(); i++ {
+		field := rt.Field(i).Name
+		value := rv.Field(i).Interface()
+
+		switch rv.Field(i).Kind() {
+		case reflect.String:
+			fmt.Fprintf(w, "%s%s: %s\n", pad, field, value)
+		case reflect.Int32:
+			fmt.Fprintf(w, "%s%s: %i\n", pad, field, value)
+		case reflect.Struct:
+			fmt.Fprintf(w, "%s[%s]\n", pad, field)
+			v := rv.Field(i).Addr()
+			PrintR(w, v.Interface(), lvl+1)
+		case reflect.Slice:
+			fmt.Fprintf(w, "%s[%s]\n", pad, field)
+			instances, ok := value.([]Instance)
+			if ok {
+				for _, slice := range instances {
+					PrintR(w, &slice, lvl+1)
+					if len(instances) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			mappings, ok := value.([]BlockDeviceMappings)
+			if ok {
+				for _, slice := range mappings {
+					PrintR(w, &slice, lvl+1)
+					if len(mappings) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			networks, ok := value.([]NetworkInterface)
+			if ok {
+				for _, slice := range networks {
+					PrintR(w, &slice, lvl+1)
+					if len(networks) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			groups, ok := value.([]Group)
+			if ok {
+				for _, slice := range groups {
+					PrintR(w, &slice, lvl+1)
+					if len(groups) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			ipaddrs, ok := value.([]PrivateIpAddress)
+			if ok {
+				for _, slice := range ipaddrs {
+					PrintR(w, &slice, lvl+1)
+					if len(ipaddrs) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			tags, ok := value.([]Tag)
+			if ok {
+				for _, slice := range tags {
+					PrintR(w, &slice, lvl+1)
+					if len(tags) > 1 {
+						fmt.Fprintf(w, "\n")
+					}
+				}
+
+				break
+			}
+
+			// when slice type is not explicitly specified in our conversion
+			fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
+		}
+	}
 }

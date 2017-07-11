@@ -4,11 +4,9 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
-	"reflect"
 
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/stack"
@@ -69,7 +67,7 @@ func describe(cmd *cobra.Command, args []string) {
 
 	switch util.GetCliStringFlag(cmd, "fmt") {
 	case "text":
-		printStackText(os.Stdout, &stacks[0], 0)
+		stack.PrintR(os.Stdout, &stacks[0], 0)
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
@@ -80,7 +78,7 @@ func describe(cmd *cobra.Command, args []string) {
 			defer fp.Close()
 			w := bufio.NewWriter(fp)
 			defer w.Flush()
-			printStackText(w, &stacks[0], 0)
+			stack.PrintR(w, &stacks[0], 0)
 			log.Println(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
@@ -100,112 +98,6 @@ func describe(cmd *cobra.Command, args []string) {
 			}
 
 			log.Println(fmt.Sprintf("Output written to %s.", f))
-		}
-	}
-}
-
-// printStackText prints the field: value of the input struct recursively. Recursion level
-// is provided for indention in printing. For slices, we have to do an explicit type assertion
-// to get the underlying slice from reflect.
-func printStackText(w io.Writer, s interface{}, lvl int) {
-	cnt := lvl * 2
-	pad := ""
-	for x := 0; x < cnt; x++ {
-		pad += " "
-	}
-
-	rt := reflect.TypeOf(s).Elem()
-	rv := reflect.ValueOf(s).Elem()
-
-	for i := 0; i < rt.NumField(); i++ {
-		field := rt.Field(i).Name
-		value := rv.Field(i).Interface()
-
-		switch rv.Field(i).Kind() {
-		case reflect.String:
-			fmt.Fprintf(w, "%s%s: %s\n", pad, field, value)
-		case reflect.Int32:
-			fmt.Fprintf(w, "%s%s: %i\n", pad, field, value)
-		case reflect.Struct:
-			fmt.Fprintf(w, "%s[%s]\n", pad, field)
-			v := rv.Field(i).Addr()
-			printStackText(w, v.Interface(), lvl+1)
-		case reflect.Slice:
-			fmt.Fprintf(w, "%s[%s]\n", pad, field)
-			instances, ok := value.([]stack.Instance)
-			if ok {
-				for _, slice := range instances {
-					printStackText(w, &slice, lvl+1)
-					if len(instances) > 1 {
-						fmt.Fprintf(w, "\n")
-					}
-				}
-
-				break
-			}
-
-			mappings, ok := value.([]stack.BlockDeviceMappings)
-			if ok {
-				for _, slice := range mappings {
-					printStackText(w, &slice, lvl+1)
-					if len(mappings) > 1 {
-						fmt.Fprintf(w, "\n")
-					}
-				}
-
-				break
-			}
-
-			networks, ok := value.([]stack.NetworkInterface)
-			if ok {
-				for _, slice := range networks {
-					printStackText(w, &slice, lvl+1)
-					if len(networks) > 1 {
-						fmt.Fprintf(w, "\n")
-					}
-				}
-
-				break
-			}
-
-			groups, ok := value.([]stack.Group)
-			if ok {
-				for _, slice := range groups {
-					printStackText(w, &slice, lvl+1)
-					if len(groups) > 1 {
-						fmt.Fprintf(w, "\n")
-					}
-				}
-
-				break
-			}
-
-			ipaddrs, ok := value.([]stack.PrivateIpAddress)
-			if ok {
-				for _, slice := range ipaddrs {
-					printStackText(w, &slice, lvl+1)
-					if len(ipaddrs) > 1 {
-						fmt.Fprintf(w, "\n")
-					}
-				}
-
-				break
-			}
-
-			tags, ok := value.([]stack.Tag)
-			if ok {
-				for _, slice := range tags {
-					printStackText(w, &slice, lvl+1)
-					if len(tags) > 1 {
-						fmt.Fprintf(w, "\n")
-					}
-				}
-
-				break
-			}
-
-			// when slice type is not explicitly specified in our conversion
-			fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
 		}
 	}
 }
