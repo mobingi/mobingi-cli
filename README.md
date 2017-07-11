@@ -5,7 +5,7 @@
 
 Command line interface for Mobingi API.
 
-### Build
+## Build
 
 This tool uses [`dep`](https://github.com/golang/dep) for dependency management. You can install `dep` via
 
@@ -19,9 +19,9 @@ To build the tool, run
 $ go build -v
 ```
 
-### Usage
+## Usage
 
-#### Login
+### Login
 
 This is the first command you need to run to use the other commands. To login, run
 
@@ -31,7 +31,7 @@ $ mocli login --client-id=value --client-secret=value
 
 This will create a file `<home_folder/.mocli/credentials` that contains the API token to be used for your subsequent queries.
 
-#### List stacks
+### List stacks
 
 To list your running stacks, run
 
@@ -53,7 +53,7 @@ $ mocli list --fmt=json
 
 You can also save the output to a file by adding the option `--out=[full_path_to_file]`. If your path contains a whitespace, enclose the value with double-quotes.
 
-#### Describe a stack
+### Describe a stack
 
 To describe a specific stack, run
 
