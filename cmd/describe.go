@@ -107,7 +107,7 @@ func describe(cmd *cobra.Command, args []string) {
 			fmt.Fprintf(os.Stdout, "Time created   : %s\n", timestr)
 		}
 
-		log.Println(fmt.Sprintf("%+v", stacks))
+		// log.Println(fmt.Sprintf("%+v", stacks))
 
 	case "json":
 		mi, err := json.MarshalIndent(stacks, "", "  ")
