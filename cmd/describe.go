@@ -135,6 +135,7 @@ func printStackText(w io.Writer, s interface{}, lvl int) {
 			if ok {
 				for _, slice := range slices {
 					printStackText(w, &slice, lvl+1)
+					fmt.Fprintf(w, "\n")
 				}
 			} else {
 				fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
