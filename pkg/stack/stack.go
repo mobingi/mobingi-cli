@@ -189,11 +189,11 @@ type DescribeStack struct {
 	UserId        string        `json:"user_id,omitempty"`
 }
 
-// PrintR prints the `field: value` of the input struct recursively. Recursion level `lvl`
-// is provided for indention in printing. For slices, we have to do an explicit type assertion
+// PrintR prints the `field: value` of the input struct recursively. Recursion level `lvl` and `indent`
+// are provided for indention in printing. For slices, we have to do an explicit type assertion
 // to get the underlying slice from reflect.
-func PrintR(w io.Writer, s interface{}, lvl int) {
-	cnt := lvl * 2
+func PrintR(w io.Writer, s interface{}, lvl, indent int) {
+	cnt := lvl * indent
 	pad := ""
 	for x := 0; x < cnt; x++ {
 		pad += " "
@@ -214,13 +214,13 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 		case reflect.Struct:
 			fmt.Fprintf(w, "%s[%s]\n", pad, field)
 			v := rv.Field(i).Addr()
-			PrintR(w, v.Interface(), lvl+1)
+			PrintR(w, v.Interface(), lvl+1, indent)
 		case reflect.Slice:
 			fmt.Fprintf(w, "%s[%s]\n", pad, field)
 			instances, ok := value.([]Instance)
 			if ok {
 				for _, slice := range instances {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(instances) > 1 {
 						fmt.Fprintf(w, "\n")
 					}
@@ -232,7 +232,7 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 			mappings, ok := value.([]BlockDeviceMappings)
 			if ok {
 				for _, slice := range mappings {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(mappings) > 1 {
 						fmt.Fprintf(w, "\n")
 					}
@@ -244,7 +244,7 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 			networks, ok := value.([]NetworkInterface)
 			if ok {
 				for _, slice := range networks {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(networks) > 1 {
 						fmt.Fprintf(w, "\n")
 					}
@@ -256,7 +256,7 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 			groups, ok := value.([]Group)
 			if ok {
 				for _, slice := range groups {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(groups) > 1 {
 						fmt.Fprintf(w, "\n")
 					}
@@ -268,7 +268,7 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 			ipaddrs, ok := value.([]PrivateIpAddress)
 			if ok {
 				for _, slice := range ipaddrs {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(ipaddrs) > 1 {
 						fmt.Fprintf(w, "\n")
 					}
@@ -280,7 +280,7 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 			tags, ok := value.([]Tag)
 			if ok {
 				for _, slice := range tags {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(tags) > 1 {
 						fmt.Fprintf(w, "\n")
 					}
@@ -292,7 +292,7 @@ func PrintR(w io.Writer, s interface{}, lvl int) {
 			stackouts, ok := value.([]StackOutput)
 			if ok {
 				for _, slice := range stackouts {
-					PrintR(w, &slice, lvl+1)
+					PrintR(w, &slice, lvl+1, indent)
 					if len(stackouts) > 1 {
 						fmt.Fprintf(w, "\n")
 					}

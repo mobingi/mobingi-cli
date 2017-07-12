@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 
@@ -72,6 +73,20 @@ func GetCliStringFlag(cmd *cobra.Command, f string) string {
 	return s
 }
 
+func GetCliIntFlag(cmd *cobra.Command, f string) int {
+	s := cmd.Flag(f).DefValue
+	if cmd.Flag(f).Changed {
+		s = cmd.Flag(f).Value.String()
+	}
+
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+
+	return v
+}
+
 func ErrorExit(err string, code int) {
 	log.Println("Error:", err)
 	os.Exit(code)
@@ -96,4 +111,13 @@ func ResponseError(r gorequest.Response, m map[string]interface{}) string {
 	}
 
 	return err
+}
+
+func Indent(count int) string {
+	pad := ""
+	for i := 0; i < count; i++ {
+		pad += " "
+	}
+
+	return pad
 }

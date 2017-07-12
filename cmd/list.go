@@ -33,6 +33,7 @@ func init() {
 	rootCmd.AddCommand(listCmd)
 	listCmd.Flags().StringP("fmt", "f", "min", "output format (valid values: min, text, json)")
 	listCmd.Flags().StringP("out", "o", "", "full file path to write the output")
+	listCmd.Flags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
 }
 
 func list(cmd *cobra.Command, args []string) {
@@ -85,7 +86,8 @@ func list(cmd *cobra.Command, args []string) {
 		term.Print(stbl)
 		term.Flush()
 	case "text":
-		stack.PrintR(os.Stdout, &stacks[0], 0)
+		indent := util.GetCliIntFlag(cmd, "indent")
+		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
@@ -96,11 +98,12 @@ func list(cmd *cobra.Command, args []string) {
 			defer fp.Close()
 			w := bufio.NewWriter(fp)
 			defer w.Flush()
-			stack.PrintR(w, &stacks[0], 0)
+			stack.PrintR(w, &stacks[0], 0, indent)
 			log.Println(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
-		mi, err := json.MarshalIndent(stacks, "", "  ")
+		indent := util.GetCliIntFlag(cmd, "indent")
+		mi, err := json.MarshalIndent(stacks, "", util.Indent(indent))
 		if err != nil {
 			util.ErrorExit(err.Error(), 1)
 		}

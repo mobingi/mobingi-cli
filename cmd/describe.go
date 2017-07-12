@@ -28,6 +28,7 @@ func init() {
 	describeCmd.Flags().StringP("id", "i", "", "stack id")
 	describeCmd.Flags().StringP("fmt", "f", "text", "output format (valid values: text, json)")
 	describeCmd.Flags().StringP("out", "o", "", "full file path to write the output")
+	describeCmd.Flags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
 }
 
 func describe(cmd *cobra.Command, args []string) {
@@ -67,7 +68,8 @@ func describe(cmd *cobra.Command, args []string) {
 
 	switch util.GetCliStringFlag(cmd, "fmt") {
 	case "text":
-		stack.PrintR(os.Stdout, &stacks[0], 0)
+		indent := util.GetCliIntFlag(cmd, "indent")
+		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
@@ -78,11 +80,12 @@ func describe(cmd *cobra.Command, args []string) {
 			defer fp.Close()
 			w := bufio.NewWriter(fp)
 			defer w.Flush()
-			stack.PrintR(w, &stacks[0], 0)
+			stack.PrintR(w, &stacks[0], 0, indent)
 			log.Println(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
-		mi, err := json.MarshalIndent(stacks, "", "  ")
+		indent := util.GetCliIntFlag(cmd, "indent")
+		mi, err := json.MarshalIndent(stacks, "", util.Indent(indent))
 		if err != nil {
 			util.ErrorExit(err.Error(), 1)
 		}
