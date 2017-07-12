@@ -66,8 +66,8 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	// workaround: see description in struct definition
-	var ptr interface{}
-	var sptr interface{}
+	var ptr interface{}  // pointer to 1st element of slice
+	var sptr interface{} // pointer to the whole slice
 	var stacks1 []stack.DescribeStack1
 	err = json.Unmarshal(body, &stacks1)
 	if err != nil {
