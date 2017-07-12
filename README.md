@@ -51,7 +51,7 @@ or
 $ mocli stack list --fmt=json
 ```
 
-You can also save the output to a file by adding the option `--out=[full_path_to_file]`. If your path contains a whitespace, enclose the value with double-quotes.
+You can also save the output to a file by adding the option `--out=[full_path_to_file]`. If your path contains whitespaces, enclose the value with double-quotes.
 
 ### Describe a stack
 
@@ -61,7 +61,7 @@ To describe a specific stack, run
 $ mocli stack describe --id=value
 ```
 
-You can get the stack id from the `stack list` subcommand. This command also supports `text`, `json`, and `raw` output formats via the `--fmt=[text|json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+You can get the stack id from the `stack list` subcommand. This command supports `text`, `json`, and `raw` output formats via the `--fmt=[text|json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
 
 ### Delete a stack
 
@@ -72,3 +72,13 @@ $ mocli stack delete --id=value
 ```
 
 You can get the stack id from the `stack list` subcommand.
+
+### Show server config
+
+To show server config of a specific stack, run
+
+```
+$ mocli svrconf show --id=[value]
+```
+
+You can get the stack from the `stack list` subcommand. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
