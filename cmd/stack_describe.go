@@ -50,7 +50,7 @@ func describe(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	// we process `raw` format first before unmarshal
+	// we process `--fmt=raw` option first
 	out := util.GetCliStringFlag(cmd, "out")
 	pfmt := util.GetCliStringFlag(cmd, "fmt")
 	if pfmt == "raw" {
@@ -61,28 +61,44 @@ func describe(cmd *cobra.Command, args []string) {
 				util.ErrorExit(err.Error(), 1)
 			}
 		}
+
+		return
 	}
 
-	var stacks []stack.DescribeStack
-	err = json.Unmarshal(body, &stacks)
+	// workaround: see description in struct definition
+	var ptr interface{}
+	var sptr interface{}
+	var stacks1 []stack.DescribeStack1
+	err = json.Unmarshal(body, &stacks1)
 	if err != nil {
-		log.Println(err)
-		var m map[string]interface{}
-		err = json.Unmarshal(body, &m)
+		var stacks2 []stack.DescribeStack2
+		err = json.Unmarshal(body, &stacks2)
 		if err != nil {
-			util.ErrorExit("internal error", 1)
-		}
+			var m map[string]interface{}
+			err = json.Unmarshal(body, &m)
+			if err != nil {
+				util.ErrorExit("internal error", 1)
+			}
 
-		serr := util.ResponseError(resp, m)
-		if serr != "" {
-			util.ErrorExit(serr, 1)
+			serr := util.ResponseError(resp, m)
+			if serr != "" {
+				util.ErrorExit(serr, 1)
+			}
+
+			util.ErrorExit(err.Error(), 1)
+		} else {
+			ptr = &stacks2[0]
+			sptr = stacks2
 		}
+	} else {
+		ptr = &stacks1[0]
+		sptr = stacks1
 	}
 
 	switch pfmt {
 	case "text":
 		indent := util.GetCliIntFlag(cmd, "indent")
-		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
+		stack.PrintR(os.Stdout, ptr, 0, indent)
 		if out != "" {
 			fp, err := os.Create(out)
 			if err != nil {
@@ -92,12 +108,12 @@ func describe(cmd *cobra.Command, args []string) {
 			defer fp.Close()
 			w := bufio.NewWriter(fp)
 			defer w.Flush()
-			stack.PrintR(w, &stacks[0], 0, indent)
+			stack.PrintR(w, ptr, 0, indent)
 			log.Println(fmt.Sprintf("output written to %s", out))
 		}
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
-		mi, err := json.MarshalIndent(stacks, "", util.Indent(indent))
+		mi, err := json.MarshalIndent(sptr, "", util.Indent(indent))
 		if err != nil {
 			util.ErrorExit(err.Error(), 1)
 		}

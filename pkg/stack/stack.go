@@ -177,7 +177,10 @@ type ListStack struct {
 	UserId        string        `json:"user_id,omitempty"`
 }
 
-type DescribeStack struct {
+// Workaround for inconsistencies in API output:
+// When stack creation is still in progress, StackOutputs is a slice. Upon completion,
+// it will be a struct. It will cause errors in Unmarshal.
+type DescribeStack1 struct {
 	AuthToken     string        `json:"auth_token,omitempty"`
 	Configuration Configuration `json:"configuration,omitempty"`
 	CreateTime    string        `json:"create_time,omitempty"`
@@ -185,6 +188,18 @@ type DescribeStack struct {
 	Nickname      string        `json:"nickname,omitempty"`
 	StackId       string        `json:"stack_id,omitempty"`
 	StackOutputs  StackOutput   `json:"stack_outputs,omitempty"`
+	StackStatus   string        `json:"stack_status,omitempty"`
+	UserId        string        `json:"user_id,omitempty"`
+}
+
+type DescribeStack2 struct {
+	AuthToken     string        `json:"auth_token,omitempty"`
+	Configuration Configuration `json:"configuration,omitempty"`
+	CreateTime    string        `json:"create_time,omitempty"`
+	Instances     []Instance    `json:"Instances,omitempty"`
+	Nickname      string        `json:"nickname,omitempty"`
+	StackId       string        `json:"stack_id,omitempty"`
+	StackOutputs  []StackOutput `json:"stack_outputs,omitempty"`
 	StackStatus   string        `json:"stack_status,omitempty"`
 	UserId        string        `json:"user_id,omitempty"`
 }
@@ -302,7 +317,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			// when slice type is not explicitly specified in our conversion
-			fmt.Fprintf(w, "%s*** Not yet supported ***\n", pad)
+			fmt.Fprintf(w, "%s*** Not available ***\n", pad)
 		}
 	}
 }
