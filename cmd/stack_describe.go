@@ -24,7 +24,7 @@ space(s) in it, make sure to surround it with double quotes.`,
 }
 
 func init() {
-	rootCmd.AddCommand(describeCmd)
+	stackCmd.AddCommand(describeCmd)
 	describeCmd.Flags().StringP("id", "i", "", "stack id")
 	describeCmd.Flags().StringP("fmt", "f", "text", "output format (valid values: text, json)")
 	describeCmd.Flags().StringP("out", "o", "", "full file path to write the output")

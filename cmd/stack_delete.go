@@ -19,7 +19,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(deleteCmd)
+	stackCmd.AddCommand(deleteCmd)
 	deleteCmd.Flags().String("id", "", "stack id to delete")
 }
 

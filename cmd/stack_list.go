@@ -30,7 +30,7 @@ using the '--out=[filename]' option. You need to specify either
 }
 
 func init() {
-	rootCmd.AddCommand(listCmd)
+	stackCmd.AddCommand(listCmd)
 	listCmd.Flags().StringP("fmt", "f", "min", "output format (valid values: min, text, json)")
 	listCmd.Flags().StringP("out", "o", "", "full file path to write the output")
 	listCmd.Flags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
