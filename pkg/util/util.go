@@ -51,11 +51,7 @@ func Password() string {
 func SaveToken(token string) error {
 	hd, _ := homedir.Dir()
 	folder := filepath.Join(hd, credFolder)
-	err := os.Mkdir(folder, os.ModePerm)
-	if err != nil {
-		return nil
-	}
-
+	_ = os.Mkdir(folder, os.ModePerm)
 	cred := filepath.Join(folder, credFile)
 	return ioutil.WriteFile(cred, []byte(token), 0644)
 }
