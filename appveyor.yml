@@ -21,4 +21,5 @@ install:
 build_script:
   # - go get -u github.com/golang/dep/cmd/dep
   # - dep ensure -v
-  - go build -v
+  # - go build -v
+  - go test -v ./...
