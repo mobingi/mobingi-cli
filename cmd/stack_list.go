@@ -23,6 +23,8 @@ var listCmd = &cobra.Command{
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
+Valid format values: min (default), text, json
+
 For now, the 'min' format option cannot yet write to a file
 using the '--out=[filename]' option. You need to specify either
 'text' or 'json'.`,
@@ -31,9 +33,6 @@ using the '--out=[filename]' option. You need to specify either
 
 func init() {
 	stackCmd.AddCommand(listCmd)
-	listCmd.Flags().StringP("fmt", "f", "min", "output format (valid values: min, text, json)")
-	listCmd.Flags().StringP("out", "o", "", "full file path to write the output")
-	listCmd.Flags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
 }
 
 func list(cmd *cobra.Command, args []string) {
@@ -64,27 +63,8 @@ func list(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	switch util.GetCliStringFlag(cmd, "fmt") {
-	case "min":
-		stbl := term.NewTable(0, 10, 5, ' ', 0)
-		fmt.Fprintf(stbl, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
-		for _, s := range stacks {
-			timestr := s.CreateTime
-			t, err := time.Parse(time.RFC3339, s.CreateTime)
-			if err == nil {
-				timestr = t.Format(time.RFC1123)
-			}
-
-			platform := "?"
-			if s.Configuration.AWS != "" {
-				platform = "AWS"
-			}
-
-			fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, platform, s.StackStatus, s.Configuration.Region, timestr)
-		}
-
-		term.Print(stbl)
-		term.Flush()
+	pfmt := util.GetCliStringFlag(cmd, "fmt")
+	switch pfmt {
 	case "text":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
@@ -119,6 +99,28 @@ func list(cmd *cobra.Command, args []string) {
 			}
 
 			log.Println(fmt.Sprintf("Output written to %s.", f))
+		}
+	default:
+		if pfmt == "min" || pfmt == "" {
+			stbl := term.NewTable(0, 10, 5, ' ', 0)
+			fmt.Fprintf(stbl, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
+			for _, s := range stacks {
+				timestr := s.CreateTime
+				t, err := time.Parse(time.RFC3339, s.CreateTime)
+				if err == nil {
+					timestr = t.Format(time.RFC1123)
+				}
+
+				platform := "?"
+				if s.Configuration.AWS != "" {
+					platform = "AWS"
+				}
+
+				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, platform, s.StackStatus, s.Configuration.Region, timestr)
+			}
+
+			term.Print(stbl)
+			term.Flush()
 		}
 	}
 }

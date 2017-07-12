@@ -22,4 +22,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringP("api-version", "v", "v2", "API version")
+	rootCmd.PersistentFlags().StringP("fmt", "f", "", "output format (values depends on command)")
+	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
+	rootCmd.PersistentFlags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
 }

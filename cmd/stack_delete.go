@@ -31,7 +31,7 @@ func delete(cmd *cobra.Command, args []string) {
 
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.ErrorExit("Stack id cannot be empty.", 1)
+		util.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
@@ -45,12 +45,12 @@ func delete(cmd *cobra.Command, args []string) {
 	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
 	if err != nil {
-		util.ErrorExit("Internal error.", 1)
+		util.ErrorExit("internal error", 1)
 	}
 
 	status, found := m["status"]
 	if !found {
-		util.ErrorExit("Cannot read status.", 1)
+		util.ErrorExit("cannot read status", 1)
 	}
 
 	log.Println(fmt.Sprintf("[%s] %s", resp.Status, status))

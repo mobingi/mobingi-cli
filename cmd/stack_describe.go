@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -19,16 +18,15 @@ var describeCmd = &cobra.Command{
 	Short: "display stack details",
 	Long: `Display stack details. If you specify the '--out=[filename]' option,
 make sure you provide the full path of the file. If the path has
-space(s) in it, make sure to surround it with double quotes.`,
+space(s) in it, make sure to surround it with double quotes.
+
+Valid format values: text (default), json, raw`,
 	Run: describe,
 }
 
 func init() {
 	stackCmd.AddCommand(describeCmd)
 	describeCmd.Flags().StringP("id", "i", "", "stack id")
-	describeCmd.Flags().StringP("fmt", "f", "text", "output format (valid values: text, json, raw)")
-	describeCmd.Flags().StringP("out", "o", "", "full file path to write the output")
-	describeCmd.Flags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
 }
 
 func describe(cmd *cobra.Command, args []string) {
@@ -56,7 +54,7 @@ func describe(cmd *cobra.Command, args []string) {
 	if pfmt == "raw" {
 		fmt.Println(string(body))
 		if out != "" {
-			err = writeToFile(out, body)
+			err = util.WriteToFile(out, body)
 			if err != nil {
 				util.ErrorExit(err.Error(), 1)
 			}
@@ -96,21 +94,6 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	switch pfmt {
-	case "text":
-		indent := util.GetCliIntFlag(cmd, "indent")
-		stack.PrintR(os.Stdout, ptr, 0, indent)
-		if out != "" {
-			fp, err := os.Create(out)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
-
-			defer fp.Close()
-			w := bufio.NewWriter(fp)
-			defer w.Flush()
-			stack.PrintR(w, ptr, 0, indent)
-			log.Println(fmt.Sprintf("output written to %s", out))
-		}
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", util.Indent(indent))
@@ -120,20 +103,27 @@ func describe(cmd *cobra.Command, args []string) {
 
 		fmt.Println(string(mi))
 		if out != "" {
-			err = writeToFile(out, mi)
+			err = util.WriteToFile(out, mi)
 			if err != nil {
 				util.ErrorExit(err.Error(), 1)
 			}
 		}
-	}
-}
+	default:
+		if pfmt == "text" || pfmt == "" {
+			indent := util.GetCliIntFlag(cmd, "indent")
+			stack.PrintR(os.Stdout, ptr, 0, indent)
+			if out != "" {
+				fp, err := os.Create(out)
+				if err != nil {
+					util.ErrorExit(err.Error(), 1)
+				}
 
-func writeToFile(f string, contents []byte) error {
-	err := ioutil.WriteFile(f, contents, 0644)
-	if err != nil {
-		return err
+				defer fp.Close()
+				w := bufio.NewWriter(fp)
+				defer w.Flush()
+				stack.PrintR(w, ptr, 0, indent)
+				log.Println(fmt.Sprintf("output written to %s", out))
+			}
+		}
 	}
-
-	log.Println(fmt.Sprintf("output written to %s", f))
-	return nil
 }
