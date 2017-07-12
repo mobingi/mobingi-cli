@@ -61,7 +61,7 @@ To describe a specific stack, run
 $ mocli stack describe --id=value
 ```
 
-You can get the stack id from the `stack list` subcommand. This command also supports `text` and `json` output formats via the `--fmt=[text|json]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+You can get the stack id from the `stack list` subcommand. This command also supports `text`, `json`, and `raw` output formats via the `--fmt=[text|json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
 
 ### Delete a stack
 
