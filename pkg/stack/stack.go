@@ -218,7 +218,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 		case reflect.Slice:
 			fmt.Fprintf(w, "%s[%s]\n", pad, field)
 			instances, ok := value.([]Instance)
-			if ok {
+			if ok && len(instances) > 0 {
 				for _, slice := range instances {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(instances) > 1 {
@@ -230,7 +230,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			mappings, ok := value.([]BlockDeviceMappings)
-			if ok {
+			if ok && len(mappings) > 0 {
 				for _, slice := range mappings {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(mappings) > 1 {
@@ -242,7 +242,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			networks, ok := value.([]NetworkInterface)
-			if ok {
+			if ok && len(networks) > 0 {
 				for _, slice := range networks {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(networks) > 1 {
@@ -254,7 +254,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			groups, ok := value.([]Group)
-			if ok {
+			if ok && len(groups) > 0 {
 				for _, slice := range groups {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(groups) > 1 {
@@ -266,7 +266,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			ipaddrs, ok := value.([]PrivateIpAddress)
-			if ok {
+			if ok && len(ipaddrs) > 0 {
 				for _, slice := range ipaddrs {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(ipaddrs) > 1 {
@@ -278,7 +278,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			tags, ok := value.([]Tag)
-			if ok {
+			if ok && len(tags) > 0 {
 				for _, slice := range tags {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(tags) > 1 {
@@ -290,7 +290,7 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 			}
 
 			stackouts, ok := value.([]StackOutput)
-			if ok {
+			if ok && len(stackouts) > 0 {
 				for _, slice := range stackouts {
 					PrintR(w, &slice, lvl+1, indent)
 					if len(stackouts) > 1 {

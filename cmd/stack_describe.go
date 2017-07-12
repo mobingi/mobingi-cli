@@ -26,7 +26,7 @@ space(s) in it, make sure to surround it with double quotes.`,
 func init() {
 	stackCmd.AddCommand(describeCmd)
 	describeCmd.Flags().StringP("id", "i", "", "stack id")
-	describeCmd.Flags().StringP("fmt", "f", "text", "output format (valid values: text, json)")
+	describeCmd.Flags().StringP("fmt", "f", "text", "output format (valid values: text, json, raw)")
 	describeCmd.Flags().StringP("out", "o", "", "full file path to write the output")
 	describeCmd.Flags().IntP("indent", "n", 2, "indent padding when fmt is 'text' or 'json'")
 }
@@ -39,15 +39,28 @@ func describe(cmd *cobra.Command, args []string) {
 
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.ErrorExit("Stack id cannot be empty.", 1)
+		util.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 	ep := c.RootUrl + "/alm/stack/" + fmt.Sprintf("%s", id)
 	resp, body, errs := c.GetSafe(ep, fmt.Sprintf("%s", token))
 	if errs != nil {
-		log.Println("Error(s):", errs)
+		log.Println("error(s):", errs)
 		os.Exit(1)
+	}
+
+	// we process `raw` format first before unmarshal
+	out := util.GetCliStringFlag(cmd, "out")
+	pfmt := util.GetCliStringFlag(cmd, "fmt")
+	if pfmt == "raw" {
+		fmt.Println(string(body))
+		if out != "" {
+			err = writeToFile(out, body)
+			if err != nil {
+				util.ErrorExit(err.Error(), 1)
+			}
+		}
 	}
 
 	var stacks []stack.DescribeStack
@@ -57,7 +70,7 @@ func describe(cmd *cobra.Command, args []string) {
 		var m map[string]interface{}
 		err = json.Unmarshal(body, &m)
 		if err != nil {
-			util.ErrorExit("Internal error.", 1)
+			util.ErrorExit("internal error", 1)
 		}
 
 		serr := util.ResponseError(resp, m)
@@ -66,13 +79,12 @@ func describe(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	switch util.GetCliStringFlag(cmd, "fmt") {
+	switch pfmt {
 	case "text":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
-		f := util.GetCliStringFlag(cmd, "out")
-		if f != "" {
-			fp, err := os.Create(f)
+		if out != "" {
+			fp, err := os.Create(out)
 			if err != nil {
 				util.ErrorExit(err.Error(), 1)
 			}
@@ -81,7 +93,7 @@ func describe(cmd *cobra.Command, args []string) {
 			w := bufio.NewWriter(fp)
 			defer w.Flush()
 			stack.PrintR(w, &stacks[0], 0, indent)
-			log.Println(fmt.Sprintf("Output written to %s.", f))
+			log.Println(fmt.Sprintf("output written to %s", out))
 		}
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
@@ -90,17 +102,22 @@ func describe(cmd *cobra.Command, args []string) {
 			util.ErrorExit(err.Error(), 1)
 		}
 
-		// this should be a prettified JSON output
 		fmt.Println(string(mi))
-
-		f := util.GetCliStringFlag(cmd, "out")
-		if f != "" {
-			err = ioutil.WriteFile(f, mi, 0644)
+		if out != "" {
+			err = writeToFile(out, mi)
 			if err != nil {
 				util.ErrorExit(err.Error(), 1)
 			}
-
-			log.Println(fmt.Sprintf("Output written to %s.", f))
 		}
 	}
+}
+
+func writeToFile(f string, contents []byte) error {
+	err := ioutil.WriteFile(f, contents, 0644)
+	if err != nil {
+		return err
+	}
+
+	log.Println(fmt.Sprintf("output written to %s", f))
+	return nil
 }
