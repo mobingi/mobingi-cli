@@ -41,7 +41,7 @@ To list your running stacks, run
 $ mocli stack list
 ```
 
-By default, this will list your task in a tabular form with minimal information. If you want to display more information, run
+By default, this will list your task in a tabular form with minimal information (`--fmt=min`). If you want to display more information, run
 
 ```
 $ mocli stack list --fmt=text
@@ -60,20 +60,20 @@ You can also save the output to a file by adding the option `--out=[full_path_to
 To describe a specific stack, run
 
 ```
-$ mocli stack describe --id=value
+$ mocli stack describe --id=[value]
 ```
 
-You can get the stack id from the `stack list` subcommand. This command supports `text`, `json`, `raw`, and `min` output formats via the `--fmt=[text|json|raw|min]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+where `[value]` is the stack id. You can get the stack id from the `stack list` command. This command supports `text`, `json`, `raw`, and `min` output formats via the `--fmt=[text|json|raw|min]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
 
 ### Delete a stack
 
 To delete a stack, run
 
 ```
-$ mocli stack delete --id=value
+$ mocli stack delete --id=[value]
 ```
 
-You can get the stack id from the `stack list` subcommand.
+where `[value]` is the stack id. You can get the stack id from the `stack list` command.
 
 ## Server config operations
 
@@ -85,7 +85,7 @@ To show server config of a specific stack, run
 $ mocli svrconf show --id=[value]
 ```
 
-where `--id` is the target stack id. You can get the stack id from the `stack list` subcommand. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+where `[value]` is the stack id. You can get the stack id from the `stack list` subcommand. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
 
 ### Update server config environment variables
 
@@ -106,3 +106,5 @@ To clear all environment variables, set `--env=null` option.
 ```
 $ mocli svrconf update --id=[value] --env=null
 ```
+
+The `--id=[value]` option should be the target stack id.
