@@ -108,3 +108,11 @@ $ mocli svrconf update --id=[value] --env=null
 ```
 
 The `--id=[value]` option should be the target stack id.
+
+### Update server config filepath
+
+To update server config filepath, run
+
+```
+$ mocli svrconf update --id=[value] --filepath=[value]
+```
