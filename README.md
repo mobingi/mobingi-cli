@@ -100,3 +100,9 @@ or if you have whitespaces in the input, enclose it with double quotes.
 ```
 $ mocli svrconf update --id=[value] --env="KEY1: value1, KEY2: value2, KEYx: valuex, ..."
 ```
+
+To clear all environment variables, set `--env=null` option.
+
+```
+$ mocli svrconf update --id=[value] --env=null
+```
