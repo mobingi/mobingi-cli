@@ -116,3 +116,5 @@ To update server config filepath, run
 ```
 $ mocli svrconf update --id=[value] --filepath=[value]
 ```
+
+Note that when you provide update options simultaneously (for example, you provide `--env=value` and `--filepath=value` at the same time), the tool will send each option as a separate request.
