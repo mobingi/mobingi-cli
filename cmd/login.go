@@ -106,7 +106,7 @@ func login(cmd *cobra.Command, args []string) {
 		util.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
-	resp, body, errs := c.PostJSON(c.RootUrl+"/access_token", p)
+	resp, body, errs := c.Post(c.RootUrl+"/access_token", p)
 	if errs != nil {
 		log.Println("Error(s):", errs)
 		os.Exit(1)

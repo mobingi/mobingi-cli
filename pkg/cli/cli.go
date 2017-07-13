@@ -26,7 +26,9 @@ func (c *Config) GetSafe(url, token string) (gorequest.Response, []byte, []error
 	return c.Requester.Get(url).Set("Authorization", "Bearer "+token).EndBytes()
 }
 
-func (c *Config) PostJSON(url string, i interface{}) (gorequest.Response, []byte, []error) {
+// Post without access token. Input `i` is a struct that will be marshaled to a JSON
+// payload.
+func (c *Config) Post(url string, i interface{}) (gorequest.Response, []byte, []error) {
 	e := make([]error, 0)
 	payload, err := json.Marshal(i)
 	if err != nil {

@@ -93,8 +93,8 @@ func show(cmd *cobra.Command, args []string) {
 			}
 		}
 
-		// extra information on `updated` field
+		// parse `updated` field for easier reading
 		up := time.Unix(sc.Updated, 0)
-		log.Println("updated (parsed):", up.Format(time.RFC1123))
+		log.Println(`"updated" (parsed):`, up.Format(time.RFC1123))
 	}
 }
