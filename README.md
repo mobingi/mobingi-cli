@@ -19,7 +19,7 @@ To build the tool, run
 $ go build -v
 ```
 
-## Usage
+# Usage
 
 ### Login
 
@@ -30,6 +30,8 @@ $ mocli login --client-id=value --client-secret=value
 ```
 
 This will create a file `credentials` `[home_folder]/.mocli/` folder that will contain the API token to be used for your subsequent commands.
+
+## Stack operations
 
 ### List stacks
 
@@ -73,6 +75,8 @@ $ mocli stack delete --id=value
 
 You can get the stack id from the `stack list` subcommand.
 
+## Server config operations
+
 ### Show server config
 
 To show server config of a specific stack, run
@@ -82,3 +86,17 @@ $ mocli svrconf show --id=[value]
 ```
 
 You can get the stack from the `stack list` subcommand. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+
+### Update server config environment variables
+
+To update server config environment variables, run
+
+```
+$ mocli svrconf update --id=[value] --env=KEY1:value1,KEY2:value2,KEYx:valuex...
+```
+
+or if you have whitespaces in the input, enclose it with double quotes.
+
+```
+$ mocli svrconf update --id=[value] --env="KEY1: value1, KEY2: value2, KEYx: valuex, ..."
+```
