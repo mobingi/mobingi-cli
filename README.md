@@ -85,7 +85,7 @@ To show server config of a specific stack, run
 $ mocli svrconf show --id=[value]
 ```
 
-You can get the stack from the `stack list` subcommand. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+where `--id` is the target stack id. You can get the stack id from the `stack list` subcommand. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
 
 ### Update server config environment variables
 
