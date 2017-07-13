@@ -52,6 +52,10 @@ func update(cmd *cobra.Command, args []string) {
 
 	env := util.GetCliStringFlag(cmd, "env")
 	in := buildPayload(sid, env)
+	if in == "" {
+		util.ErrorExit("Something is wrong with the --env input.", 1)
+	}
+
 	rm := json.RawMessage(in)
 	payload, err := json.Marshal(&rm)
 	if err != nil {
@@ -88,7 +92,15 @@ func update(cmd *cobra.Command, args []string) {
 }
 
 func buildPayload(sid, env string) string {
+	cnt := 0
 	payload := `{"stack_id":"` + sid + `",`
+
+	// check if delete all
+	if env == "null" {
+		payload += `"envvars":{}}`
+		return payload
+	}
+
 	if env != "" {
 		line := `"envvars":{`
 		envs := strings.Split(env, ",")
@@ -96,6 +108,7 @@ func buildPayload(sid, env string) string {
 			kv := strings.Split(s, ":")
 			if len(kv) == 2 {
 				line += `"` + strings.TrimSpace(kv[0]) + `":"` + strings.TrimSpace(kv[1]) + `"`
+				cnt += 1
 			}
 
 			if i < len(envs)-1 {
@@ -108,5 +121,9 @@ func buildPayload(sid, env string) string {
 	}
 
 	payload += `}`
+	if cnt == 0 {
+		return ""
+	}
+
 	return payload
 }
