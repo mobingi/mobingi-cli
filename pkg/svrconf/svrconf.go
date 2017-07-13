@@ -1,12 +1,12 @@
 package svrconf
 
 type ServerConfig struct {
-	Code          string `json:"code,omitempty"`
-	CodeDir       string `json:"codeDir,omitempty"`
-	Image         string `json:"image,omitempty"`
-	Ports         []int  `json:"ports,omitempty"`
-	Updated       int64  `json:"updated,omitempty"`
-	Version       string `json:"version,omitempty"`
-	GitPrivateKey string `json:"gitPrivateKey,omitempty"`
-	GitReference  string `json:"gitReference,omitempty"`
+	Code          string `json:"code"`
+	CodeDir       string `json:"codeDir"`
+	Image         string `json:"image"`
+	Ports         []int  `json:"ports"`
+	Updated       int64  `json:"updated"`
+	Version       string `json:"version"`
+	GitPrivateKey string `json:"gitPrivateKey"`
+	GitReference  string `json:"gitReference"`
 }
