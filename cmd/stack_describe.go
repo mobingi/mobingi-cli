@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -20,7 +21,7 @@ var describeCmd = &cobra.Command{
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
-Valid format values: text (default), json, raw`,
+Valid format values: text (default), json, raw, min`,
 	Run: describe,
 }
 
@@ -67,9 +68,10 @@ func describe(cmd *cobra.Command, args []string) {
 	var ptr interface{}  // pointer to 1st element of slice
 	var sptr interface{} // pointer to the whole slice
 	var stacks1 []stack.DescribeStack1
+	var stacks2 []stack.DescribeStack2
+	valid := 0
 	err = json.Unmarshal(body, &stacks1)
 	if err != nil {
-		var stacks2 []stack.DescribeStack2
 		err = json.Unmarshal(body, &stacks2)
 		if err != nil {
 			serr := util.ResponseError(resp, body)
@@ -81,13 +83,42 @@ func describe(cmd *cobra.Command, args []string) {
 		} else {
 			ptr = &stacks2[0]
 			sptr = stacks2
+			valid = 2
 		}
 	} else {
 		ptr = &stacks1[0]
 		sptr = stacks1
+		valid = 1
 	}
 
 	switch pfmt {
+	case "min":
+		stbl := term.NewTable(0, 10, 5, ' ', 0)
+		fmt.Fprintf(stbl, "INSTANCE ID\tINSTANCE TYPE\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
+		if valid == 1 {
+			for _, inst := range stacks1[0].Instances {
+				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\n",
+					inst.InstanceId,
+					inst.InstanceType,
+					inst.PublicIpAddress,
+					inst.PrivateIpAddress,
+					inst.State.Name)
+			}
+		}
+
+		if valid == 2 {
+			for _, inst := range stacks2[0].Instances {
+				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\n",
+					inst.InstanceId,
+					inst.InstanceType,
+					inst.PublicIpAddress,
+					inst.PrivateIpAddress,
+					inst.State.Name)
+			}
+		}
+
+		term.Print(stbl)
+		term.Flush()
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", util.Indent(indent))
