@@ -16,20 +16,18 @@ func TestResponseError(t *testing.T) {
 		StatusCode: 401,
 	}
 
-	m := make(map[string]interface{})
-	if re := ResponseError(r, m); re == "" {
+	b := []byte(`{}`)
+	if re := ResponseError(r, b); re == "" {
 		t.Errorf("Expected error mesage, got %v", re)
 	}
 
 	r.StatusCode = 200
-	if re := ResponseError(r, m); re != "" {
+	if re := ResponseError(r, b); re != "" {
 		t.Errorf("Expected empty mesage, got %v", re)
 	}
 
-	m["code"] = 100
-	m["error"] = "error string"
-	m["message"] = "error message"
-	if re := ResponseError(r, m); re == "" {
+	b = []byte(`{"code":"100","error":"error":"message":"error message"}`)
+	if re := ResponseError(r, b); re == "" {
 		t.Errorf("Expected error mesage, got %v", re)
 	}
 }
