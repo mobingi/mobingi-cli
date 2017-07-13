@@ -74,7 +74,6 @@ func show(cmd *cobra.Command, args []string) {
 
 			serr := util.ResponseError(resp, m)
 			if serr != "" {
-				log.Println("error?")
 				util.ErrorExit(serr, 1)
 			}
 		}
