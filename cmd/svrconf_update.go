@@ -37,6 +37,7 @@ func init() {
 	svrconfCmd.AddCommand(updateCmd)
 	updateCmd.Flags().StringP("id", "i", "", "stack id to query")
 	updateCmd.Flags().StringP("env", "e", "", "comma-separated key/val pair(s)")
+	updateCmd.Flags().StringP("filepath", "p", "", "file path")
 }
 
 func update(cmd *cobra.Command, args []string) {
@@ -50,48 +51,73 @@ func update(cmd *cobra.Command, args []string) {
 		util.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	env := util.GetCliStringFlag(cmd, "env")
-	in := buildPayload(sid, env)
-	if in == "" {
-		util.ErrorExit("Something is wrong with the --env input.", 1)
-	}
+	// each parameter set is sent separately
+	opts := []string{"env", "filepath"}
+	for _, opt := range opts {
+		var payload string
+		val := util.GetCliStringFlag(cmd, opt)
 
-	rm := json.RawMessage(in)
-	payload, err := json.Marshal(&rm)
-	if err != nil {
-		util.ErrorExit(err.Error(), 1)
-	}
+		switch opt {
+		case "env":
+			in := buildEnvPayload(sid, val)
+			if in != "" {
+				rm := json.RawMessage(in)
+				pl, err := json.Marshal(&rm)
+				if err != nil {
+					util.ErrorExit(err.Error(), 1)
+				}
 
-	log.Println("payload:", string(payload))
-	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-	resp, body, errs := c.PutSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token), string(payload))
-	if errs != nil {
-		log.Println("error(s):", errs)
-		os.Exit(1)
-	}
+				payload = string(pl)
+			}
 
-	serr := util.ResponseError(resp, body)
-	if serr != "" {
-		util.ErrorExit(serr, 1)
-	}
+		case "filepath":
+			if val != "" {
+				in := buildFilePathPayload(sid, val)
+				rm := json.RawMessage(in)
+				pl, err := json.Marshal(&rm)
+				if err != nil {
+					util.ErrorExit(err.Error(), 1)
+				}
 
-	// display return status
-	var m map[string]interface{}
-	err = json.Unmarshal(body, &m)
-	if status, found := m["status"]; found {
-		s := fmt.Sprintf("%s", status)
-		if s == "success" {
-			line := "[" + resp.Status + "] " + s
-			log.Println(line)
-			os.Exit(0)
+				payload = string(pl)
+			}
 		}
-	}
 
-	// or just the raw output
-	log.Println(string(body))
+		if payload == "" {
+			continue
+		}
+
+		log.Println("payload:", payload)
+		c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
+		resp, body, errs := c.PutSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token), payload)
+		if errs != nil {
+			log.Println("error(s):", errs)
+			os.Exit(1)
+		}
+
+		serr := util.ResponseError(resp, body)
+		if serr != "" {
+			util.ErrorExit(serr, 1)
+		}
+
+		// display return status
+		var m map[string]interface{}
+		err = json.Unmarshal(body, &m)
+		if status, found := m["status"]; found {
+			s := fmt.Sprintf("%s", status)
+			if s == "success" {
+				line := "[" + resp.Status + "] " + s
+				log.Println(line)
+				continue
+			}
+		}
+
+		// or just the raw output
+		log.Println(string(body))
+	}
 }
 
-func buildPayload(sid, env string) string {
+func buildEnvPayload(sid, env string) string {
 	cnt := 0
 	payload := `{"stack_id":"` + sid + `",`
 
@@ -126,4 +152,8 @@ func buildPayload(sid, env string) string {
 	}
 
 	return payload
+}
+
+func buildFilePathPayload(sid, fp string) string {
+	return `{"stack_id":"` + sid + `","filepath":"` + fp + `"}`
 }
