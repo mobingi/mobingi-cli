@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-
 	"github.com/parnurzeal/gorequest"
 )
 
@@ -26,17 +24,12 @@ func (c *Config) GetSafe(url, token string) (gorequest.Response, []byte, []error
 	return c.Requester.Get(url).Set("Authorization", "Bearer "+token).EndBytes()
 }
 
-// Post without access token. Input `i` is a struct that will be marshaled to a JSON
-// payload.
-func (c *Config) Post(url string, i interface{}) (gorequest.Response, []byte, []error) {
-	e := make([]error, 0)
-	payload, err := json.Marshal(i)
-	if err != nil {
-		e = append(e, err)
-		return nil, nil, e
-	}
+func (c *Config) Post(url, payload string) (gorequest.Response, []byte, []error) {
+	return c.Requester.Post(url).Send(payload).EndBytes()
+}
 
-	return c.Requester.Post(url).Send(string(payload)).EndBytes()
+func (c *Config) PutSafe(url, token string, payload string) (gorequest.Response, []byte, []error) {
+	return c.Requester.Put(url).Set("Authorization", "Bearer "+token).Send(payload).EndBytes()
 }
 
 func (c *Config) DeleteSafe(url, token string) (gorequest.Response, []byte, []error) {

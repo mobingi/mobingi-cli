@@ -43,7 +43,7 @@ func show(cmd *cobra.Command, args []string) {
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 	resp, body, errs := c.GetSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token))
 	if errs != nil {
-		log.Println("Error(s):", errs)
+		log.Println("error(s):", errs)
 		os.Exit(1)
 	}
 
@@ -66,16 +66,12 @@ func show(cmd *cobra.Command, args []string) {
 		err = json.Unmarshal(body, &sc)
 		if err != nil {
 			log.Println(err)
-			var m map[string]interface{}
-			err = json.Unmarshal(body, &m)
-			if err != nil {
-				util.ErrorExit("internal error", 1)
-			}
-
-			serr := util.ResponseError(resp, m)
+			serr := util.ResponseError(resp, body)
 			if serr != "" {
 				util.ErrorExit(serr, 1)
 			}
+
+			util.ErrorExit(err.Error(), 1)
 		}
 
 		indent := util.GetCliIntFlag(cmd, "indent")

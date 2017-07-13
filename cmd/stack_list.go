@@ -44,20 +44,14 @@ func list(cmd *cobra.Command, args []string) {
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 	resp, body, errs := c.GetSafe(c.RootUrl+"/alm/stack", fmt.Sprintf("%s", token))
 	if errs != nil {
-		log.Println("Error(s):", errs)
+		log.Println("error(s):", errs)
 		os.Exit(1)
 	}
 
 	var stacks []stack.ListStack
 	err = json.Unmarshal(body, &stacks)
 	if err != nil {
-		var m map[string]interface{}
-		err = json.Unmarshal(body, &m)
-		if err != nil {
-			util.ErrorExit("Internal error.", 1)
-		}
-
-		serr := util.ResponseError(resp, m)
+		serr := util.ResponseError(resp, body)
 		if serr != "" {
 			util.ErrorExit(serr, 1)
 		}

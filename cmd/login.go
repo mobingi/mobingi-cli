@@ -106,25 +106,30 @@ func login(cmd *cobra.Command, args []string) {
 		util.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
-	resp, body, errs := c.Post(c.RootUrl+"/access_token", p)
-	if errs != nil {
-		log.Println("Error(s):", errs)
-		os.Exit(1)
-	}
-
-	err := json.Unmarshal(body, &m)
+	payload, err := json.Marshal(p)
 	if err != nil {
 		util.ErrorExit(err.Error(), 1)
 	}
 
-	serr := util.ResponseError(resp, m)
+	resp, body, errs := c.Post(c.RootUrl+"/access_token", string(payload))
+	if errs != nil {
+		log.Println("error(s):", errs)
+		os.Exit(1)
+	}
+
+	serr := util.ResponseError(resp, body)
 	if serr != "" {
 		util.ErrorExit(serr, 1)
 	}
 
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		util.ErrorExit(err.Error(), 1)
+	}
+
 	token, found := m["access_token"]
 	if !found {
-		util.ErrorExit("Internal error.", 1)
+		util.ErrorExit("cannot find access token", 1)
 	}
 
 	// always overwrite file

@@ -38,7 +38,7 @@ func delete(cmd *cobra.Command, args []string) {
 	ep := c.RootUrl + "/alm/stack/" + fmt.Sprintf("%s", id)
 	resp, body, errs := c.DeleteSafe(ep, fmt.Sprintf("%s", token))
 	if errs != nil {
-		log.Println("Error(s):", errs)
+		log.Println("error(s):", errs)
 		os.Exit(1)
 	}
 

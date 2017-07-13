@@ -72,13 +72,7 @@ func describe(cmd *cobra.Command, args []string) {
 		var stacks2 []stack.DescribeStack2
 		err = json.Unmarshal(body, &stacks2)
 		if err != nil {
-			var m map[string]interface{}
-			err = json.Unmarshal(body, &m)
-			if err != nil {
-				util.ErrorExit("internal error", 1)
-			}
-
-			serr := util.ResponseError(resp, m)
+			serr := util.ResponseError(resp, body)
 			if serr != "" {
 				util.ErrorExit(serr, 1)
 			}

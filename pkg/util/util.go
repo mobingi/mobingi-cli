@@ -2,6 +2,7 @@ package util
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -88,29 +89,35 @@ func GetCliIntFlag(cmd *cobra.Command, f string) int {
 }
 
 func ErrorExit(err string, code int) {
-	log.Println("Error:", err)
+	log.Println("error:", err)
 	os.Exit(code)
 }
 
-func ResponseError(r gorequest.Response, m map[string]interface{}) string {
-	var err string
+func ResponseError(r gorequest.Response, b []byte) string {
+	var m map[string]interface{}
+	err := json.Unmarshal(b, &m)
+	if err != nil {
+		return err.Error()
+	}
+
+	var serr string
 	if r.StatusCode != 200 {
-		err = err + "[" + r.Status + "]"
+		serr = serr + "[" + r.Status + "]"
 	}
 
 	if c, found := m["code"]; found {
-		err = err + "[" + fmt.Sprintf("%s", c) + "]"
+		serr = serr + "[" + fmt.Sprintf("%s", c) + "]"
 	}
 
 	if e, found := m["error"]; found {
-		err = err + fmt.Sprintf(" %s:", e)
+		serr = serr + fmt.Sprintf(" %s:", e)
 	}
 
 	if s, found := m["message"]; found {
-		err = err + fmt.Sprintf(" %s", s)
+		serr = serr + fmt.Sprintf(" %s", s)
 	}
 
-	return err
+	return serr
 }
 
 func Indent(count int) string {
