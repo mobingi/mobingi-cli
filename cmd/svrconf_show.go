@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/svrconf"
@@ -92,5 +93,9 @@ func show(cmd *cobra.Command, args []string) {
 				util.ErrorExit(err.Error(), 1)
 			}
 		}
+
+		// extra information on `updated` field
+		up := time.Unix(sc.Updated, 0)
+		log.Println("updated (parsed):", up.Format(time.RFC1123))
 	}
 }
