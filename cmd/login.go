@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -44,8 +43,7 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	if id == "" {
-		log.Println("Client id cannot be empty.")
-		os.Exit(1)
+		util.CheckErrorExit("Client id cannot be empty.", 1)
 	}
 
 	if secret == "" {
@@ -53,8 +51,7 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	if secret == "" {
-		log.Println("Client secret cannot be empty.")
-		secret = util.ClientSecret()
+		util.CheckErrorExit("Client secret cannot be empty.", 1)
 	}
 
 	var m map[string]interface{}
@@ -77,8 +74,7 @@ func login(cmd *cobra.Command, args []string) {
 		}
 
 		if user == "" {
-			log.Println("Username cannot be empty.")
-			os.Exit(1)
+			util.CheckErrorExit("Username cannot be empty.", 1)
 		}
 
 		pass = util.GetCliStringFlag(cmd, "password")
@@ -87,8 +83,7 @@ func login(cmd *cobra.Command, args []string) {
 		}
 
 		if pass == "" {
-			log.Println("Password cannot be empty.")
-			os.Exit(1)
+			util.CheckErrorExit("Password cannot be empty.", 1)
 		}
 
 		fmt.Println("\n") // new line after the password input
@@ -103,40 +98,24 @@ func login(cmd *cobra.Command, args []string) {
 
 	// should not be nil when `grant_type` is valid
 	if p == nil {
-		util.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
+		util.CheckErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
 	payload, err := json.Marshal(p)
-	if err != nil {
-		util.ErrorExit(err.Error(), 1)
-	}
-
+	util.CheckErrorExit(err, 1)
 	resp, body, errs := c.Post(c.RootUrl+"/access_token", string(payload))
-	if errs != nil {
-		log.Println("error(s):", errs)
-		os.Exit(1)
-	}
-
+	util.CheckErrorExit(errs, 1)
 	serr := util.ResponseError(resp, body)
-	if serr != "" {
-		util.ErrorExit(serr, 1)
-	}
-
+	util.CheckErrorExit(serr, 1)
 	err = json.Unmarshal(body, &m)
-	if err != nil {
-		util.ErrorExit(err.Error(), 1)
-	}
-
+	util.CheckErrorExit(err, 1)
 	token, found := m["access_token"]
 	if !found {
-		util.ErrorExit("cannot find access token", 1)
+		util.CheckErrorExit("cannot find access token", 1)
 	}
 
 	// always overwrite file
 	err = util.SaveToken(fmt.Sprintf("%s", token))
-	if err != nil {
-		util.ErrorExit(err.Error(), 1)
-	}
-
+	util.CheckErrorExit(err, 1)
 	log.Println("Login successful.")
 }

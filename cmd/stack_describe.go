@@ -33,21 +33,18 @@ func init() {
 func describe(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.ErrorExit("stack id cannot be empty", 1)
+		util.CheckErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 	ep := c.RootUrl + "/alm/stack/" + fmt.Sprintf("%s", id)
 	resp, body, errs := c.GetSafe(ep, fmt.Sprintf("%s", token))
-	if errs != nil {
-		log.Println("error(s):", errs)
-		os.Exit(1)
-	}
+	util.CheckErrorExit(errs, 1)
 
 	// we process `--fmt=raw` option first
 	out := util.GetCliStringFlag(cmd, "out")
@@ -56,9 +53,7 @@ func describe(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = util.WriteToFile(out, body)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
+			util.CheckErrorExit(err, 1)
 		}
 
 		return
@@ -75,11 +70,8 @@ func describe(cmd *cobra.Command, args []string) {
 		err = json.Unmarshal(body, &stacks2)
 		if err != nil {
 			serr := util.ResponseError(resp, body)
-			if serr != "" {
-				util.ErrorExit(serr, 1)
-			}
-
-			util.ErrorExit(err.Error(), 1)
+			util.CheckErrorExit(serr, 1)
+			util.CheckErrorExit(err, 1)
 		} else {
 			ptr = &stacks2[0]
 			sptr = stacks2
@@ -122,16 +114,11 @@ func describe(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", util.Indent(indent))
-		if err != nil {
-			util.ErrorExit(err.Error(), 1)
-		}
-
+		util.CheckErrorExit(err, 1)
 		fmt.Println(string(mi))
 		if out != "" {
 			err = util.WriteToFile(out, mi)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
+			util.CheckErrorExit(err, 1)
 		}
 	default:
 		if pfmt == "text" || pfmt == "" {
@@ -139,9 +126,7 @@ func describe(cmd *cobra.Command, args []string) {
 			stack.PrintR(os.Stdout, ptr, 0, indent)
 			if out != "" {
 				fp, err := os.Create(out)
-				if err != nil {
-					util.ErrorExit(err.Error(), 1)
-				}
+				util.CheckErrorExit(err, 1)
 
 				defer fp.Close()
 				w := bufio.NewWriter(fp)

@@ -14,16 +14,16 @@ type Configuration struct {
 	AssociatePublicIp   string `json:"AssociatePublicIP,omitempty"`
 	ELBOpen443Port      string `json:"ELBOpen443Port,omitempty"`
 	ELBOpen80Port       string `json:"ELBOpen80Port,omitempty"`
-	SpotInstanceMaxSize string `json:"SpotInstanceMaxSize,omitempty"`
-	SpotInstanceMinSize string `json:"SpotInstanceMinSize,omitempty"`
+	SpotInstanceMaxSize int    `json:"SpotInstanceMaxSize,omitempty"`
+	SpotInstanceMinSize int    `json:"SpotInstanceMinSize,omitempty"`
 	SpotPrice           string `json:"SpotPrice,omitempty"`
 	Architecture        string `json:"architecture,omitempty"`
 	Code                string `json:"code,omitempty"`
 	Image               string `json:"image,omitempty"`
 	Max                 string `json:"max,omitempty"`
-	MaxOrigin           string `json:"maxOrigin,omitempty"`
+	MaxOrigin           int    `json:"maxOrigin,omitempty"`
 	Min                 string `json:"min,omitempty"`
-	MinOrigin           string `json:"minOrigin,omitempty"`
+	MinOrigin           int    `json:"minOrigin,omitempty"`
 	Nickname            string `json:"nickname,omitempty"`
 	Region              string `json:"region,omitempty"`
 	Type                string `json:"type,omitempty"`

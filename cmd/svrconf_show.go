@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -32,20 +31,17 @@ func init() {
 func show(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	sid := util.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		util.ErrorExit("stack id cannot be empty", 1)
+		util.CheckErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 	resp, body, errs := c.GetSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token))
-	if errs != nil {
-		log.Println("error(s):", errs)
-		os.Exit(1)
-	}
+	util.CheckErrorExit(errs, 1)
 
 	out := util.GetCliStringFlag(cmd, "out")
 	pfmt := util.GetCliStringFlag(cmd, "fmt")
@@ -53,9 +49,7 @@ func show(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = util.WriteToFile(out, body)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
+			util.CheckErrorExit(err, 1)
 		}
 
 		return
@@ -64,29 +58,21 @@ func show(cmd *cobra.Command, args []string) {
 	if pfmt == "json" || pfmt == "" {
 		var sc svrconf.ServerConfig
 		err = json.Unmarshal(body, &sc)
-		if err != nil {
-			log.Println(err)
-			serr := util.ResponseError(resp, body)
-			if serr != "" {
-				util.ErrorExit(serr, 1)
-			}
+		util.CheckErrorExit(err, 1)
 
-			util.ErrorExit(err.Error(), 1)
-		}
+		serr := util.ResponseError(resp, body)
+		log.Println(serr)
+		util.CheckErrorExit(serr, 1)
 
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sc, "", util.Indent(indent))
-		if err != nil {
-			util.ErrorExit(err.Error(), 1)
-		}
+		util.CheckErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 		out := util.GetCliStringFlag(cmd, "out")
 		if out != "" {
 			err = util.WriteToFile(out, mi)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
+			util.CheckErrorExit(err, 1)
 		}
 
 		// parse `updated` field for easier reading

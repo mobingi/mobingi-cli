@@ -38,23 +38,19 @@ func init() {
 func list(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 	resp, body, errs := c.GetSafe(c.RootUrl+"/alm/stack", fmt.Sprintf("%s", token))
-	if errs != nil {
-		log.Println("error(s):", errs)
-		os.Exit(1)
-	}
+	util.CheckErrorExit(errs, 1)
 
 	var stacks []stack.ListStack
 	err = json.Unmarshal(body, &stacks)
 	if err != nil {
+		log.Println(err)
 		serr := util.ResponseError(resp, body)
-		if serr != "" {
-			util.ErrorExit(serr, 1)
-		}
+		util.CheckErrorExit(serr, 1)
 	}
 
 	pfmt := util.GetCliStringFlag(cmd, "fmt")
@@ -65,9 +61,7 @@ func list(cmd *cobra.Command, args []string) {
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
+			util.CheckErrorExit(err, 1)
 
 			defer fp.Close()
 			w := bufio.NewWriter(fp)
@@ -78,20 +72,13 @@ func list(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(stacks, "", util.Indent(indent))
-		if err != nil {
-			util.ErrorExit(err.Error(), 1)
-		}
+		util.CheckErrorExit(err, 1)
 
-		// this should be a prettified JSON output
 		fmt.Println(string(mi))
-
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, mi, 0644)
-			if err != nil {
-				util.ErrorExit(err.Error(), 1)
-			}
-
+			util.CheckErrorExit(err, 1)
 			log.Println(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:
@@ -110,7 +97,13 @@ func list(cmd *cobra.Command, args []string) {
 					platform = "AWS"
 				}
 
-				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n", s.StackId, s.Nickname, platform, s.StackStatus, s.Configuration.Region, timestr)
+				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n",
+					s.StackId,
+					s.Nickname,
+					platform,
+					s.StackStatus,
+					s.Configuration.Region,
+					timestr)
 			}
 
 			term.Print(stbl)

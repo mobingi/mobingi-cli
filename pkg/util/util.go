@@ -2,7 +2,6 @@ package util
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,14 +12,13 @@ import (
 	"syscall"
 
 	homedir "github.com/mitchellh/go-homedir"
-	"github.com/parnurzeal/gorequest"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
 const (
-	credFolder = ".mocli"      // folder name for config file(s), created in home folder
-	credFile   = "credentials" // we store access token here
+	credfolder = ".mocli"      // folder name for config file(s), created in home folder
+	credfile   = "credentials" // we store access token here
 )
 
 func ClientId() string {
@@ -52,16 +50,16 @@ func Password() string {
 
 func SaveToken(token string) error {
 	hd, _ := homedir.Dir()
-	folder := filepath.Join(hd, credFolder)
+	folder := filepath.Join(hd, credfolder)
 	_ = os.Mkdir(folder, os.ModePerm)
-	cred := filepath.Join(folder, credFile)
+	cred := filepath.Join(folder, credfile)
 	return ioutil.WriteFile(cred, []byte(token), 0644)
 }
 
 func GetToken() ([]byte, error) {
 	hd, _ := homedir.Dir()
-	folder := filepath.Join(hd, credFolder)
-	cred := filepath.Join(folder, credFile)
+	folder := filepath.Join(hd, credfolder)
+	cred := filepath.Join(folder, credfile)
 	return ioutil.ReadFile(cred)
 }
 
@@ -86,38 +84,6 @@ func GetCliIntFlag(cmd *cobra.Command, f string) int {
 	}
 
 	return v
-}
-
-func ErrorExit(err string, code int) {
-	log.Println("error:", err)
-	os.Exit(code)
-}
-
-func ResponseError(r gorequest.Response, b []byte) string {
-	var m map[string]interface{}
-	err := json.Unmarshal(b, &m)
-	if err != nil {
-		return err.Error()
-	}
-
-	var serr string
-	if r.StatusCode != 200 {
-		serr = serr + "[" + r.Status + "]"
-	}
-
-	if c, found := m["code"]; found {
-		serr = serr + "[" + fmt.Sprintf("%s", c) + "]"
-	}
-
-	if e, found := m["error"]; found {
-		serr = serr + fmt.Sprintf(" %s:", e)
-	}
-
-	if s, found := m["message"]; found {
-		serr = serr + fmt.Sprintf(" %s", s)
-	}
-
-	return serr
 }
 
 func Indent(count int) string {

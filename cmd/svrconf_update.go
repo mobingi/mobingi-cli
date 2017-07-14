@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -43,12 +42,12 @@ func init() {
 func update(cmd *cobra.Command, args []string) {
 	token, err := util.GetToken()
 	if err != nil {
-		util.ErrorExit("Cannot read token. See `login` for information on how to login.", 1)
+		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
 	}
 
 	sid := util.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		util.ErrorExit("stack id cannot be empty", 1)
+		util.CheckErrorExit("stack id cannot be empty", 1)
 	}
 
 	// each parameter set is sent separately
@@ -63,10 +62,7 @@ func update(cmd *cobra.Command, args []string) {
 			if in != "" {
 				rm := json.RawMessage(in)
 				pl, err := json.Marshal(&rm)
-				if err != nil {
-					util.ErrorExit(err.Error(), 1)
-				}
-
+				util.CheckErrorExit(err, 1)
 				payload = string(pl)
 			}
 
@@ -75,10 +71,7 @@ func update(cmd *cobra.Command, args []string) {
 				in := buildFilePathPayload(sid, val)
 				rm := json.RawMessage(in)
 				pl, err := json.Marshal(&rm)
-				if err != nil {
-					util.ErrorExit(err.Error(), 1)
-				}
-
+				util.CheckErrorExit(err, 1)
 				payload = string(pl)
 			}
 		}
@@ -91,13 +84,15 @@ func update(cmd *cobra.Command, args []string) {
 		c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
 		resp, body, errs := c.PutSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token), payload)
 		if errs != nil {
-			log.Println("error(s):", errs)
-			os.Exit(1)
+			if len(errs) > 0 {
+				continue
+			}
 		}
 
 		serr := util.ResponseError(resp, body)
 		if serr != "" {
-			util.ErrorExit(serr, 1)
+			log.Println("error:", serr)
+			continue
 		}
 
 		// display return status
