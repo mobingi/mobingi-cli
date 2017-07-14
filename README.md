@@ -10,7 +10,7 @@ Command line interface for Mobingi API.
 To install `mocli`, run
 
 ```
-$ go get -v github.com/mobingilabs/mocli
+$ go get github.com/mobingilabs/mocli
 ```
 
 # Build
