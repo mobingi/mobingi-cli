@@ -29,7 +29,7 @@ $ go build -v
 
 # Usage
 
-### Login
+## Login
 
 This is the first command you need to run to use the other commands. To login, run
 
