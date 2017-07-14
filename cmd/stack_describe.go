@@ -115,7 +115,10 @@ func describe(cmd *cobra.Command, args []string) {
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", util.Indent(indent))
 		util.CheckErrorExit(err, 1)
+
 		fmt.Println(string(mi))
+
+		// write to file option
 		if out != "" {
 			err = util.WriteToFile(out, mi)
 			util.CheckErrorExit(err, 1)
@@ -124,6 +127,8 @@ func describe(cmd *cobra.Command, args []string) {
 		if pfmt == "text" || pfmt == "" {
 			indent := util.GetCliIntFlag(cmd, "indent")
 			stack.PrintR(os.Stdout, ptr, 0, indent)
+
+			// write to file option
 			if out != "" {
 				fp, err := os.Create(out)
 				util.CheckErrorExit(err, 1)

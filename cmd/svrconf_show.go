@@ -61,7 +61,6 @@ func show(cmd *cobra.Command, args []string) {
 		util.CheckErrorExit(err, 1)
 
 		serr := util.ResponseError(resp, body)
-		log.Println(serr)
 		util.CheckErrorExit(serr, 1)
 
 		indent := util.GetCliIntFlag(cmd, "indent")
@@ -69,6 +68,8 @@ func show(cmd *cobra.Command, args []string) {
 		util.CheckErrorExit(err, 1)
 
 		fmt.Println(string(mi))
+
+		// write to file option
 		out := util.GetCliStringFlag(cmd, "out")
 		if out != "" {
 			err = util.WriteToFile(out, mi)

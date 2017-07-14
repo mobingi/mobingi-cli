@@ -58,6 +58,8 @@ func list(cmd *cobra.Command, args []string) {
 	case "text":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
+
+		// write to file option
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
@@ -75,6 +77,8 @@ func list(cmd *cobra.Command, args []string) {
 		util.CheckErrorExit(err, 1)
 
 		fmt.Println(string(mi))
+
+		// write to file option
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, mi, 0644)

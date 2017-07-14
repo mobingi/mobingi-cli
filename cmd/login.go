@@ -103,10 +103,12 @@ func login(cmd *cobra.Command, args []string) {
 
 	payload, err := json.Marshal(p)
 	util.CheckErrorExit(err, 1)
+
 	resp, body, errs := c.Post(c.RootUrl+"/access_token", string(payload))
 	util.CheckErrorExit(errs, 1)
 	serr := util.ResponseError(resp, body)
 	util.CheckErrorExit(serr, 1)
+
 	err = json.Unmarshal(body, &m)
 	util.CheckErrorExit(err, 1)
 	token, found := m["access_token"]
