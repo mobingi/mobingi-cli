@@ -37,7 +37,7 @@ This is the first command you need to run to use the other commands. To login, r
 $ mocli login --client-id=value --client-secret=value
 ```
 
-This will create a file `credentials` `[home_folder]/.mocli/` folder that will contain the API token to be used for your subsequent commands.
+This will create a file `credentials` under `[home_folder]/.mocli/` folder that will contain the API token to be used for your subsequent commands.
 
 ## Stack operations
 
