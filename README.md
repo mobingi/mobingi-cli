@@ -34,7 +34,7 @@ $ go build -v
 This is the first command you need to run to use the other commands. To login, run
 
 ```
-$ mocli login --client-id=value --client-secret=value
+$ mocli login --client-id=[value] --client-secret=[value]
 ```
 
 This will create a file `credentials` under `[home_folder]/.mocli/` folder that will contain the API token to be used for your subsequent commands.
