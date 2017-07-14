@@ -5,7 +5,15 @@
 
 Command line interface for Mobingi API.
 
-## Build
+# Installation
+
+To install `mocli`, run
+
+```
+$ go get -v github.com/mobingilabs/mocli
+```
+
+# Build
 
 This tool uses [`dep`](https://github.com/golang/dep) for dependency management. You can install `dep` via
 
