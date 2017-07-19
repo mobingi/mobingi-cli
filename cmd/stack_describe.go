@@ -8,7 +8,7 @@ import (
 	"os"
 
 	term "github.com/buger/goterm"
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -31,19 +31,14 @@ func init() {
 }
 
 func describe(cmd *cobra.Command, args []string) {
-	token, err := util.GetToken()
-	if err != nil {
-		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
-	}
-
+	var err error
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
 		util.CheckErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-	ep := c.RootUrl + "/alm/stack/" + fmt.Sprintf("%s", id)
-	resp, body, errs := c.GetSafe(ep, fmt.Sprintf("%s", token))
+	c := api.NewClient(api.NewConfig(cmd))
+	resp, body, errs := c.Get("/alm/stack/" + fmt.Sprintf("%s", id))
 	util.CheckErrorExit(errs, 1)
 
 	// we process `--fmt=raw` option first

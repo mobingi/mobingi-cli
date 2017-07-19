@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -40,11 +40,6 @@ func init() {
 }
 
 func update(cmd *cobra.Command, args []string) {
-	token, err := util.GetToken()
-	if err != nil {
-		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
-	}
-
 	sid := util.GetCliStringFlag(cmd, "id")
 	if sid == "" {
 		util.CheckErrorExit("stack id cannot be empty", 1)
@@ -81,8 +76,8 @@ func update(cmd *cobra.Command, args []string) {
 		}
 
 		log.Println("payload:", payload)
-		c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-		resp, body, errs := c.PutSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token), payload)
+		c := api.NewClient(api.NewConfig(cmd))
+		resp, body, errs := c.Put(`/alm/serverconfig?stack_id=`+sid, payload)
 		if errs != nil {
 			if len(errs) > 0 {
 				continue
@@ -97,7 +92,7 @@ func update(cmd *cobra.Command, args []string) {
 
 		// display return status
 		var m map[string]interface{}
-		err = json.Unmarshal(body, &m)
+		_ = json.Unmarshal(body, &m)
 		if status, found := m["status"]; found {
 			s := fmt.Sprintf("%s", status)
 			if s == "success" {

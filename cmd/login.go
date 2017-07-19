@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -37,13 +37,16 @@ func init() {
 func login(cmd *cobra.Command, args []string) {
 	id := util.GetCliStringFlag(cmd, "client-id")
 	secret := util.GetCliStringFlag(cmd, "client-secret")
+	grant := util.GetCliStringFlag(cmd, "grant-type")
+	user := util.GetCliStringFlag(cmd, "username")
+	pass := util.GetCliStringFlag(cmd, "password")
 
 	if id == "" {
 		id = util.ClientId()
 	}
 
 	if id == "" {
-		util.CheckErrorExit("Client id cannot be empty.", 1)
+		util.CheckErrorExit("client id cannot be empty", 1)
 	}
 
 	if secret == "" {
@@ -51,46 +54,44 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	if secret == "" {
-		util.CheckErrorExit("Client secret cannot be empty.", 1)
+		util.CheckErrorExit("client secret cannot be empty", 1)
 	}
 
 	var m map[string]interface{}
-	var user, pass string
 	var p *authPayload
-	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
+	cnf := api.NewConfig(cmd)
+	c := api.NewClient(cnf)
 
-	if util.GetCliStringFlag(cmd, "grant-type") == "client_credentials" {
+	if grant == "client_credentials" {
 		p = &authPayload{
 			ClientId:     id,
 			ClientSecret: secret,
-			GrantType:    util.GetCliStringFlag(cmd, "grant-type"),
+			GrantType:    grant,
 		}
 	}
 
-	if util.GetCliStringFlag(cmd, "grant-type") == "password" {
-		user = util.GetCliStringFlag(cmd, "username")
+	if grant == "password" {
 		if user == "" {
 			user = util.Username()
 		}
 
 		if user == "" {
-			util.CheckErrorExit("Username cannot be empty.", 1)
+			util.CheckErrorExit("username cannot be empty", 1)
 		}
 
-		pass = util.GetCliStringFlag(cmd, "password")
 		if pass == "" {
 			pass = util.Password()
 		}
 
 		if pass == "" {
-			util.CheckErrorExit("Password cannot be empty.", 1)
+			util.CheckErrorExit("password cannot be empty", 1)
 		}
 
 		fmt.Println("\n") // new line after the password input
 		p = &authPayload{
 			ClientId:     id,
 			ClientSecret: secret,
-			GrantType:    util.GetCliStringFlag(cmd, "grant-type"),
+			GrantType:    grant,
 			Username:     user,
 			Password:     pass,
 		}
@@ -104,7 +105,7 @@ func login(cmd *cobra.Command, args []string) {
 	payload, err := json.Marshal(p)
 	util.CheckErrorExit(err, 1)
 
-	resp, body, errs := c.Post(c.RootUrl+"/access_token", string(payload))
+	resp, body, errs := c.PostU("/access_token", string(payload))
 	util.CheckErrorExit(errs, 1)
 	serr := util.ResponseError(resp, body)
 	util.CheckErrorExit(serr, 1)

@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/svrconf"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -29,18 +29,14 @@ func init() {
 }
 
 func show(cmd *cobra.Command, args []string) {
-	token, err := util.GetToken()
-	if err != nil {
-		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
-	}
-
+	var err error
 	sid := util.GetCliStringFlag(cmd, "id")
 	if sid == "" {
 		util.CheckErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-	resp, body, errs := c.GetSafe(c.RootUrl+`/alm/serverconfig?stack_id=`+sid, fmt.Sprintf("%s", token))
+	c := api.NewClient(api.NewConfig(cmd))
+	resp, body, errs := c.Get(`/alm/serverconfig?stack_id=` + sid)
 	util.CheckErrorExit(errs, 1)
 
 	out := util.GetCliStringFlag(cmd, "out")

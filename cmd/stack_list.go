@@ -10,7 +10,7 @@ import (
 	"time"
 
 	term "github.com/buger/goterm"
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -36,17 +36,12 @@ func init() {
 }
 
 func list(cmd *cobra.Command, args []string) {
-	token, err := util.GetToken()
-	if err != nil {
-		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
-	}
-
-	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-	resp, body, errs := c.GetSafe(c.RootUrl+"/alm/stack", fmt.Sprintf("%s", token))
+	c := api.NewClient(api.NewConfig(cmd))
+	resp, body, errs := c.Get("/alm/stack")
 	util.CheckErrorExit(errs, 1)
 
 	var stacks []stack.ListStack
-	err = json.Unmarshal(body, &stacks)
+	err := json.Unmarshal(body, &stacks)
 	if err != nil {
 		log.Println(err)
 		serr := util.ResponseError(resp, body)

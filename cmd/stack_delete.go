@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -23,23 +23,17 @@ func init() {
 }
 
 func delete(cmd *cobra.Command, args []string) {
-	token, err := util.GetToken()
-	if err != nil {
-		util.CheckErrorExit("Cannot read token. See `login` for information on how to login.", 1)
-	}
-
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
 		util.CheckErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := cli.New(util.GetCliStringFlag(cmd, "api-version"))
-	ep := c.RootUrl + "/alm/stack/" + fmt.Sprintf("%s", id)
-	resp, body, errs := c.DeleteSafe(ep, fmt.Sprintf("%s", token))
+	c := api.NewClient(api.NewConfig(cmd))
+	resp, body, errs := c.Del("/alm/stack/" + fmt.Sprintf("%s", id))
 	util.CheckErrorExit(errs, 1)
 
 	var m map[string]interface{}
-	err = json.Unmarshal(body, &m)
+	err := json.Unmarshal(body, &m)
 	util.CheckErrorExit(err, 1)
 	serr := util.ResponseError(resp, body)
 	util.CheckErrorExit(serr, 1)

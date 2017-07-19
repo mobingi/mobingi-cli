@@ -12,13 +12,9 @@ import (
 	"syscall"
 
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
-)
-
-const (
-	credfolder = ".mocli"      // folder name for config file(s), created in home folder
-	credfile   = "credentials" // we store access token here
 )
 
 func ClientId() string {
@@ -50,16 +46,16 @@ func Password() string {
 
 func SaveToken(token string) error {
 	hd, _ := homedir.Dir()
-	folder := filepath.Join(hd, credfolder)
+	folder := filepath.Join(hd, constants.CRED_FOLDER)
 	_ = os.Mkdir(folder, os.ModePerm)
-	cred := filepath.Join(folder, credfile)
+	cred := filepath.Join(folder, constants.CRED_FILE)
 	return ioutil.WriteFile(cred, []byte(token), 0644)
 }
 
 func GetToken() ([]byte, error) {
 	hd, _ := homedir.Dir()
-	folder := filepath.Join(hd, credfolder)
-	cred := filepath.Join(folder, credfile)
+	folder := filepath.Join(hd, constants.CRED_FOLDER)
+	cred := filepath.Join(folder, constants.CRED_FILE)
 	return ioutil.ReadFile(cred)
 }
 
