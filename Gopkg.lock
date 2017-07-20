@@ -53,19 +53,19 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "7f7c0c2d75ebb4e32a21396ce36e87b6dadc91c9"
+  revision = "4bc1c249b153ce1da9f55437759cec51fe6acabb"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["idna","publicsuffix"]
-  revision = "5d0d7096b5f2ef7ba83f319c07ef63989a1c6f91"
+  revision = "02ac38e2528ff4adea90f184d71a3faa04b4b1b0"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "cd2c276457edda6df7fb04895d3fd6a6add42926"
+  revision = "7a4fde3fda8ef580a89dbae8138c26041be14299"
 
 [[projects]]
   branch = "master"
