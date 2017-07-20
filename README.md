@@ -126,3 +126,21 @@ $ mocli svrconf update --id=[value] --filepath=[value]
 ```
 
 Note that when you provide update options simultaneously (for example, you provide `--env=value` and `--filepath=value` at the same time), the tool will send each option as a separate request.
+
+## Mobingi Docker registry
+
+### Get token for Docker Registry API
+
+To get token for Docker Registry API access, run
+
+```
+$ mocli registry token --username=[value] --password=[value]
+```
+
+where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`, like
+
+```
+$ mocli registry token
+Username:
+Password:
+```
