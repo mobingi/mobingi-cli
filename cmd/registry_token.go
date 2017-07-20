@@ -59,7 +59,12 @@ func token(cmd *cobra.Command, args []string) {
 
 	Url.Path += "/" + util.GetCliStringFlag(cmd, "apiver") + "/docker/token"
 	parameters := url.Values{}
-	parameters.Add("account", util.GetCliStringFlag(cmd, "account"))
+	acct := util.GetCliStringFlag(cmd, "account")
+	if acct == "" {
+		acct = user
+	}
+
+	parameters.Add("account", acct)
 	parameters.Add("service", util.GetCliStringFlag(cmd, "service"))
 	parameters.Add("scope", util.GetCliStringFlag(cmd, "scope"))
 	Url.RawQuery = parameters.Encode()
