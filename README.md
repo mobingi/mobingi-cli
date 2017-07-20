@@ -153,5 +153,15 @@ Password:
 Example:
 
 ```
-$ mocli registry token --username=foo --password=bar --account=foo --scope="repository:foo/container:*"
+$ mocli registry token \
+      --username=foo \
+      --password=bar \
+      --account=foo \
+      --scope="repository:foo/container:*"
+```
+
+You can use the token when using Docker Registry API. For example,
+
+```
+$ curl -H "Authorization: Bearer [token]" https://registry.mobingi.com/v2/foo/container/manifests/latest
 ```
