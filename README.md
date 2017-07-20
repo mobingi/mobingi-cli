@@ -145,7 +145,7 @@ $ mocli registry token \
 where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`, like
 
 ```
-$ mocli registry token
+$ mocli registry token --scope="some_scope"
 Username:
 Password:
 ```
