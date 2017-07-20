@@ -134,7 +134,12 @@ Note that when you provide update options simultaneously (for example, you provi
 To get token for Docker Registry API access, run
 
 ```
-$ mocli registry token --username=[value] --password=[value] --account=[value] --account=[subuser] --scope="some_scope"
+$ mocli registry token \
+      --username=[value] \
+      --password=[value] \
+      --account=[value] \
+      --account=[subuser] \
+      --scope="some_scope"
 ```
 
 where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`, like
@@ -143,4 +148,10 @@ where `username` is a subuser under your Mobingi account. You can also remove `-
 $ mocli registry token
 Username:
 Password:
+```
+
+Example:
+
+```
+$ mocli registry token --username=foo --password=bar --account=foo --scope="repository:foo/container:*"
 ```
