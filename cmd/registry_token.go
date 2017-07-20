@@ -78,11 +78,11 @@ func token(cmd *cobra.Command, args []string) {
 	}
 
 	defer resp.Body.Close()
-	// log.Println(resp)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		util.CheckErrorExit(err, 1)
 	}
 
+	// output raw for now
 	fmt.Println(string(body))
 }
