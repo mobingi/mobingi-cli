@@ -15,8 +15,9 @@ import (
 var tokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "get registry token",
-	Long:  `Get registry token.`,
-	Run:   token,
+	Long: `Get registry token. This command supports '--fmt=raw' option. By default,
+it will only print the token value.`,
+	Run: token,
 }
 
 func init() {
