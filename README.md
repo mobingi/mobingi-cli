@@ -10,7 +10,7 @@ Command line interface for Mobingi API.
 To install `mocli`, run
 
 ```
-$ go get github.com/mobingilabs/mocli
+$ go get -u github.com/mobingilabs/mocli
 ```
 
 # Build
@@ -35,13 +35,15 @@ $ go build -v
 
 # Usage
 
-## Login
+## Help
 
 To display usage information, run
 
 ```
-$ mocli login --help
+$ mocli
 ```
+
+## Login
 
 This is the first command you need to run to use the other commands. To login, run
 
@@ -54,12 +56,6 @@ This will create a file `credentials` under `{home}/.mocli/` folder that will co
 ## Stack operations
 
 ### List stacks
-
-To diplay usage information, run
-
-```
-$ mocli stack list --help
-```
 
 To list your stacks, run
 
@@ -77,12 +73,6 @@ You can also save the output to a file by adding the option `--out=full_path_to_
 
 ### Describe a stack
 
-To display usage information, run
-
-```
-$ mocli stack describe --help
-```
-
 To describe a specific stack, run
 
 ```
@@ -92,12 +82,6 @@ $ mocli stack describe --id=stack_id
 You can get the stack id from the `stack list` command. This command supports `text`, `json`, `raw`, and `min` output formats via the `--fmt=text|json|raw|min` option, as well as writing to a file via the `--out=full_path_to_file` option.
 
 ### Delete a stack
-
-To display usage information, run
-
-```
-$ mocli stack delete --help
-```
 
 To delete a stack, run
 
@@ -111,12 +95,6 @@ You can get the stack id from the `stack list` command.
 
 ### Show server config
 
-To display usage information, run
-
-```
-$ mocli svrconf show --help
-```
-
 To show server config of a specific stack, run
 
 ```
@@ -126,12 +104,6 @@ $ mocli svrconf show --id=stack_id
 You can get the stack id from the `stack list` command. This command supports `json`, and `raw` output formats via the `--fmt=json|raw` option, as well as writing to a file via the `--out=full_path_to_file` option.
 
 ### Update server config
-
-To display usage information, run
-
-```
-$ mocli svrconf update --help
-```
 
 To update server config environment variables, run
 
@@ -162,12 +134,6 @@ Note that when you provide update options simultaneously (for example, you provi
 ## Mobingi Docker registry
 
 ### Get token for Docker Registry API
-
-To display usage information, run
-
-```
-$ mocli registry token --help
-```
 
 To get token for Docker Registry API access, run
 
