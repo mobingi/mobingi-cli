@@ -1,13 +1,10 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 
 	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -57,13 +54,22 @@ func token(cmd *cobra.Command, args []string) {
 	base := util.GetCliStringFlag(cmd, "url")
 	apiver := util.GetCliStringFlag(cmd, "apiver")
 	acct := util.GetCliStringFlag(cmd, "account")
+	svc := util.GetCliStringFlag(cmd, "service")
+	scope := util.GetCliStringFlag(cmd, "scope")
 	if acct == "" {
 		acct = user
 	}
 
-	svc := util.GetCliStringFlag(cmd, "service")
-	scope := util.GetCliStringFlag(cmd, "scope")
-	body, token, err := getRegistryToken(base, apiver, user, pass, acct, svc, scope)
+	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
+		Base:       base,
+		ApiVersion: apiver,
+		Username:   user,
+		Password:   pass,
+		Account:    acct,
+		Service:    svc,
+		Scope:      scope,
+	})
+
 	if err != nil {
 		util.CheckErrorExit(err, 1)
 	}
@@ -76,51 +82,4 @@ func token(cmd *cobra.Command, args []string) {
 		d.Info("token:", token)
 
 	}
-}
-
-func getRegistryToken(base, apiver, user, pass, subuser, svc, scope string) ([]byte, string, error) {
-	var u *url.URL
-	u, err := url.Parse(base)
-	if err != nil {
-		return nil, "", err
-	}
-
-	u.Path += "/" + apiver + "/docker/token"
-	v := url.Values{}
-	v.Add("account", subuser)
-	v.Add("service", svc)
-	v.Add("scope", scope)
-	u.RawQuery = v.Encode()
-
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return nil, "", err
-	}
-
-	req.SetBasicAuth(user, pass)
-	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.", subuser, svc, scope))
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, "", err
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, "", err
-	}
-
-	var m map[string]interface{}
-	err = json.Unmarshal(body, &m)
-	if err != nil {
-		return nil, "", err
-	}
-
-	t, found := m["token"]
-	if !found {
-		return nil, "", fmt.Errorf("cannot find token")
-	}
-
-	return body, fmt.Sprintf("%s", t), nil
 }
