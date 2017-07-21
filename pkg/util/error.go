@@ -3,9 +3,9 @@ package util
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/parnurzeal/gorequest"
 )
 
@@ -14,19 +14,19 @@ func isError(err interface{}) bool {
 	switch err.(type) {
 	case string:
 		if err != "" {
-			log.Println("error:", err)
+			d.Error(err)
 			valid = true
 		}
 	case error:
 		if err != nil {
-			log.Println("error:", err)
+			d.Error(err)
 			valid = true
 		}
 	case []error:
 		s, ok := err.([]error)
 		if ok {
 			if len(s) > 0 {
-				log.Println("errors:", s)
+				d.Error(s)
 				valid = true
 			}
 		}

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -64,14 +65,21 @@ func token(cmd *cobra.Command, args []string) {
 		acct = user
 	}
 
+	svc := util.GetCliStringFlag(cmd, "service")
+	scope := util.GetCliStringFlag(cmd, "scope")
 	parameters.Add("account", acct)
-	parameters.Add("service", util.GetCliStringFlag(cmd, "service"))
-	parameters.Add("scope", util.GetCliStringFlag(cmd, "scope"))
+	parameters.Add("service", svc)
+	parameters.Add("scope", scope)
 	Url.RawQuery = parameters.Encode()
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", Url.String(), nil)
+	if err != nil {
+		util.CheckErrorExit(err, 1)
+	}
+
 	req.SetBasicAuth(user, pass)
+	log.Println(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope of '%s'.", user, svc, scope))
 	resp, err := client.Do(req)
 	if err != nil {
 		util.CheckErrorExit(err, 1)
