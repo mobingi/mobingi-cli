@@ -180,7 +180,7 @@ $ mocli registry token \
       --scope="repository:foo/container:*"
 ```
 
-where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`. By default, it will print the only. To print the raw output, append the `--fmt=raw` option.
+where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`. By default, it will only print the token value. To print the raw JSON output, append the `--fmt=raw` option.
 
 ```
 $ mocli registry token --scope="repository:foo/container:*"
