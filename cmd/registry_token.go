@@ -54,14 +54,8 @@ func token(cmd *cobra.Command, args []string) {
 		fmt.Println("\n") // new line after the password input
 	}
 
-	var Url *url.URL
-	Url, err := url.Parse(util.GetCliStringFlag(cmd, "url"))
-	if err != nil {
-		util.CheckErrorExit(err, 1)
-	}
-
-	Url.Path += "/" + util.GetCliStringFlag(cmd, "apiver") + "/docker/token"
-	parameters := url.Values{}
+	base := util.GetCliStringFlag(cmd, "url")
+	apiver := util.GetCliStringFlag(cmd, "apiver")
 	acct := util.GetCliStringFlag(cmd, "account")
 	if acct == "" {
 		acct = user
@@ -69,26 +63,7 @@ func token(cmd *cobra.Command, args []string) {
 
 	svc := util.GetCliStringFlag(cmd, "service")
 	scope := util.GetCliStringFlag(cmd, "scope")
-	parameters.Add("account", acct)
-	parameters.Add("service", svc)
-	parameters.Add("scope", scope)
-	Url.RawQuery = parameters.Encode()
-
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", Url.String(), nil)
-	if err != nil {
-		util.CheckErrorExit(err, 1)
-	}
-
-	req.SetBasicAuth(user, pass)
-	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.", user, svc, scope))
-	resp, err := client.Do(req)
-	if err != nil {
-		util.CheckErrorExit(err, 1)
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, token, err := getRegistryToken(base, apiver, user, pass, acct, svc, scope)
 	if err != nil {
 		util.CheckErrorExit(err, 1)
 	}
@@ -96,21 +71,56 @@ func token(cmd *cobra.Command, args []string) {
 	pfmt := util.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
 	case "raw":
-		// output raw for now
 		fmt.Println(string(body))
 	default:
-		var m map[string]interface{}
-		err = json.Unmarshal(body, &m)
-		if err != nil {
-			util.CheckErrorExit(err, 1)
-		}
+		d.Info("token:", token)
 
-		t, found := m["token"]
-		if !found {
-			// should not happen :)
-			d.Error("cannot find token")
-		}
-
-		d.Info("token:", fmt.Sprintf("%s", t))
 	}
+}
+
+func getRegistryToken(base, apiver, user, pass, subuser, svc, scope string) ([]byte, string, error) {
+	var u *url.URL
+	u, err := url.Parse(base)
+	if err != nil {
+		return nil, "", err
+	}
+
+	u.Path += "/" + apiver + "/docker/token"
+	v := url.Values{}
+	v.Add("account", subuser)
+	v.Add("service", svc)
+	v.Add("scope", scope)
+	u.RawQuery = v.Encode()
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, "", err
+	}
+
+	req.SetBasicAuth(user, pass)
+	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.", subuser, svc, scope))
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, "", err
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var m map[string]interface{}
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		return nil, "", err
+	}
+
+	t, found := m["token"]
+	if !found {
+		return nil, "", fmt.Errorf("cannot find token")
+	}
+
+	return body, fmt.Sprintf("%s", t), nil
 }
