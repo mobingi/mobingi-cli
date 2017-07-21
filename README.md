@@ -73,7 +73,7 @@ By default, this will list your stack(s) in a tabular form with minimal informat
 $ mocli stack list --fmt=[text|json]
 ```
 
-You can also save the output to a file by adding the option `--out=[full_path_to_file]`. If your path contains whitespaces, enclose `full_path_to_file` with double-quotes.
+You can also save the output to a file by adding the option `--out=full_path_to_file`. If your path contains whitespaces, enclose `full_path_to_file` with double-quotes.
 
 ### Describe a stack
 
@@ -89,7 +89,7 @@ To describe a specific stack, run
 $ mocli stack describe --id=stack_id
 ```
 
-You can get the stack id from the `stack list` command. This command supports `text`, `json`, `raw`, and `min` output formats via the `--fmt=[text|json|raw|min]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+You can get the stack id from the `stack list` command. This command supports `text`, `json`, `raw`, and `min` output formats via the `--fmt=text|json|raw|min` option, as well as writing to a file via the `--out=full_path_to_file` option.
 
 ### Delete a stack
 
@@ -123,7 +123,7 @@ To show server config of a specific stack, run
 $ mocli svrconf show --id=stack_id
 ```
 
-You can get the stack id from the `stack list` command. This command supports `json`, and `raw` output formats via the `--fmt=[json|raw]` option, as well as writing to a file via the `--out=[full_path_to_file]` option.
+You can get the stack id from the `stack list` command. This command supports `json`, and `raw` output formats via the `--fmt=json|raw` option, as well as writing to a file via the `--out=full_path_to_file` option.
 
 ### Update server config
 
