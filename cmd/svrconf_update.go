@@ -3,10 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/mobingilabs/mocli/api"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -75,7 +75,7 @@ func update(cmd *cobra.Command, args []string) {
 			continue
 		}
 
-		log.Println("payload:", payload)
+		d.Info("payload:", payload)
 		c := api.NewClient(api.NewConfig(cmd))
 		resp, body, errs := c.Put(`/alm/serverconfig?stack_id=`+sid, payload)
 		if errs != nil {
@@ -86,7 +86,7 @@ func update(cmd *cobra.Command, args []string) {
 
 		serr := util.ResponseError(resp, body)
 		if serr != "" {
-			log.Println("error:", serr)
+			d.Error(serr)
 			continue
 		}
 
@@ -97,13 +97,13 @@ func update(cmd *cobra.Command, args []string) {
 			s := fmt.Sprintf("%s", status)
 			if s == "success" {
 				line := "[" + resp.Status + "] " + s
-				log.Println(line)
+				d.Info(line)
 				continue
 			}
 		}
 
 		// or just the raw output
-		log.Println(string(body))
+		d.Info(string(body))
 	}
 }
 

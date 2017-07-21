@@ -3,10 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/mobingilabs/mocli/api"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/svrconf"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -74,6 +74,6 @@ func show(cmd *cobra.Command, args []string) {
 
 		// parse `updated` field for easier reading
 		up := time.Unix(sc.Updated, 0)
-		log.Println(`parsed value for 'updated' field:`, up.Format(time.RFC1123))
+		d.Info(`parsed value for 'updated' field:`, up.Format(time.RFC1123))
 	}
 }

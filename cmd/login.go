@@ -3,9 +3,9 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/mobingilabs/mocli/api"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -120,5 +120,5 @@ func login(cmd *cobra.Command, args []string) {
 	// always overwrite file
 	err = util.SaveToken(fmt.Sprintf("%s", token))
 	util.CheckErrorExit(err, 1)
-	log.Println("Login successful.")
+	d.Info("Login successful.")
 }

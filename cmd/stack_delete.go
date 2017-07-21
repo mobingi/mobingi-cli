@@ -3,9 +3,9 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/mobingilabs/mocli/api"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -42,5 +42,5 @@ func delete(cmd *cobra.Command, args []string) {
 		util.CheckErrorExit("cannot read status", 1)
 	}
 
-	log.Println(fmt.Sprintf("[%s] %s", resp.Status, status))
+	d.Info(fmt.Sprintf("[%s] %s", resp.Status, status))
 }

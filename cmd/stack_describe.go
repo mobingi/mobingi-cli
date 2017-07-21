@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/api"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -132,7 +132,7 @@ func describe(cmd *cobra.Command, args []string) {
 				w := bufio.NewWriter(fp)
 				defer w.Flush()
 				stack.PrintR(w, ptr, 0, indent)
-				log.Println(fmt.Sprintf("output written to %s", out))
+				d.Info(fmt.Sprintf("output written to %s", out))
 			}
 		}
 	}

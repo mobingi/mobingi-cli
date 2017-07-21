@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"time"
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/api"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -43,7 +43,6 @@ func list(cmd *cobra.Command, args []string) {
 	var stacks []stack.ListStack
 	err := json.Unmarshal(body, &stacks)
 	if err != nil {
-		log.Println(err)
 		serr := util.ResponseError(resp, body)
 		util.CheckErrorExit(serr, 1)
 	}
@@ -64,7 +63,7 @@ func list(cmd *cobra.Command, args []string) {
 			w := bufio.NewWriter(fp)
 			defer w.Flush()
 			stack.PrintR(w, &stacks[0], 0, indent)
-			log.Println(fmt.Sprintf("Output written to %s.", f))
+			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
@@ -78,7 +77,7 @@ func list(cmd *cobra.Command, args []string) {
 		if f != "" {
 			err = ioutil.WriteFile(f, mi, 0644)
 			util.CheckErrorExit(err, 1)
-			log.Println(fmt.Sprintf("Output written to %s.", f))
+			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:
 		if pfmt == "min" || pfmt == "" {

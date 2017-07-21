@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
@@ -79,7 +79,7 @@ func token(cmd *cobra.Command, args []string) {
 	}
 
 	req.SetBasicAuth(user, pass)
-	log.Println(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope of '%s'.", user, svc, scope))
+	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope of '%s'.", user, svc, scope))
 	resp, err := client.Do(req)
 	if err != nil {
 		util.CheckErrorExit(err, 1)
