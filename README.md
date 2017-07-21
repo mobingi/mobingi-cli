@@ -67,7 +67,7 @@ To list your stacks, run
 $ mocli stack list
 ```
 
-By default, this will list your task in a tabular form with minimal information (`--fmt=min`). If you want to display more information, run
+By default, this will list your stack(s) in a tabular form with minimal information (`--fmt=min`). If you want to display more information, run
 
 ```
 $ mocli stack list --fmt=[text|json]
