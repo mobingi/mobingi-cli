@@ -68,7 +68,7 @@ func token(cmd *cobra.Command, args []string) {
 		Account:    acct,
 		Service:    svc,
 		Scope:      scope,
-	})
+	}, false)
 
 	if err != nil {
 		util.CheckErrorExit(err, 1)

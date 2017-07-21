@@ -20,7 +20,7 @@ type TokenParams struct {
 	Scope      string
 }
 
-func GetRegistryToken(c *TokenParams) ([]byte, string, error) {
+func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 	var u *url.URL
 	u, err := url.Parse(c.Base)
 	if err != nil {
@@ -43,9 +43,22 @@ func GetRegistryToken(c *TokenParams) ([]byte, string, error) {
 	req.SetBasicAuth(c.Username, c.Password)
 	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.",
 		c.Account, c.Service, c.Scope))
+
+	if verbose {
+		for n, h := range req.Header {
+			d.Info(fmt.Sprintf("[in] %s: %s", n, h))
+		}
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, "", err
+	}
+
+	if verbose {
+		for n, h := range resp.Header {
+			d.Info(fmt.Sprintf("[out] %s: %s", n, h))
+		}
 	}
 
 	defer resp.Body.Close()
