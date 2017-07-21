@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -79,7 +80,7 @@ func token(cmd *cobra.Command, args []string) {
 	}
 
 	req.SetBasicAuth(user, pass)
-	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope of '%s'.", user, svc, scope))
+	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.", user, svc, scope))
 	resp, err := client.Do(req)
 	if err != nil {
 		util.CheckErrorExit(err, 1)
@@ -91,6 +92,24 @@ func token(cmd *cobra.Command, args []string) {
 		util.CheckErrorExit(err, 1)
 	}
 
-	// output raw for now
-	fmt.Println(string(body))
+	pfmt := util.GetCliStringFlag(cmd, "fmt")
+	switch pfmt {
+	case "raw":
+		// output raw for now
+		fmt.Println(string(body))
+	default:
+		var m map[string]interface{}
+		err = json.Unmarshal(body, &m)
+		if err != nil {
+			util.CheckErrorExit(err, 1)
+		}
+
+		t, found := m["token"]
+		if !found {
+			// should not happen :)
+			d.Error("cannot find token")
+		}
+
+		d.Info("token:", fmt.Sprintf("%s", t))
+	}
 }
