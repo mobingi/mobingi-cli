@@ -1,48 +1,17 @@
 package util
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
-	"syscall"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
 )
-
-func ClientId() string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Client ID: ")
-	id, _ := reader.ReadString('\n')
-	return strings.TrimSpace(id)
-}
-
-func ClientSecret() string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Client secret: ")
-	secret, _ := reader.ReadString('\n')
-	return strings.TrimSpace(secret)
-}
-
-func Username() string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Username: ")
-	user, _ := reader.ReadString('\n')
-	return strings.TrimSpace(user)
-}
-
-func Password() string {
-	fmt.Print("Password: ")
-	pass, _ := terminal.ReadPassword(int(syscall.Stdin))
-	return string(pass)
-}
 
 func SaveToken(token string) error {
 	hd, _ := homedir.Dir()

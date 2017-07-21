@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -27,27 +28,17 @@ func init() {
 }
 
 func token(cmd *cobra.Command, args []string) {
-	passin := false
-	user := util.GetCliStringFlag(cmd, "username")
-	pass := util.GetCliStringFlag(cmd, "password")
-	if user == "" {
-		user = util.Username()
+	up := &credentials.UserPass{
+		Username: util.GetCliStringFlag(cmd, "username"),
+		Password: util.GetCliStringFlag(cmd, "password"),
 	}
 
-	if user == "" {
-		util.CheckErrorExit("username cannot be empty", 1)
+	in, err := up.EnsureInput(false)
+	if err != nil {
+		util.CheckErrorExit(err, 1)
 	}
 
-	if pass == "" {
-		pass = util.Password()
-		passin = true
-	}
-
-	if pass == "" {
-		util.CheckErrorExit("password cannot be empty", 1)
-	}
-
-	if passin {
+	if in[1] {
 		fmt.Println("\n") // new line after the password input
 	}
 
@@ -57,17 +48,18 @@ func token(cmd *cobra.Command, args []string) {
 	svc := util.GetCliStringFlag(cmd, "service")
 	scope := util.GetCliStringFlag(cmd, "scope")
 	if acct == "" {
-		acct = user
+		acct = up.Username
 	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
 		Base:       base,
 		ApiVersion: apiver,
-		Username:   user,
-		Password:   pass,
-		Account:    acct,
-		Service:    svc,
-		Scope:      scope,
+		TokenCreds: &registry.TokenCredentials{
+			UserPass: up,
+			Account:  acct,
+			Service:  svc,
+			Scope:    scope,
+		},
 	}, false)
 
 	if err != nil {

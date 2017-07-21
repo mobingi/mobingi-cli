@@ -7,31 +7,48 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 )
+
+type TokenCredentials struct {
+	UserPass *credentials.UserPass
+	Account  string
+	Service  string
+	Scope    string
+}
 
 type TokenParams struct {
 	Base       string
 	ApiVersion string
-	Username   string
-	Password   string
-	Account    string
-	Service    string
-	Scope      string
+	TokenCreds *TokenCredentials
 }
 
 func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
+	if c.TokenCreds == nil {
+		return nil, "", fmt.Errorf("credentials cannot be nil")
+	}
+
+	if c.TokenCreds.UserPass == nil {
+		return nil, "", fmt.Errorf("credentials cannot be nil")
+	}
+
+	_, err := c.TokenCreds.UserPass.EnsureInput(false)
+	if err != nil {
+		return nil, "", err
+	}
+
 	var u *url.URL
-	u, err := url.Parse(c.Base)
+	u, err = url.Parse(c.Base)
 	if err != nil {
 		return nil, "", err
 	}
 
 	u.Path += "/" + c.ApiVersion + "/docker/token"
 	v := url.Values{}
-	v.Add("account", c.Account)
-	v.Add("service", c.Service)
-	v.Add("scope", c.Scope)
+	v.Add("account", c.TokenCreds.Account)
+	v.Add("service", c.TokenCreds.Service)
+	v.Add("scope", c.TokenCreds.Scope)
 	u.RawQuery = v.Encode()
 
 	client := &http.Client{}
@@ -40,9 +57,9 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 		return nil, "", err
 	}
 
-	req.SetBasicAuth(c.Username, c.Password)
+	req.SetBasicAuth(c.TokenCreds.UserPass.Username, c.TokenCreds.UserPass.Password)
 	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.",
-		c.Account, c.Service, c.Scope))
+		c.TokenCreds.Account, c.TokenCreds.Service, c.TokenCreds.Scope))
 
 	if verbose {
 		for n, h := range req.Header {

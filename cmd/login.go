@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -35,27 +36,21 @@ func init() {
 }
 
 func login(cmd *cobra.Command, args []string) {
-	id := util.GetCliStringFlag(cmd, "client-id")
-	secret := util.GetCliStringFlag(cmd, "client-secret")
+	idsec := &credentials.ClientIdSecret{
+		Id:     util.GetCliStringFlag(cmd, "client-id"),
+		Secret: util.GetCliStringFlag(cmd, "client-secret"),
+	}
+
+	err := idsec.EnsureInput(false)
+	if err != nil {
+		util.CheckErrorExit(err, 1)
+	}
+
+	// id := util.GetCliStringFlag(cmd, "client-id")
+	// secret := util.GetCliStringFlag(cmd, "client-secret")
 	grant := util.GetCliStringFlag(cmd, "grant-type")
-	user := util.GetCliStringFlag(cmd, "username")
-	pass := util.GetCliStringFlag(cmd, "password")
-
-	if id == "" {
-		id = util.ClientId()
-	}
-
-	if id == "" {
-		util.CheckErrorExit("client id cannot be empty", 1)
-	}
-
-	if secret == "" {
-		secret = util.ClientSecret()
-	}
-
-	if secret == "" {
-		util.CheckErrorExit("client secret cannot be empty", 1)
-	}
+	// user := util.GetCliStringFlag(cmd, "username")
+	// pass := util.GetCliStringFlag(cmd, "password")
 
 	var m map[string]interface{}
 	var p *authPayload
@@ -64,36 +59,33 @@ func login(cmd *cobra.Command, args []string) {
 
 	if grant == "client_credentials" {
 		p = &authPayload{
-			ClientId:     id,
-			ClientSecret: secret,
+			ClientId:     idsec.Id,
+			ClientSecret: idsec.Secret,
 			GrantType:    grant,
 		}
 	}
 
 	if grant == "password" {
-		if user == "" {
-			user = util.Username()
+		up := &credentials.UserPass{
+			Username: util.GetCliStringFlag(cmd, "username"),
+			Password: util.GetCliStringFlag(cmd, "password"),
 		}
 
-		if user == "" {
-			util.CheckErrorExit("username cannot be empty", 1)
+		in, err := up.EnsureInput(false)
+		if err != nil {
+			util.CheckErrorExit(err, 1)
 		}
 
-		if pass == "" {
-			pass = util.Password()
+		if in[1] {
+			fmt.Println("\n") // new line after the password input
 		}
 
-		if pass == "" {
-			util.CheckErrorExit("password cannot be empty", 1)
-		}
-
-		fmt.Println("\n") // new line after the password input
 		p = &authPayload{
-			ClientId:     id,
-			ClientSecret: secret,
+			ClientId:     idsec.Id,
+			ClientSecret: idsec.Secret,
+			Username:     up.Username,
+			Password:     up.Password,
 			GrantType:    grant,
-			Username:     user,
-			Password:     pass,
 		}
 	}
 
