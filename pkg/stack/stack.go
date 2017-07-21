@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/mobingilabs/mocli/pkg/util"
+	"github.com/mobingilabs/mocli/pkg/pretty"
 )
 
 type Configuration struct {
@@ -210,7 +210,7 @@ type DescribeStack2 struct {
 // are provided for indention in printing. For slices, we have to do an explicit type assertion
 // to get the underlying slice from reflect.
 func PrintR(w io.Writer, s interface{}, lvl, indent int) {
-	pad := util.Indent(lvl * indent)
+	pad := pretty.Indent(lvl * indent)
 	rt := reflect.TypeOf(s).Elem()
 	rv := reflect.ValueOf(s).Elem()
 

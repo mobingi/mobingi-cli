@@ -7,9 +7,11 @@ import (
 
 	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingilabs/mocli/pkg/iohelper"
+	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/mobingilabs/mocli/pkg/svrconf"
-	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +33,7 @@ func init() {
 
 func show(cmd *cobra.Command, args []string) {
 	var err error
-	sid := util.GetCliStringFlag(cmd, "id")
+	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
@@ -40,12 +42,12 @@ func show(cmd *cobra.Command, args []string) {
 	resp, body, errs := c.Get(`/alm/serverconfig?stack_id=` + sid)
 	check.ErrorExit(errs, 1)
 
-	out := util.GetCliStringFlag(cmd, "out")
-	pfmt := util.GetCliStringFlag(cmd, "fmt")
+	out := cli.GetCliStringFlag(cmd, "out")
+	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	if pfmt == "raw" {
 		fmt.Println(string(body))
 		if out != "" {
-			err = util.WriteToFile(out, body)
+			err = iohelper.WriteToFile(out, body)
 			check.ErrorExit(err, 1)
 		}
 
@@ -60,16 +62,16 @@ func show(cmd *cobra.Command, args []string) {
 		serr := check.ResponseError(resp, body)
 		check.ErrorExit(serr, 1)
 
-		indent := util.GetCliIntFlag(cmd, "indent")
-		mi, err := json.MarshalIndent(sc, "", util.Indent(indent))
+		indent := cli.GetCliIntFlag(cmd, "indent")
+		mi, err := json.MarshalIndent(sc, "", pretty.Indent(indent))
 		check.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
 		// write to file option
-		out := util.GetCliStringFlag(cmd, "out")
+		out := cli.GetCliStringFlag(cmd, "out")
 		if out != "" {
-			err = util.WriteToFile(out, mi)
+			err = iohelper.WriteToFile(out, mi)
 			check.ErrorExit(err, 1)
 		}
 

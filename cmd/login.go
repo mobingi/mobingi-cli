@@ -6,9 +6,9 @@ import (
 
 	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -38,8 +38,8 @@ func init() {
 
 func login(cmd *cobra.Command, args []string) {
 	idsec := &credentials.ClientIdSecret{
-		Id:     util.GetCliStringFlag(cmd, "client-id"),
-		Secret: util.GetCliStringFlag(cmd, "client-secret"),
+		Id:     cli.GetCliStringFlag(cmd, "client-id"),
+		Secret: cli.GetCliStringFlag(cmd, "client-secret"),
 	}
 
 	err := idsec.EnsureInput(false)
@@ -47,11 +47,11 @@ func login(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	// id := util.GetCliStringFlag(cmd, "client-id")
-	// secret := util.GetCliStringFlag(cmd, "client-secret")
-	grant := util.GetCliStringFlag(cmd, "grant-type")
-	// user := util.GetCliStringFlag(cmd, "username")
-	// pass := util.GetCliStringFlag(cmd, "password")
+	// id := cli.GetCliStringFlag(cmd, "client-id")
+	// secret := cli.GetCliStringFlag(cmd, "client-secret")
+	grant := cli.GetCliStringFlag(cmd, "grant-type")
+	// user := cli.GetCliStringFlag(cmd, "username")
+	// pass := cli.GetCliStringFlag(cmd, "password")
 
 	var m map[string]interface{}
 	var p *authPayload
@@ -68,8 +68,8 @@ func login(cmd *cobra.Command, args []string) {
 
 	if grant == "password" {
 		up := &credentials.UserPass{
-			Username: util.GetCliStringFlag(cmd, "username"),
-			Password: util.GetCliStringFlag(cmd, "password"),
+			Username: cli.GetCliStringFlag(cmd, "username"),
+			Password: cli.GetCliStringFlag(cmd, "password"),
 		}
 
 		in, err := up.EnsureInput(false)
@@ -111,7 +111,7 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	// always overwrite file
-	err = util.SaveToken(fmt.Sprintf("%s", token))
+	err = credentials.SaveToken(fmt.Sprintf("%s", token))
 	check.ErrorExit(err, 1)
 	d.Info("Login successful.")
 }

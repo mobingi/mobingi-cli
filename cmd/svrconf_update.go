@@ -7,8 +7,8 @@ import (
 
 	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ func init() {
 }
 
 func update(cmd *cobra.Command, args []string) {
-	sid := util.GetCliStringFlag(cmd, "id")
+	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
@@ -50,7 +50,7 @@ func update(cmd *cobra.Command, args []string) {
 	opts := []string{"env", "filepath"}
 	for _, opt := range opts {
 		var payload string
-		val := util.GetCliStringFlag(cmd, opt)
+		val := cli.GetCliStringFlag(cmd, opt)
 
 		switch opt {
 		case "env":

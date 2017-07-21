@@ -11,9 +11,10 @@ import (
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/mobingilabs/mocli/pkg/stack"
-	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -48,14 +49,14 @@ func slist(cmd *cobra.Command, args []string) {
 		check.ErrorExit(serr, 1)
 	}
 
-	pfmt := util.GetCliStringFlag(cmd, "fmt")
+	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
 	case "text":
-		indent := util.GetCliIntFlag(cmd, "indent")
+		indent := cli.GetCliIntFlag(cmd, "indent")
 		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
 
 		// write to file option
-		f := util.GetCliStringFlag(cmd, "out")
+		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
 			check.ErrorExit(err, 1)
@@ -67,14 +68,14 @@ func slist(cmd *cobra.Command, args []string) {
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
-		indent := util.GetCliIntFlag(cmd, "indent")
-		mi, err := json.MarshalIndent(stacks, "", util.Indent(indent))
+		indent := cli.GetCliIntFlag(cmd, "indent")
+		mi, err := json.MarshalIndent(stacks, "", pretty.Indent(indent))
 		check.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
 		// write to file option
-		f := util.GetCliStringFlag(cmd, "out")
+		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, mi, 0644)
 			check.ErrorExit(err, 1)

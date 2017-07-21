@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
-	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -30,8 +30,8 @@ func init() {
 
 func token(cmd *cobra.Command, args []string) {
 	up := &credentials.UserPass{
-		Username: util.GetCliStringFlag(cmd, "username"),
-		Password: util.GetCliStringFlag(cmd, "password"),
+		Username: cli.GetCliStringFlag(cmd, "username"),
+		Password: cli.GetCliStringFlag(cmd, "password"),
 	}
 
 	in, err := up.EnsureInput(false)
@@ -43,11 +43,11 @@ func token(cmd *cobra.Command, args []string) {
 		fmt.Println("\n") // new line after the password input
 	}
 
-	base := util.GetCliStringFlag(cmd, "url")
-	apiver := util.GetCliStringFlag(cmd, "apiver")
-	acct := util.GetCliStringFlag(cmd, "account")
-	svc := util.GetCliStringFlag(cmd, "service")
-	scope := util.GetCliStringFlag(cmd, "scope")
+	base := cli.GetCliStringFlag(cmd, "url")
+	apiver := cli.GetCliStringFlag(cmd, "apiver")
+	acct := cli.GetCliStringFlag(cmd, "account")
+	svc := cli.GetCliStringFlag(cmd, "service")
+	scope := cli.GetCliStringFlag(cmd, "scope")
 	if acct == "" {
 		acct = up.Username
 	}
@@ -67,7 +67,7 @@ func token(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	pfmt := util.GetCliStringFlag(cmd, "fmt")
+	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
 	case "raw":
 		fmt.Println(string(body))

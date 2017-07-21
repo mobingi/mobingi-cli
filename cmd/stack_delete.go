@@ -6,8 +6,8 @@ import (
 
 	"github.com/mobingilabs/mocli/api"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +24,7 @@ func init() {
 }
 
 func delete(cmd *cobra.Command, args []string) {
-	id := util.GetCliStringFlag(cmd, "id")
+	id := cli.GetCliStringFlag(cmd, "id")
 	if id == "" {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
