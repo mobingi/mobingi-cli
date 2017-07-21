@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
@@ -15,7 +17,10 @@ var tokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "get registry token",
 	Long: `Get registry token. This command supports '--fmt=raw' option. By default,
-it will only print the token value.`,
+it will only print the token value.
+
+If you want to save the token for other registry-related commands,
+use the '--out=home' option.`,
 	Run: token,
 }
 
@@ -73,5 +78,22 @@ func token(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 	default:
 		d.Info("token:", token)
+	}
+
+	out := cli.GetCliStringFlag(cmd, "out")
+	if out != "" {
+		switch out {
+		case "home":
+			err = credentials.SaveRegistryToken(token)
+			if err != nil {
+				check.ErrorExit(err, 1)
+			}
+
+			hd := credentials.CredFolder(false)
+			rf := filepath.Join(hd, constants.REGTOKEN_FILE)
+			d.Info(fmt.Sprintf("output written to %s", rf))
+		default:
+			d.Error("should set '--out=home' option")
+		}
 	}
 }
