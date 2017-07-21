@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
@@ -35,7 +36,7 @@ func token(cmd *cobra.Command, args []string) {
 
 	in, err := up.EnsureInput(false)
 	if err != nil {
-		util.CheckErrorExit(err, 1)
+		check.ErrorExit(err, 1)
 	}
 
 	if in[1] {
@@ -63,7 +64,7 @@ func token(cmd *cobra.Command, args []string) {
 	}, false)
 
 	if err != nil {
-		util.CheckErrorExit(err, 1)
+		check.ErrorExit(err, 1)
 	}
 
 	pfmt := util.GetCliStringFlag(cmd, "fmt")
@@ -72,6 +73,5 @@ func token(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 	default:
 		d.Info("token:", token)
-
 	}
 }

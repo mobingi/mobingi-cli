@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -42,7 +43,7 @@ func init() {
 func update(cmd *cobra.Command, args []string) {
 	sid := util.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		util.CheckErrorExit("stack id cannot be empty", 1)
+		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	// each parameter set is sent separately
@@ -57,7 +58,7 @@ func update(cmd *cobra.Command, args []string) {
 			if in != "" {
 				rm := json.RawMessage(in)
 				pl, err := json.Marshal(&rm)
-				util.CheckErrorExit(err, 1)
+				check.ErrorExit(err, 1)
 				payload = string(pl)
 			}
 
@@ -66,7 +67,7 @@ func update(cmd *cobra.Command, args []string) {
 				in := buildFilePathPayload(sid, val)
 				rm := json.RawMessage(in)
 				pl, err := json.Marshal(&rm)
-				util.CheckErrorExit(err, 1)
+				check.ErrorExit(err, 1)
 				payload = string(pl)
 			}
 		}
@@ -84,7 +85,7 @@ func update(cmd *cobra.Command, args []string) {
 			}
 		}
 
-		serr := util.ResponseError(resp, body)
+		serr := check.ResponseError(resp, body)
 		if serr != "" {
 			d.Error(serr)
 			continue

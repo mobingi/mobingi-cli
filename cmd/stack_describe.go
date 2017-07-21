@@ -8,6 +8,7 @@ import (
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -34,12 +35,12 @@ func describe(cmd *cobra.Command, args []string) {
 	var err error
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.CheckErrorExit("stack id cannot be empty", 1)
+		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := api.NewClient(api.NewConfig(cmd))
 	resp, body, errs := c.Get("/alm/stack/" + fmt.Sprintf("%s", id))
-	util.CheckErrorExit(errs, 1)
+	check.ErrorExit(errs, 1)
 
 	// we process `--fmt=raw` option first
 	out := util.GetCliStringFlag(cmd, "out")
@@ -48,7 +49,7 @@ func describe(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = util.WriteToFile(out, body)
-			util.CheckErrorExit(err, 1)
+			check.ErrorExit(err, 1)
 		}
 
 		return
@@ -64,9 +65,9 @@ func describe(cmd *cobra.Command, args []string) {
 	if err != nil {
 		err = json.Unmarshal(body, &stacks2)
 		if err != nil {
-			serr := util.ResponseError(resp, body)
-			util.CheckErrorExit(serr, 1)
-			util.CheckErrorExit(err, 1)
+			serr := check.ResponseError(resp, body)
+			check.ErrorExit(serr, 1)
+			check.ErrorExit(err, 1)
 		} else {
 			ptr = &stacks2[0]
 			sptr = stacks2
@@ -109,14 +110,14 @@ func describe(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", util.Indent(indent))
-		util.CheckErrorExit(err, 1)
+		check.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
 		// write to file option
 		if out != "" {
 			err = util.WriteToFile(out, mi)
-			util.CheckErrorExit(err, 1)
+			check.ErrorExit(err, 1)
 		}
 	default:
 		if pfmt == "text" || pfmt == "" {
@@ -126,7 +127,7 @@ func describe(cmd *cobra.Command, args []string) {
 			// write to file option
 			if out != "" {
 				fp, err := os.Create(out)
-				util.CheckErrorExit(err, 1)
+				check.ErrorExit(err, 1)
 
 				defer fp.Close()
 				w := bufio.NewWriter(fp)

@@ -10,6 +10,7 @@ import (
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -38,13 +39,13 @@ func init() {
 func slist(cmd *cobra.Command, args []string) {
 	c := api.NewClient(api.NewConfig(cmd))
 	resp, body, errs := c.Get("/alm/stack")
-	util.CheckErrorExit(errs, 1)
+	check.ErrorExit(errs, 1)
 
 	var stacks []stack.ListStack
 	err := json.Unmarshal(body, &stacks)
 	if err != nil {
-		serr := util.ResponseError(resp, body)
-		util.CheckErrorExit(serr, 1)
+		serr := check.ResponseError(resp, body)
+		check.ErrorExit(serr, 1)
 	}
 
 	pfmt := util.GetCliStringFlag(cmd, "fmt")
@@ -57,7 +58,7 @@ func slist(cmd *cobra.Command, args []string) {
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			fp, err := os.Create(f)
-			util.CheckErrorExit(err, 1)
+			check.ErrorExit(err, 1)
 
 			defer fp.Close()
 			w := bufio.NewWriter(fp)
@@ -68,7 +69,7 @@ func slist(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := util.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(stacks, "", util.Indent(indent))
-		util.CheckErrorExit(err, 1)
+		check.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
@@ -76,7 +77,7 @@ func slist(cmd *cobra.Command, args []string) {
 		f := util.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, mi, 0644)
-			util.CheckErrorExit(err, 1)
+			check.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:

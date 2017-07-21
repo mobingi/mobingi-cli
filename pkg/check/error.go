@@ -1,4 +1,4 @@
-package util
+package check
 
 import (
 	"encoding/json"
@@ -35,7 +35,7 @@ func isError(err interface{}) bool {
 	return valid
 }
 
-func CheckErrorExit(err interface{}, code int) {
+func ErrorExit(err interface{}, code int) {
 	if valid := isError(err); valid {
 		os.Exit(code)
 	}

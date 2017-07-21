@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
@@ -43,7 +44,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	err := idsec.EnsureInput(false)
 	if err != nil {
-		util.CheckErrorExit(err, 1)
+		check.ErrorExit(err, 1)
 	}
 
 	// id := util.GetCliStringFlag(cmd, "client-id")
@@ -73,7 +74,7 @@ func login(cmd *cobra.Command, args []string) {
 
 		in, err := up.EnsureInput(false)
 		if err != nil {
-			util.CheckErrorExit(err, 1)
+			check.ErrorExit(err, 1)
 		}
 
 		if in[1] {
@@ -91,26 +92,26 @@ func login(cmd *cobra.Command, args []string) {
 
 	// should not be nil when `grant_type` is valid
 	if p == nil {
-		util.CheckErrorExit("Invalid argument(s). See `help` for more information.", 1)
+		check.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
 	payload, err := json.Marshal(p)
-	util.CheckErrorExit(err, 1)
+	check.ErrorExit(err, 1)
 
 	resp, body, errs := c.PostU("/access_token", string(payload))
-	util.CheckErrorExit(errs, 1)
-	serr := util.ResponseError(resp, body)
-	util.CheckErrorExit(serr, 1)
+	check.ErrorExit(errs, 1)
+	serr := check.ResponseError(resp, body)
+	check.ErrorExit(serr, 1)
 
 	err = json.Unmarshal(body, &m)
-	util.CheckErrorExit(err, 1)
+	check.ErrorExit(err, 1)
 	token, found := m["access_token"]
 	if !found {
-		util.CheckErrorExit("cannot find access token", 1)
+		check.ErrorExit("cannot find access token", 1)
 	}
 
 	// always overwrite file
 	err = util.SaveToken(fmt.Sprintf("%s", token))
-	util.CheckErrorExit(err, 1)
+	check.ErrorExit(err, 1)
 	d.Info("Login successful.")
 }

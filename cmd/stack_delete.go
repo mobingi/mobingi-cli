@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/util"
 	"github.com/spf13/cobra"
@@ -25,21 +26,21 @@ func init() {
 func delete(cmd *cobra.Command, args []string) {
 	id := util.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		util.CheckErrorExit("stack id cannot be empty", 1)
+		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := api.NewClient(api.NewConfig(cmd))
 	resp, body, errs := c.Del("/alm/stack/" + fmt.Sprintf("%s", id))
-	util.CheckErrorExit(errs, 1)
+	check.ErrorExit(errs, 1)
 
 	var m map[string]interface{}
 	err := json.Unmarshal(body, &m)
-	util.CheckErrorExit(err, 1)
-	serr := util.ResponseError(resp, body)
-	util.CheckErrorExit(serr, 1)
+	check.ErrorExit(err, 1)
+	serr := check.ResponseError(resp, body)
+	check.ErrorExit(serr, 1)
 	status, found := m["status"]
 	if !found {
-		util.CheckErrorExit("cannot read status", 1)
+		check.ErrorExit("cannot read status", 1)
 	}
 
 	d.Info(fmt.Sprintf("[%s] %s", resp.Status, status))
