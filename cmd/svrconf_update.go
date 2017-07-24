@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
@@ -77,7 +77,7 @@ func update(cmd *cobra.Command, args []string) {
 		}
 
 		d.Info("payload:", payload)
-		c := api.NewClient(api.NewConfig(cmd))
+		c := client.NewClient(client.NewConfig(cmd))
 		resp, body, errs := c.Put(`/alm/serverconfig?stack_id=`+sid, payload)
 		if errs != nil {
 			if len(errs) > 0 {

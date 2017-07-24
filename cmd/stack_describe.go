@@ -7,7 +7,7 @@ import (
 	"os"
 
 	term "github.com/buger/goterm"
-	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
@@ -40,7 +40,7 @@ func describe(cmd *cobra.Command, args []string) {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := api.NewClient(api.NewConfig(cmd))
+	c := client.NewClient(client.NewConfig(cmd))
 	resp, body, errs := c.Get("/alm/stack/" + fmt.Sprintf("%s", id))
 	check.ErrorExit(errs, 1)
 

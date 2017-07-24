@@ -9,7 +9,7 @@ import (
 	"time"
 
 	term "github.com/buger/goterm"
-	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
@@ -31,6 +31,12 @@ For now, the 'min' format option cannot yet write to a file
 using the '--out=[filename]' option. You need to specify either
 'text' or 'json'.`,
 	Run: slist,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		d.Info("prerun")
+	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		d.Info("postrun")
+	},
 }
 
 func init() {
@@ -38,7 +44,7 @@ func init() {
 }
 
 func slist(cmd *cobra.Command, args []string) {
-	c := api.NewClient(api.NewConfig(cmd))
+	c := client.NewClient(client.NewConfig(cmd))
 	resp, body, errs := c.Get("/alm/stack")
 	check.ErrorExit(errs, 1)
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
@@ -55,8 +55,8 @@ func login(cmd *cobra.Command, args []string) {
 
 	var m map[string]interface{}
 	var p *authPayload
-	cnf := api.NewConfig(cmd)
-	c := api.NewClient(cnf)
+	cnf := client.NewConfig(cmd)
+	c := client.NewClient(cnf)
 
 	if grant == "client_credentials" {
 		p = &authPayload{

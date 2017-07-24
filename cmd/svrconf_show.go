@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mobingilabs/mocli/api"
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
@@ -38,7 +38,7 @@ func show(cmd *cobra.Command, args []string) {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := api.NewClient(api.NewConfig(cmd))
+	c := client.NewClient(client.NewConfig(cmd))
 	resp, body, errs := c.Get(`/alm/serverconfig?stack_id=` + sid)
 	check.ErrorExit(errs, 1)
 

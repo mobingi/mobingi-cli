@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
 )
 
@@ -11,6 +12,12 @@ var rootCmd = &cobra.Command{
 	Use:   "mocli",
 	Short: "Mobingi API command line interface.",
 	Long:  `Command line interface for Mobingi API and services.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		d.Info("prerun")
+	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		d.Info("postrun")
+	},
 }
 
 func Execute() {
