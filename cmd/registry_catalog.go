@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -14,24 +13,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type catalog struct {
+	Repositories []string `json:"repositories"`
+}
+
 func RegistryCatalog() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "catalog",
 		Short: "list catalog images",
-		Long:  `List catalog images.`,
-		Run:   catalog,
+		Long: `List catalog images. Note that this command will probably
+take some time to complete.`,
+		Run: printCatalog,
 	}
 
 	cmd.Flags().String("username", "", "username (account subuser)")
 	cmd.Flags().String("password", "", "password (account subuser)")
-	cmd.Flags().String("account", "", "subuser name")
 	cmd.Flags().String("service", "Mobingi Docker Registry", "service for authentication")
 	cmd.Flags().String("scope", "", "scope for authentication")
-	cmd.Flags().String("image", "", "image name to query")
 	return cmd
 }
 
-func catalog(cmd *cobra.Command, args []string) {
+func printCatalog(cmd *cobra.Command, args []string) {
 	up := &credentials.UserPass{
 		Username: cli.GetCliStringFlag(cmd, "username"),
 		Password: cli.GetCliStringFlag(cmd, "password"),
@@ -50,13 +52,8 @@ func catalog(cmd *cobra.Command, args []string) {
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
-	image := cli.GetCliStringFlag(cmd, "image")
-	if image == "" {
-		check.ErrorExit("image name cannot be empty", 1)
-	}
-
 	if scope == "" {
-		scope = fmt.Sprintf("repository:%s/%s:pull", up.Username, image)
+		scope = "registry:catalog:*"
 	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
@@ -79,8 +76,7 @@ func catalog(cmd *cobra.Command, args []string) {
 		AccessToken: token,
 	})
 
-	path := fmt.Sprintf("/%s/%s/tags/list", up.Username, image)
-	_, body, errs := c.Get(path)
+	_, body, errs := c.Get("/_catalog")
 	check.ErrorExit(errs, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -92,20 +88,15 @@ func catalog(cmd *cobra.Command, args []string) {
 			d.Info("Token used:", token)
 		}
 
-		var t tags
-		err = json.Unmarshal(body, &t)
+		var ct catalog
+		err = json.Unmarshal(body, &ct)
 		if err != nil {
 			check.ErrorExit(err, 1)
 		}
 
-		stbl := term.NewTable(0, 10, 5, ' ', 0)
-		fmt.Fprintf(stbl, "IMAGE\tTAG\n")
-		for _, v := range t.Tags {
-			fmt.Fprintf(stbl, "%s\t%s\n", t.Name, v)
+		for _, v := range ct.Repositories {
+			fmt.Println(v)
 		}
-
-		term.Print(stbl)
-		term.Flush()
 	}
 
 	/*

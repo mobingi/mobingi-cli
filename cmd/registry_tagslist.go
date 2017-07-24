@@ -30,7 +30,6 @@ and image name. Other values will be built based on inputs and command type.`,
 
 	cmd.Flags().String("username", "", "username (account subuser)")
 	cmd.Flags().String("password", "", "password (account subuser)")
-	cmd.Flags().String("account", "", "subuser name")
 	cmd.Flags().String("service", "Mobingi Docker Registry", "service for authentication")
 	cmd.Flags().String("scope", "", "scope for authentication")
 	cmd.Flags().String("image", "", "image name to query")
