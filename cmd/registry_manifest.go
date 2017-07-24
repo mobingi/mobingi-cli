@@ -53,13 +53,13 @@ func manifest(cmd *cobra.Command, args []string) {
 		check.ErrorExit("image name cannot be empty", 1)
 	}
 
-	imagepair := strings.Split(image, ":")
-	if len(imagepair) != 2 {
+	pair := strings.Split(image, ":")
+	if len(pair) != 2 {
 		check.ErrorExit("--image format is `image:tag`", 1)
 	}
 
 	if scope == "" {
-		scope = fmt.Sprintf("repository:%s/%s:pull", up.Username, imagepair[0])
+		scope = fmt.Sprintf("repository:%s/%s:pull", up.Username, pair[0])
 	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
@@ -82,7 +82,7 @@ func manifest(cmd *cobra.Command, args []string) {
 		AccessToken: token,
 	})
 
-	path := fmt.Sprintf("/%s/%s/manifests/%s", up.Username, imagepair[0], imagepair[1])
+	path := fmt.Sprintf("/%s/%s/manifests/%s", up.Username, pair[0], pair[1])
 	_, body, errs := c.Get(path)
 	check.ErrorExit(errs, 1)
 
