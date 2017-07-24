@@ -154,7 +154,7 @@ Username:
 Password:
 ```
 
-You can then use the token when using Docker Registry API. For example,
+This is useful when you want to access the registry directly using other tools. For example, you can use the token when using Docker Registry API via `curl`.
 
 ```
 $ curl -H "Authorization: Bearer token" \
