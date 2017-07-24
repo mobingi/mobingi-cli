@@ -161,3 +161,11 @@ $ curl -H "Authorization: Bearer token" \
       -H "Accept application/vnd.docker.distribution.manifest.v2+json" \
       https://registry.mobingi.com/v2/foo/container/manifests/latest
 ```
+
+### List image tags
+
+To list image tags, run
+
+```
+$ mocli registry tags [--username=foo] [--password=bar] --image=image_name
+```
