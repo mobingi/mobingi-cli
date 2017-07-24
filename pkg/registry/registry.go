@@ -23,7 +23,7 @@ type TokenParams struct {
 	TokenCreds *TokenCredentials
 }
 
-func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
+func GetRegistryToken(c *TokenParams) ([]byte, string, error) {
 	if c.TokenCreds == nil {
 		return nil, "", fmt.Errorf("credentials cannot be nil")
 	}
@@ -61,7 +61,7 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 			c.TokenCreds.UserPass.Username, c.TokenCreds.Service, c.TokenCreds.Scope))
 	}
 
-	if verbose {
+	if d.Verbose {
 		for n, h := range req.Header {
 			d.Info(fmt.Sprintf("[in] %s: %s", n, h))
 		}
@@ -72,7 +72,7 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 		return nil, "", err
 	}
 
-	if verbose {
+	if d.Verbose {
 		for n, h := range resp.Header {
 			d.Info(fmt.Sprintf("[out] %s: %s", n, h))
 		}
@@ -82,6 +82,10 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, "", err
+	}
+
+	if len(body) <= 0 {
+		return nil, "", fmt.Errorf("empty return")
 	}
 
 	var m map[string]interface{}
