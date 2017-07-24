@@ -169,3 +169,13 @@ To list image tags, run
 ```
 $ mocli registry tags [--username=foo] [--password=bar] --image=image_name
 ```
+
+### List registry catalog
+
+To print the catalog, run
+
+```
+$ mocli registry catalog [--username=foo] [--password=bar]
+```
+
+Note that this command is inherently slow.
