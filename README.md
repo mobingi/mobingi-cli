@@ -161,5 +161,3 @@ $ curl -H "Authorization: Bearer token" \
       -H "Accept application/vnd.docker.distribution.manifest.v2+json" \
       https://registry.mobingi.com/v2/foo/container/manifests/latest
 ```
-
-You can also choose to save the token to `{home}/.mocli/regtoken` by using the `--out=home` option. If present, this token will be used in other registry-related commands.
