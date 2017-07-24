@@ -32,6 +32,7 @@ Valid format values: text (default), json, raw, min`,
 	cmd.Flags().StringP("id", "i", "", "stack id")
 	return cmd
 }
+
 func describe(cmd *cobra.Command, args []string) {
 	var err error
 	id := cli.GetCliStringFlag(cmd, "id")
