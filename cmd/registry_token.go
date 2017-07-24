@@ -50,19 +50,14 @@ func token(cmd *cobra.Command, args []string) {
 
 	base := cli.GetCliStringFlag(cmd, "url")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
-	acct := cli.GetCliStringFlag(cmd, "account")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
-	if acct == "" {
-		acct = up.Username
-	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
 		Base:       base,
 		ApiVersion: apiver,
 		TokenCreds: &registry.TokenCredentials{
 			UserPass: up,
-			Account:  acct,
 			Service:  svc,
 			Scope:    scope,
 		},

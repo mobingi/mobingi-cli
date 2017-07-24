@@ -14,18 +14,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type tags struct {
-	Name string   `json:"name"`
-	Tags []string `json:"tags"`
-}
-
-func RegistryTagsList() *cobra.Command {
+func RegistryCatalog() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "tags",
-		Short: "list image tags",
-		Long: `List image tags. At the very least, you only have to provide 'username', 'password',
-and image name. Other values will be built based on inputs and command type.`,
-		Run: tagsList,
+		Use:   "catalog",
+		Short: "list catalog images",
+		Long:  `List catalog images.`,
+		Run:   catalog,
 	}
 
 	cmd.Flags().String("username", "", "username (account subuser)")
@@ -37,7 +31,7 @@ and image name. Other values will be built based on inputs and command type.`,
 	return cmd
 }
 
-func tagsList(cmd *cobra.Command, args []string) {
+func catalog(cmd *cobra.Command, args []string) {
 	up := &credentials.UserPass{
 		Username: cli.GetCliStringFlag(cmd, "username"),
 		Password: cli.GetCliStringFlag(cmd, "password"),

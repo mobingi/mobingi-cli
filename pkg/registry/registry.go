@@ -13,7 +13,6 @@ import (
 
 type TokenCredentials struct {
 	UserPass *credentials.UserPass
-	Account  string
 	Service  string
 	Scope    string
 }
@@ -46,7 +45,6 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 
 	u.Path += "/" + c.ApiVersion + "/docker/token"
 	v := url.Values{}
-	v.Add("account", c.TokenCreds.Account)
 	v.Add("service", c.TokenCreds.Service)
 	v.Add("scope", c.TokenCreds.Scope)
 	u.RawQuery = v.Encode()
@@ -60,7 +58,7 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 	req.SetBasicAuth(c.TokenCreds.UserPass.Username, c.TokenCreds.UserPass.Password)
 	if d.Verbose {
 		d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.",
-			c.TokenCreds.Account, c.TokenCreds.Service, c.TokenCreds.Scope))
+			c.TokenCreds.UserPass.Username, c.TokenCreds.Service, c.TokenCreds.Scope))
 	}
 
 	if verbose {
