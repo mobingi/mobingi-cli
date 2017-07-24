@@ -12,13 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var loginCmd = &cobra.Command{
-	Use:   "login",
-	Short: "login to Mobingi API",
-	Long:  `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to enter your username and password.`,
-	Run:   login,
-}
-
 type authPayload struct {
 	ClientId     string `json:"client_id,omitempty"`
 	ClientSecret string `json:"client_secret,omitempty"`
@@ -27,13 +20,20 @@ type authPayload struct {
 	Password     string `json:"password,omitempty"`
 }
 
-func init() {
-	rootCmd.AddCommand(loginCmd)
-	loginCmd.Flags().StringP("client-id", "i", "", "client id (required)")
-	loginCmd.Flags().StringP("client-secret", "s", "", "client secret (required)")
-	loginCmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type (valid values: 'client_credentials', 'password')")
-	loginCmd.Flags().StringP("username", "u", "", "user name")
-	loginCmd.Flags().StringP("password", "p", "", "password")
+func LoginCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "login",
+		Short: "login to Mobingi API",
+		Long:  `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to enter your username and password.`,
+		Run:   login,
+	}
+
+	cmd.Flags().StringP("client-id", "i", "", "client id (required)")
+	cmd.Flags().StringP("client-secret", "s", "", "client secret (required)")
+	cmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type (valid values: 'client_credentials', 'password')")
+	cmd.Flags().StringP("username", "u", "", "user name")
+	cmd.Flags().StringP("password", "p", "", "password")
+	return cmd
 }
 
 func login(cmd *cobra.Command, args []string) {
@@ -47,11 +47,7 @@ func login(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	// id := cli.GetCliStringFlag(cmd, "client-id")
-	// secret := cli.GetCliStringFlag(cmd, "client-secret")
 	grant := cli.GetCliStringFlag(cmd, "grant-type")
-	// user := cli.GetCliStringFlag(cmd, "username")
-	// pass := cli.GetCliStringFlag(cmd, "password")
 
 	var m map[string]interface{}
 	var p *authPayload

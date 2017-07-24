@@ -7,6 +7,8 @@ import (
 	"github.com/fatih/color"
 )
 
+var Verbose bool
+
 // Info prints `v` into standard output (via log) with a green prefix "info:".
 func Info(v ...interface{}) {
 	green := color.New(color.FgGreen).SprintFunc()

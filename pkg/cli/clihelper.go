@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -26,4 +28,8 @@ func GetCliIntFlag(cmd *cobra.Command, f string) int {
 	}
 
 	return v
+}
+
+func BinName() string {
+	return strings.TrimPrefix(os.Args[0], "./")
 }

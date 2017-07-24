@@ -11,16 +11,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "delete a stack",
-	Long:  `Delete a stack.`,
-	Run:   delete,
-}
+func StackDeleteCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete",
+		Short: "delete a stack",
+		Long:  `Delete a stack.`,
+		Run:   delete,
+	}
 
-func init() {
-	stackCmd.AddCommand(deleteCmd)
-	deleteCmd.Flags().String("id", "", "stack id to delete")
+	cmd.Flags().String("id", "", "stack id to delete")
+	return cmd
 }
 
 func delete(cmd *cobra.Command, args []string) {

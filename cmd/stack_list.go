@@ -18,10 +18,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var slistCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list all stacks",
-	Long: `List all stacks. If you specify the '--out=[filename]' option,
+func StackListCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "list all stacks",
+		Long: `List all stacks. If you specify the '--out=[filename]' option,
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
@@ -30,17 +31,10 @@ Valid format values: min (default), text, json
 For now, the 'min' format option cannot yet write to a file
 using the '--out=[filename]' option. You need to specify either
 'text' or 'json'.`,
-	Run: slist,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		d.Info("prerun")
-	},
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		d.Info("postrun")
-	},
-}
+		Run: slist,
+	}
 
-func init() {
-	stackCmd.AddCommand(slistCmd)
+	return cmd
 }
 
 func slist(cmd *cobra.Command, args []string) {

@@ -17,22 +17,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var describeCmd = &cobra.Command{
-	Use:   "describe",
-	Short: "display stack details",
-	Long: `Display stack details. If you specify the '--out=[filename]' option,
+func StackDescribeCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "describe",
+		Short: "display stack details",
+		Long: `Display stack details. If you specify the '--out=[filename]' option,
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
 Valid format values: text (default), json, raw, min`,
-	Run: describe,
-}
+		Run: describe,
+	}
 
-func init() {
-	stackCmd.AddCommand(describeCmd)
-	describeCmd.Flags().StringP("id", "i", "", "stack id")
+	cmd.Flags().StringP("id", "i", "", "stack id")
+	return cmd
 }
-
 func describe(cmd *cobra.Command, args []string) {
 	var err error
 	id := cli.GetCliStringFlag(cmd, "id")

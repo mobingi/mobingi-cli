@@ -12,15 +12,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "update current server config",
-	Long: `Show current server config. If you specify the '--out=[filename]' option,
+func ServerConfigUpdateCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update",
+		Short: "update current server config",
+		Long: `Show current server config. If you specify the '--out=[filename]' option,
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
 Valid format values:
-    
+
     json (default), raw
 
 Example on how to input environment variables via --env option:
@@ -30,14 +31,13 @@ Example on how to input environment variables via --env option:
     or (enclose in double quotes when you have whitespaces)
 
     --env="KEY1:value1, KEY2:value2, KEYX:valuex"`,
-	Run: update,
-}
+		Run: update,
+	}
 
-func init() {
-	svrconfCmd.AddCommand(updateCmd)
-	updateCmd.Flags().StringP("id", "i", "", "stack id to query")
-	updateCmd.Flags().StringP("env", "e", "", "comma-separated key/val pair(s)")
-	updateCmd.Flags().StringP("filepath", "p", "", "file path")
+	cmd.Flags().StringP("id", "i", "", "stack id to query")
+	cmd.Flags().StringP("env", "e", "", "comma-separated key/val pair(s)")
+	cmd.Flags().StringP("filepath", "p", "", "file path")
+	return cmd
 }
 
 func update(cmd *cobra.Command, args []string) {

@@ -1,18 +1,22 @@
 package cmd
 
-import (
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
-var stackCmd = &cobra.Command{
-	Use:   "stack",
-	Short: "manage your stack",
-	Long:  `Manage your infrastructure/application stack.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-	},
-}
+func StackCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "stack",
+		Short: "manage your stack",
+		Long:  `Manage your infrastructure/application stack.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			cmd.Help()
+		},
+	}
 
-func init() {
-	rootCmd.AddCommand(stackCmd)
+	cmd.AddCommand(
+		StackListCmd(),
+		StackDescribeCmd(),
+		StackDeleteCmd(),
+	)
+
+	return cmd
 }

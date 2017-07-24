@@ -15,20 +15,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var scshowCmd = &cobra.Command{
-	Use:   "show",
-	Short: "show current server config",
-	Long: `Show current server config. If you specify the '--out=[filename]' option,
+func ServerConfigShowCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "show",
+		Short: "show current server config",
+		Long: `Show current server config. If you specify the '--out=[filename]' option,
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
 Valid format values: json (default), raw`,
-	Run: show,
-}
+		Run: show,
+	}
 
-func init() {
-	svrconfCmd.AddCommand(scshowCmd)
-	scshowCmd.Flags().StringP("id", "i", "", "stack id to query")
+	cmd.Flags().StringP("id", "i", "", "stack id to query")
+	return cmd
 }
 
 func show(cmd *cobra.Command, args []string) {
