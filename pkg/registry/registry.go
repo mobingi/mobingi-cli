@@ -58,8 +58,10 @@ func GetRegistryToken(c *TokenParams, verbose bool) ([]byte, string, error) {
 	}
 
 	req.SetBasicAuth(c.TokenCreds.UserPass.Username, c.TokenCreds.UserPass.Password)
-	d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.",
-		c.TokenCreds.Account, c.TokenCreds.Service, c.TokenCreds.Scope))
+	if d.Verbose {
+		d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.",
+			c.TokenCreds.Account, c.TokenCreds.Service, c.TokenCreds.Scope))
+	}
 
 	if verbose {
 		for n, h := range req.Header {

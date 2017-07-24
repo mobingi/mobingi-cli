@@ -16,7 +16,7 @@ func RegistryCmd() *cobra.Command {
 
 	cmd.AddCommand(
 		RegistryToken(),
-		RegistryList(),
+		RegistryTagsList(),
 	)
 
 	return cmd
