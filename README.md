@@ -216,3 +216,13 @@ $ mocli registry catalog [--username=foo] [--password=bar]
 ```
 
 Note that this command is inherently slow.
+
+### Print tag manifest
+
+To print a tag manifest, run
+
+```
+$ mocli registry manifest [--username=foo] [--password=bar] --image=hello:latest
+```
+
+You can also write the output to a file via the `--fmt=full_path_to_file` option.
