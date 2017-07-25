@@ -94,9 +94,13 @@ func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (h
 	return ret, nil
 }
 
-func (c *Client) Get(path string, values url.Values) ([]byte, error) {
+func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
+	for n, h := range hdrs {
+		req.Header.Add(n, h[0])
+	}
+
 	req.URL.RawQuery = values.Encode()
 	if d.Verbose {
 		for n, h := range req.Header {

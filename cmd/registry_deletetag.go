@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -84,7 +85,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	// get manifest to get tag digest
 	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
-	xhdrs := map[string][]string{
+	xhdrs := http.Header{
 		"Accept": {"application/vnd.docker.distribution.manifest.v2+json"},
 	}
 
