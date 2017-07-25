@@ -9,6 +9,7 @@ import (
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
+	"github.com/mobingilabs/mocli/pkg/iohelper"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
 )
@@ -105,22 +106,9 @@ func manifest(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 	}
 
-	/*
-		out := cli.GetCliStringFlag(cmd, "out")
-		if out != "" {
-			switch out {
-			case "home":
-				err = credentials.SaveRegistryToken(token)
-				if err != nil {
-					check.ErrorExit(err, 1)
-				}
-
-				hd := credentials.CredFolder(false)
-				rf := filepath.Join(hd, constants.REGTOKEN_FILE)
-				d.Info(fmt.Sprintf("output written to %s", rf))
-			default:
-				d.Error("should set '--out=home' option")
-			}
-		}
-	*/
+	out := cli.GetCliStringFlag(cmd, "out")
+	if out != "" {
+		err = iohelper.WriteToFile(out, body)
+		check.ErrorExit(err, 1)
+	}
 }
