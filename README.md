@@ -3,7 +3,43 @@
 
 # mocli
 
-Command line interface for Mobingi API.
+```
+Command line interface for Mobingi API and services.
+
+When '--devmode=true', the following endpoints are used:
+    
+    https://apidev.mobingi.com - API access
+    https://dockereg2.labs.mobingi.com - Docker Registry access
+
+otherwise,
+
+    https://api.mobingi.com
+    https://registry.mobingi.com
+
+Usage:
+  mocli [command]
+
+Available Commands:
+  help        Help about any command
+  login       login to Mobingi API
+  registry    manage your docker registry
+  stack       manage your stack
+  svrconf     manage your server config file
+  version     print the version
+
+Flags:
+      --apiver string   API version (default "v2")
+      --devmode         development mode (default true)
+  -f, --fmt string      output format (values depends on command)
+  -h, --help            help for mocli
+  -n, --indent int      indent padding when fmt is 'text' or 'json' (default 4)
+  -o, --out string      full file path to write the output
+      --token string    access token
+      --url string      API endpoint url (default "https://apidev.mobingi.com")
+      --verbose         verbose output
+
+Use "mocli [command] --help" for more information about a command.
+```
 
 # Installation
 
