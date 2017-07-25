@@ -34,8 +34,9 @@ Flags:
   -h, --help            help for mocli
   -n, --indent int      indent padding when fmt is 'text' or 'json' (default 4)
   -o, --out string      full file path to write the output
+      --rurl string     base url for Docker Registry
       --token string    access token
-      --url string      API endpoint url (default "https://apidev.mobingi.com")
+      --url string      base url for API
       --verbose         verbose output
 
 Use "mocli [command] --help" for more information about a command.
