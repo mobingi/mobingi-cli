@@ -67,14 +67,14 @@ func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (h
 	}
 
 	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "headers-in")
+	verboseHeader(req.Header, "HEADERS-REQUEST")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	verboseHeader(resp.Header, "headers-out")
+	verboseHeader(resp.Header, "HEADERS-RESPONSE")
 	defer resp.Body.Close()
 	ret := resp.Header
 	return ret, nil
@@ -88,20 +88,15 @@ func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, 
 	}
 
 	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "get-in")
+	verboseHeader(req.Header, "GET-REQUEST")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	if d.Verbose {
-		for n, h := range resp.Header {
-			d.Info(fmt.Sprintf("[get-out] %s: %s", n, h))
-		}
-	}
-
 	defer resp.Body.Close()
+	verboseHeader(resp.Header, "GET-RESPONSE")
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -114,7 +109,7 @@ func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
 	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "del-in")
+	verboseHeader(req.Header, "DEL-REQUEST")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -122,7 +117,7 @@ func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 	}
 
 	defer resp.Body.Close()
-	verboseHeader(resp.Header, "del-out")
+	verboseHeader(resp.Header, "DEL-RESPONSE")
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

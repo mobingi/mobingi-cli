@@ -3,6 +3,8 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
@@ -71,15 +73,17 @@ func tagsList(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	c := client.NewGrClient(&client.Config{
+	c := client.NewClient(&client.Config{
 		RootUrl:     BaseRegUrl(cmd),
 		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 
 	path := fmt.Sprintf("/%s/%s/tags/list", userpass.Username, image)
-	_, body, errs := c.Get(path)
-	check.ErrorExit(errs, 1)
+	body, err = c.Get(path, url.Values{}, http.Header{})
+	if err != nil {
+		check.ErrorExit(err, 1)
+	}
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {

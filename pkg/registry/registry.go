@@ -69,7 +69,7 @@ func GetRegistryToken(tp *TokenParams) ([]byte, string, error) {
 
 	if d.Verbose {
 		for n, h := range req.Header {
-			d.Info(fmt.Sprintf("[gettoken-in] %s: %s", n, h))
+			d.Info(fmt.Sprintf("[GETTOKEN-REQUEST] %s: %s", n, h))
 		}
 	}
 
@@ -80,7 +80,7 @@ func GetRegistryToken(tp *TokenParams) ([]byte, string, error) {
 
 	if d.Verbose {
 		for n, h := range resp.Header {
-			d.Info(fmt.Sprintf("[gettoken-out] %s: %s", n, h))
+			d.Info(fmt.Sprintf("[GETTOKEN-RESPONSE] %s: %s", n, h))
 		}
 	}
 
