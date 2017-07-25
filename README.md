@@ -8,7 +8,7 @@ Command line interface for Mobingi API and services.
 
 When '--devmode=true', the following endpoints are used:
     
-    https://apidev.mobingi.com - API access
+    https://apidev.mobingi.com         - API access
     https://dockereg2.labs.mobingi.com - Docker Registry access
 
 otherwise,
