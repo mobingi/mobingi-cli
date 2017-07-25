@@ -15,11 +15,17 @@ func RegistryToken() *cobra.Command {
 		Use:   "token",
 		Short: "get registry token",
 		Long: `Get registry token. This command supports '--fmt=raw' option. By default,
-it will only print the token value.`,
+it will only print the token value.
+
+Example:
+
+    $ mocli registry token \
+          --username=foo \
+          --password=bar \
+          --scope="repository:foo/sample:pull"`,
 		Run: token,
 	}
 
-	// cmd.Flags().String("account", "", "subuser name")
 	cmd.Flags().String("username", "", "username (account subuser)")
 	cmd.Flags().String("password", "", "password (account subuser)")
 	cmd.Flags().String("service", "Mobingi Docker Registry", "service for authentication")

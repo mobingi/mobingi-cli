@@ -36,19 +36,12 @@ Example:
 }
 
 func deleteTag(cmd *cobra.Command, args []string) {
-	up := userPass(cmd)
-	base := cli.GetCliStringFlag(cmd, "url")
+	userpass := userPass(cmd)
+	base := BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
-	if base == "" {
-		base = constants.PROD_API_BASE
-		if check.IsDevMode() {
-			base = constants.DEV_API_BASE
-		}
-	}
-
 	if image == "" {
 		check.ErrorExit("image name cannot be empty", 1)
 	}
@@ -59,14 +52,14 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	}
 
 	if scope == "" {
-		scope = fmt.Sprintf("repository:%s/%s:pull", up.Username, pair[0])
+		scope = fmt.Sprintf("repository:%s/%s:pull", userpass.Username, pair[0])
 	}
 
 	tp := &registry.TokenParams{
 		Base:       base,
 		ApiVersion: apiver,
 		TokenCreds: &registry.TokenCredentials{
-			UserPass: up,
+			UserPass: userpass,
 			Service:  svc,
 			Scope:    scope,
 		},
@@ -90,7 +83,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	})
 
 	// get manifest to get tag digest
-	path := fmt.Sprintf("/%s/%s/manifests/%s", up.Username, pair[0], pair[1])
+	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
 	xhdrs := map[string][]string{
 		"Accept": {"application/vnd.docker.distribution.manifest.v2+json"},
 	}
@@ -110,7 +103,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 		check.ErrorExit("digest not found", 1)
 	}
 
-	scope = fmt.Sprintf("repository:%s/%s:*", up.Username, pair[0])
+	scope = fmt.Sprintf("repository:%s/%s:*", userpass.Username, pair[0])
 	tp.TokenCreds.Scope = scope
 	_, token, err = registry.GetRegistryToken(tp)
 	if err != nil {
@@ -123,7 +116,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 		AccessToken: token,
 	})
 
-	path = fmt.Sprintf("/%s/%s/manifests/%s", up.Username, pair[0], digest)
+	path = fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], digest)
 	_, err = c2.Del(path, url.Values{})
 	check.ErrorExit(err, 1)
 	d.Info(fmt.Sprintf("Tag '%s:%s' deleted.", pair[0], pair[1]))

@@ -25,7 +25,11 @@ func StackDescribeCmd() *cobra.Command {
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
-Valid format values: text (default), json, raw, min`,
+Valid format values: text (default), json, raw, min
+
+Examples:
+
+    $ mocli stack describe --id=58c2297d25645-Y6NSE4VjP-tk`,
 		Run: describe,
 	}
 

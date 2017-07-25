@@ -15,8 +15,12 @@ func StackDeleteCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "delete a stack",
-		Long:  `Delete a stack.`,
-		Run:   delete,
+		Long: `Delete a stack.
+		
+Example:
+
+    $ mocli stack delete --id=58c2297d25645-Y6NSE4VjP-tk`,
+		Run: delete,
 	}
 
 	cmd.Flags().String("id", "", "stack id to delete")

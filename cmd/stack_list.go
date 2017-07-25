@@ -30,7 +30,13 @@ Valid format values: min (default), text, json
 
 For now, the 'min' format option cannot yet write to a file
 using the '--out=[filename]' option. You need to specify either
-'text' or 'json'.`,
+'text' or 'json'.
+
+Examples:
+
+    $ mocli stack list
+    $ mocli stack list --fmt=text
+    $ mocli stack list --fmt=json`,
 		Run: slist,
 	}
 
