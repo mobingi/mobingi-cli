@@ -29,7 +29,8 @@ Valid format values: text (default), json, raw, min
 
 Examples:
 
-    $ mocli stack describe --id=58c2297d25645-Y6NSE4VjP-tk`,
+    $ mocli stack describe --id=58c2297d25645-Y6NSE4VjP-tk
+    $ mocli stack describe --id=58c2297d25645-Y6NSE4VjP-tk --fmt=min`,
 		Run: describe,
 	}
 

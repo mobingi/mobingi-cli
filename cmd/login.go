@@ -70,20 +70,7 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	if grant == "password" {
-		userpass := &credentials.UserPass{
-			Username: cli.GetCliStringFlag(cmd, "username"),
-			Password: cli.GetCliStringFlag(cmd, "password"),
-		}
-
-		in, err := userpass.EnsureInput(false)
-		if err != nil {
-			check.ErrorExit(err, 1)
-		}
-
-		if in[1] {
-			fmt.Println("\n") // new line after the password input
-		}
-
+		userpass := userPass(cmd)
 		p = &authPayload{
 			ClientId:     idsec.Id,
 			ClientSecret: idsec.Secret,
