@@ -2,28 +2,29 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/constants"
-	"github.com/mobingilabs/mocli/pkg/iohelper"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
 )
 
-func RegistryManifest() *cobra.Command {
+func RegistryDeleteTag() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "manifest",
-		Short: "print a tag manifest",
-		Long: `Print a tag manifest. At the very least, you only have to provide 'username', 'password',
-and image name. Other values will be built based on inputs and command type. Output format is JSON.
+		Use:   "delete",
+		Short: "delete an image tag",
+		Long: `Delete an image tag. At the very least, you only have to provide 'username', 'password',
+and image name. Other values will be built based on inputs and command type.
 
 Example:
 
-    $ mocli registry manifest --username=foo --password=bar --image=hello:latest`,
-		Run: manifest,
+    $ mocli registry delete --username=foo --password=bar --image=hello:latest`,
+		Run: deleteTag,
 	}
 
 	cmd.Flags().String("username", "", "username (account subuser)")
@@ -34,7 +35,7 @@ Example:
 	return cmd
 }
 
-func manifest(cmd *cobra.Command, args []string) {
+func deleteTag(cmd *cobra.Command, args []string) {
 	up := userPass(cmd)
 	base := cli.GetCliStringFlag(cmd, "url")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
@@ -61,7 +62,7 @@ func manifest(cmd *cobra.Command, args []string) {
 		scope = fmt.Sprintf("repository:%s/%s:pull", up.Username, pair[0])
 	}
 
-	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
+	tp := &registry.TokenParams{
 		Base:       base,
 		ApiVersion: apiver,
 		TokenCreds: &registry.TokenCredentials{
@@ -69,8 +70,10 @@ func manifest(cmd *cobra.Command, args []string) {
 			Service:  svc,
 			Scope:    scope,
 		},
-	})
+	}
 
+	// request token for get manifest (pull)
+	_, token, err := registry.GetRegistryToken(tp)
 	if err != nil {
 		check.ErrorExit(err, 1)
 	}
@@ -80,25 +83,48 @@ func manifest(cmd *cobra.Command, args []string) {
 		rurl = constants.DEV_REG_BASE
 	}
 
-	c := client.NewGrClient(&client.Config{
+	c := client.NewClient(&client.Config{
 		RootUrl:     rurl,
 		ApiVersion:  "v2",
 		AccessToken: token,
 	})
 
+	// get manifest to get tag digest
 	path := fmt.Sprintf("/%s/%s/manifests/%s", up.Username, pair[0], pair[1])
-	_, body, errs := c.Get(path)
-	check.ErrorExit(errs, 1)
-
-	pfmt := cli.GetCliStringFlag(cmd, "fmt")
-	switch pfmt {
-	default:
-		fmt.Println(string(body))
+	xhdrs := map[string][]string{
+		"Accept": {"application/vnd.docker.distribution.manifest.v2+json"},
 	}
 
-	out := cli.GetCliStringFlag(cmd, "out")
-	if out != "" {
-		err = iohelper.WriteToFile(out, body)
+	hdrs, err := c.GetHeaders(path, url.Values{}, xhdrs)
+	check.ErrorExit(err, 1)
+
+	var digest string
+	for n, h := range hdrs {
+		if n == "Etag" {
+			digest = h[0]
+			digest = strings.TrimSuffix(strings.TrimPrefix(digest, "\""), "\"")
+		}
+	}
+
+	if digest == "" {
+		check.ErrorExit("digest not found", 1)
+	}
+
+	scope = fmt.Sprintf("repository:%s/%s:*", up.Username, pair[0])
+	tp.TokenCreds.Scope = scope
+	_, token, err = registry.GetRegistryToken(tp)
+	if err != nil {
 		check.ErrorExit(err, 1)
 	}
+
+	c2 := client.NewClient(&client.Config{
+		RootUrl:     rurl,
+		ApiVersion:  "v2",
+		AccessToken: token,
+	})
+
+	path = fmt.Sprintf("/%s/%s/manifests/%s", up.Username, pair[0], digest)
+	_, err = c2.Del(path, url.Values{})
+	check.ErrorExit(err, 1)
+	d.Info(fmt.Sprintf("Tag '%s:%s' deleted.", pair[0], pair[1]))
 }

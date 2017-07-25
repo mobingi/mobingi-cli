@@ -38,9 +38,7 @@ using the '--out=[filename]' option. You need to specify either
 }
 
 func slist(cmd *cobra.Command, args []string) {
-	d.Info(check.IsDevMode())
-
-	c := client.NewClient(client.NewApiConfig(cmd))
+	c := client.NewGrClient(client.NewApiConfig(cmd))
 	resp, body, errs := c.Get("/alm/stack")
 	check.ErrorExit(errs, 1)
 

@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
@@ -58,6 +59,7 @@ func init() {
 	rootCmd.PersistentFlags().IntP("indent", "n", 4, "indent padding when fmt is 'text' or 'json'")
 	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(check.DevMode(), "devmode", true, "development mode")
+	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
 
 	rootCmd.AddCommand(
 		LoginCmd(),

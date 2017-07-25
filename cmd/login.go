@@ -52,7 +52,7 @@ func login(cmd *cobra.Command, args []string) {
 	var m map[string]interface{}
 	var p *authPayload
 	cnf := client.NewApiConfig(cmd)
-	c := client.NewClient(cnf)
+	c := client.NewGrClient(cnf)
 
 	if grant == "client_credentials" {
 		p = &authPayload{

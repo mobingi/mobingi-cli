@@ -29,7 +29,7 @@ func delete(cmd *cobra.Command, args []string) {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := client.NewClient(client.NewApiConfig(cmd))
+	c := client.NewGrClient(client.NewApiConfig(cmd))
 	resp, body, errs := c.Del("/alm/stack/" + fmt.Sprintf("%s", id))
 	check.ErrorExit(errs, 1)
 

@@ -6,7 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 
+	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 )
@@ -23,58 +25,62 @@ type TokenParams struct {
 	TokenCreds *TokenCredentials
 }
 
-func GetRegistryToken(c *TokenParams) ([]byte, string, error) {
-	if c.TokenCreds == nil {
+func GetRegistryToken(tp *TokenParams) ([]byte, string, error) {
+	if tp.TokenCreds == nil {
 		return nil, "", fmt.Errorf("credentials cannot be nil")
 	}
 
-	if c.TokenCreds.UserPass == nil {
+	if tp.TokenCreds.UserPass == nil {
 		return nil, "", fmt.Errorf("credentials cannot be nil")
 	}
 
-	_, err := c.TokenCreds.UserPass.EnsureInput(false)
+	_, err := tp.TokenCreds.UserPass.EnsureInput(false)
 	if err != nil {
 		return nil, "", err
 	}
 
 	var u *url.URL
-	u, err = url.Parse(c.Base)
+	u, err = url.Parse(tp.Base)
 	if err != nil {
 		return nil, "", err
 	}
 
-	u.Path += "/" + c.ApiVersion + "/docker/token"
+	u.Path += "/" + tp.ApiVersion + "/docker/token"
 	v := url.Values{}
-	v.Add("service", c.TokenCreds.Service)
-	v.Add("scope", c.TokenCreds.Scope)
+	v.Add("service", tp.TokenCreds.Service)
+	v.Add("scope", tp.TokenCreds.Scope)
 	u.RawQuery = v.Encode()
 
-	client := &http.Client{}
+	// TODO: use our client library
+	c := &http.Client{
+		Timeout: time.Second * time.Duration(client.Timeout),
+	}
+
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, "", err
 	}
 
-	req.SetBasicAuth(c.TokenCreds.UserPass.Username, c.TokenCreds.UserPass.Password)
+	req.SetBasicAuth(tp.TokenCreds.UserPass.Username, tp.TokenCreds.UserPass.Password)
 	if d.Verbose {
 		d.Info(fmt.Sprintf("Get token for subuser '%s' with service '%s' and scope '%s'.",
-			c.TokenCreds.UserPass.Username, c.TokenCreds.Service, c.TokenCreds.Scope))
+			tp.TokenCreds.UserPass.Username, tp.TokenCreds.Service, tp.TokenCreds.Scope))
 	}
 
 	if d.Verbose {
 		for n, h := range req.Header {
-			d.Info(fmt.Sprintf("[in] %s: %s", n, h))
+			d.Info(fmt.Sprintf("[gettoken-in] %s: %s", n, h))
 		}
 	}
 
-	resp, err := client.Do(req)
+	resp, err := c.Do(req)
 	if err != nil {
 		return nil, "", err
 	}
 
 	if d.Verbose {
 		for n, h := range resp.Header {
-			d.Info(fmt.Sprintf("[out] %s: %s", n, h))
+			d.Info(fmt.Sprintf("[gettoken-out] %s: %s", n, h))
 		}
 	}
 
