@@ -10,12 +10,12 @@ import (
 )
 
 func userPass(cmd *cobra.Command) *credentials.UserPass {
-	up := &credentials.UserPass{
+	userpass := &credentials.UserPass{
 		Username: cli.GetCliStringFlag(cmd, "username"),
 		Password: cli.GetCliStringFlag(cmd, "password"),
 	}
 
-	in, err := up.EnsureInput(false)
+	in, err := userpass.EnsureInput(false)
 	if err != nil {
 		check.ErrorExit(err, 1)
 	}
@@ -24,5 +24,5 @@ func userPass(cmd *cobra.Command) *credentials.UserPass {
 		fmt.Println("\n") // new line after the password input
 	}
 
-	return up
+	return userpass
 }
