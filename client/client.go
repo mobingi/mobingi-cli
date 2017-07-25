@@ -1,7 +1,6 @@
 package client
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -60,10 +59,6 @@ func NewClient(cnf *Config) *Client {
 	}
 }
 
-func (c *Client) url() string {
-	return c.config.RootUrl + "/" + c.config.ApiVersion
-}
-
 func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (http.Header, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
@@ -72,23 +67,14 @@ func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (h
 	}
 
 	req.URL.RawQuery = values.Encode()
-	if d.Verbose {
-		for n, h := range req.Header {
-			d.Info(fmt.Sprintf("[headers-in] %s: %s", n, h))
-		}
-	}
+	verboseHeader(req.Header, "headers-in")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	if d.Verbose {
-		for n, h := range resp.Header {
-			d.Info(fmt.Sprintf("[headers-out] %s: %s", n, h))
-		}
-	}
-
+	verboseHeader(resp.Header, "headers-out")
 	defer resp.Body.Close()
 	ret := resp.Header
 	return ret, nil
@@ -102,11 +88,7 @@ func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, 
 	}
 
 	req.URL.RawQuery = values.Encode()
-	if d.Verbose {
-		for n, h := range req.Header {
-			d.Info(fmt.Sprintf("[get-in] %s: %s", n, h))
-		}
-	}
+	verboseHeader(req.Header, "get-in")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -121,8 +103,8 @@ func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, 
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return body, errors.New(resp.Status)
+	if err != nil {
+		return nil, err
 	}
 
 	return body, nil
@@ -132,28 +114,31 @@ func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
 	req.URL.RawQuery = values.Encode()
-	if d.Verbose {
-		for n, h := range req.Header {
-			d.Info(fmt.Sprintf("[del-in] %s: %s", n, h))
-		}
-	}
+	verboseHeader(req.Header, "del-in")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	if d.Verbose {
-		for n, h := range resp.Header {
-			d.Info(fmt.Sprintf("[del-out] %s: %s", n, h))
-		}
-	}
-
 	defer resp.Body.Close()
+	verboseHeader(resp.Header, "del-out")
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	return body, nil
+}
+
+func (c *Client) url() string {
+	return c.config.RootUrl + "/" + c.config.ApiVersion
+}
+
+func verboseHeader(hdr http.Header, prefix string) {
+	if d.Verbose {
+		for n, h := range hdr {
+			d.Info(fmt.Sprintf("[%s] %s: %s", prefix, n, h))
+		}
+	}
 }
