@@ -24,7 +24,7 @@ and image name. Other values will be built based on inputs and command type.
 
 Example:
 
-    $ mocli registry delete --username=foo --password=bar --image=hello:latest`,
+  $ mocli registry delete --username=foo --password=bar --image=hello:latest`,
 		Run: deleteTag,
 	}
 

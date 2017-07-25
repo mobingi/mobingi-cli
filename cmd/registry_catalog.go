@@ -26,7 +26,7 @@ take some time to complete.
 
 Example:
 
-    $ mocli registry catalog --username=foo --password=bar`,
+  $ mocli registry catalog --username=foo --password=bar`,
 		Run: printCatalog,
 	}
 

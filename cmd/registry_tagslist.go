@@ -28,7 +28,7 @@ and image name. Other values will be built based on inputs and command type.
 
 Example:
 
-    $ mocli registry tags --username=foo --password=bar --image=hello`,
+  $ mocli registry tags --username=foo --password=bar --image=hello`,
 		Run: tagsList,
 	}
 

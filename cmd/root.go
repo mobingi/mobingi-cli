@@ -21,13 +21,13 @@ var (
 
 When '--devmode=true', the following base urls are used:
     
-    https://apidev.mobingi.com         - API access
-    https://dockereg2.labs.mobingi.com - Docker Registry access
+  https://apidev.mobingi.com         - API access
+  https://dockereg2.labs.mobingi.com - Docker Registry access
 	
-otherwise,
+Otherwise,
 
-    https://api.mobingi.com
-    https://registry.mobingi.com`,
+  https://api.mobingi.com
+  https://registry.mobingi.com`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			startTime = time.Now()
 		},

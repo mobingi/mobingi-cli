@@ -31,7 +31,7 @@ Valid 'grant-type' values: client_credentials, password
 
 Examples:
 
-    $ mocli login --client-id=foo --client-secret=bar`,
+  $ mocli login --client-id=foo --client-secret=bar`,
 		Run: login,
 	}
 

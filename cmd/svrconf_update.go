@@ -22,15 +22,15 @@ space(s) in it, make sure to surround it with double quotes.
 
 Valid format values:
 
-    json (default), raw
+  json (default), raw
 
 Example on how to input environment variables via --env option:
 
-    --env=KEY1:value1,KEY2:value2,KEYX:valuex
+  --env=KEY1:value1,KEY2:value2,KEYX:valuex
 
-    or (enclose in double quotes when you have whitespaces)
+  or (enclose in double quotes when you have whitespaces)
 
-    --env="KEY1:value1, KEY2:value2, KEYX:valuex"`,
+  --env="KEY1:value1, KEY2:value2, KEYX:valuex"`,
 		Run: update,
 	}
 

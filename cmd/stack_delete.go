@@ -19,7 +19,7 @@ func StackDeleteCmd() *cobra.Command {
 		
 Example:
 
-    $ mocli stack delete --id=58c2297d25645-Y6NSE4VjP-tk`,
+  $ mocli stack delete --id=58c2297d25645-Y6NSE4VjP-tk`,
 		Run: delete,
 	}
 

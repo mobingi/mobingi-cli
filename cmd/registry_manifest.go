@@ -22,7 +22,7 @@ and image name. Other values will be built based on inputs and command type. Out
 
 Example:
 
-    $ mocli registry manifest --username=foo --password=bar --image=hello:latest`,
+  $ mocli registry manifest --username=foo --password=bar --image=hello:latest`,
 		Run: manifest,
 	}
 

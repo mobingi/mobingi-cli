@@ -34,9 +34,9 @@ using the '--out=[filename]' option. You need to specify either
 
 Examples:
 
-    $ mocli stack list
-    $ mocli stack list --fmt=text
-    $ mocli stack list --fmt=json`,
+  $ mocli stack list
+  $ mocli stack list --fmt=text
+  $ mocli stack list --fmt=json`,
 		Run: slist,
 	}
 
