@@ -218,3 +218,11 @@ $ mocli registry manifest [--username=foo] [--password=bar] --image=hello:latest
 ```
 
 You can also write the output to a file via the `--fmt=full_path_to_file` option.
+
+### Delete a tag
+
+To delete a tag, run
+
+```
+$ mocli registry delete [--username=foo] [--password=bar] --image=hello:latest
+```
