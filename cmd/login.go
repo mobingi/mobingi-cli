@@ -51,7 +51,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	var m map[string]interface{}
 	var p *authPayload
-	cnf := client.NewConfig(cmd)
+	cnf := client.NewApiConfig(cmd)
 	c := client.NewClient(cnf)
 
 	if grant == "client_credentials" {

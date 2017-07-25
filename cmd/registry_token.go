@@ -5,6 +5,7 @@ import (
 
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
@@ -47,6 +48,13 @@ func token(cmd *cobra.Command, args []string) {
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
+	if base == "" {
+		if check.IsDevMode() {
+			base = constants.DEV_API_BASE
+		} else {
+			base = constants.PROD_API_BASE
+		}
+	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
 		Base:       base,

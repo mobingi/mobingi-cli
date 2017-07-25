@@ -1,7 +1,9 @@
 package client
 
 import (
+	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	"github.com/spf13/cobra"
 )
@@ -12,9 +14,9 @@ type Config struct {
 	AccessToken string
 }
 
-func NewConfig(cmd *cobra.Command) *Config {
+func NewApiConfig(cmd *cobra.Command) *Config {
 	token := cli.GetCliStringFlag(cmd, "token")
-	endpoint := cli.GetCliStringFlag(cmd, "url")
+	baseurl := cli.GetCliStringFlag(cmd, "url")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 
 	// if already logged in
@@ -25,8 +27,16 @@ func NewConfig(cmd *cobra.Command) *Config {
 		}
 	}
 
+	if baseurl == "" {
+		if check.IsDevMode() {
+			baseurl = constants.DEV_API_BASE
+		} else {
+			baseurl = constants.PROD_API_BASE
+		}
+	}
+
 	return &Config{
-		RootUrl:     endpoint,
+		RootUrl:     baseurl,
 		ApiVersion:  apiver,
 		AccessToken: token,
 	}

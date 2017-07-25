@@ -7,6 +7,7 @@ import (
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
@@ -52,6 +53,13 @@ func printCatalog(cmd *cobra.Command, args []string) {
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
+	if base == "" {
+		base = constants.PROD_API_BASE
+		if check.IsDevMode() {
+			base = constants.DEV_API_BASE
+		}
+	}
+
 	if scope == "" {
 		scope = "registry:catalog:*"
 	}
@@ -70,8 +78,13 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
+	rurl := constants.PROD_REG_BASE
+	if check.IsDevMode() {
+		rurl = constants.DEV_REG_BASE
+	}
+
 	c := client.NewClient(&client.Config{
-		RootUrl:     "https://dockereg2.labs.mobingi.com",
+		RootUrl:     rurl,
 		ApiVersion:  "v2",
 		AccessToken: token,
 	})

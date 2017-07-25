@@ -77,7 +77,7 @@ func update(cmd *cobra.Command, args []string) {
 		}
 
 		d.Info("payload:", payload)
-		c := client.NewClient(client.NewConfig(cmd))
+		c := client.NewClient(client.NewApiConfig(cmd))
 		resp, body, errs := c.Put(`/alm/serverconfig?stack_id=`+sid, payload)
 		if errs != nil {
 			if len(errs) > 0 {
