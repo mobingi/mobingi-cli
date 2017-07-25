@@ -40,15 +40,17 @@ func token(cmd *cobra.Command, args []string) {
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
 
-	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
-		Base:       base,
-		ApiVersion: apiver,
-		TokenCreds: &registry.TokenCredentials{
-			UserPass: userpass,
-			Service:  svc,
-			Scope:    scope,
+	body, token, err := registry.GetRegistryToken(
+		&registry.TokenParams{
+			Base:       base,
+			ApiVersion: apiver,
+			TokenCreds: &registry.TokenCredentials{
+				UserPass: userpass,
+				Service:  svc,
+				Scope:    scope,
+			},
 		},
-	})
+	)
 
 	if err != nil {
 		check.ErrorExit(err, 1)

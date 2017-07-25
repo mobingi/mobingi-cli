@@ -72,14 +72,10 @@ func deleteTag(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	rurl := constants.PROD_REG_BASE
-	if check.IsDevMode() {
-		rurl = constants.DEV_REG_BASE
-	}
-
+	rurl := BaseRegUrl(cmd)
 	c := client.NewClient(&client.Config{
 		RootUrl:     rurl,
-		ApiVersion:  "v2",
+		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 
@@ -113,7 +109,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	c2 := client.NewClient(&client.Config{
 		RootUrl:     rurl,
-		ApiVersion:  "v2",
+		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 

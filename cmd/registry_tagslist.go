@@ -55,28 +55,25 @@ func tagsList(cmd *cobra.Command, args []string) {
 		scope = fmt.Sprintf("repository:%s/%s:pull", userpass.Username, image)
 	}
 
-	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
-		Base:       base,
-		ApiVersion: apiver,
-		TokenCreds: &registry.TokenCredentials{
-			UserPass: userpass,
-			Service:  svc,
-			Scope:    scope,
+	body, token, err := registry.GetRegistryToken(
+		&registry.TokenParams{
+			Base:       base,
+			ApiVersion: apiver,
+			TokenCreds: &registry.TokenCredentials{
+				UserPass: userpass,
+				Service:  svc,
+				Scope:    scope,
+			},
 		},
-	})
+	)
 
 	if err != nil {
 		check.ErrorExit(err, 1)
 	}
 
-	rurl := constants.PROD_REG_BASE
-	if check.IsDevMode() {
-		rurl = constants.DEV_REG_BASE
-	}
-
 	c := client.NewGrClient(&client.Config{
-		RootUrl:     rurl,
-		ApiVersion:  "v2",
+		RootUrl:     BaseRegUrl(cmd),
+		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 

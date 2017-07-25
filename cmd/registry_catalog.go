@@ -61,14 +61,9 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	rurl := constants.PROD_REG_BASE
-	if check.IsDevMode() {
-		rurl = constants.DEV_REG_BASE
-	}
-
 	c := client.NewGrClient(&client.Config{
-		RootUrl:     rurl,
-		ApiVersion:  "v2",
+		RootUrl:     BaseRegUrl(cmd),
+		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 
