@@ -3,6 +3,8 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
@@ -61,14 +63,14 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		check.ErrorExit(err, 1)
 	}
 
-	c := client.NewGrClient(&client.Config{
+	c := client.NewClient(&client.Config{
 		RootUrl:     BaseRegUrl(cmd),
 		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 
-	_, body, errs := c.Get("/_catalog")
-	check.ErrorExit(errs, 1)
+	body, err = c.Get("/_catalog", url.Values{}, http.Header{})
+	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -81,9 +83,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 
 		var ct catalog
 		err = json.Unmarshal(body, &ct)
-		if err != nil {
-			check.ErrorExit(err, 1)
-		}
+		check.ErrorExit(err, 1)
 
 		for _, v := range ct.Repositories {
 			fmt.Println(v)

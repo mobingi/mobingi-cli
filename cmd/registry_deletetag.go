@@ -68,9 +68,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	// request token for get manifest (pull)
 	_, token, err := registry.GetRegistryToken(tp)
-	if err != nil {
-		check.ErrorExit(err, 1)
-	}
+	check.ErrorExit(err, 1)
 
 	rurl := BaseRegUrl(cmd)
 	c := client.NewClient(&client.Config{
@@ -103,9 +101,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	scope = fmt.Sprintf("repository:%s/%s:*", userpass.Username, pair[0])
 	tp.TokenCreds.Scope = scope
 	_, token, err = registry.GetRegistryToken(tp)
-	if err != nil {
-		check.ErrorExit(err, 1)
-	}
+	check.ErrorExit(err, 1)
 
 	c2 := client.NewClient(&client.Config{
 		RootUrl:     rurl,
@@ -116,5 +112,6 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	path = fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], digest)
 	_, err = c2.Del(path, url.Values{})
 	check.ErrorExit(err, 1)
+
 	d.Info(fmt.Sprintf("Tag '%s:%s' deleted.", pair[0], pair[1]))
 }

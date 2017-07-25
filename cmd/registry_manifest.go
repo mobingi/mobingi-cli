@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
@@ -64,19 +66,17 @@ func manifest(cmd *cobra.Command, args []string) {
 		},
 	})
 
-	if err != nil {
-		check.ErrorExit(err, 1)
-	}
+	check.ErrorExit(err, 1)
 
-	c := client.NewGrClient(&client.Config{
+	c := client.NewClient(&client.Config{
 		RootUrl:     BaseRegUrl(cmd),
 		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})
 
 	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
-	_, body, errs := c.Get(path)
-	check.ErrorExit(errs, 1)
+	body, err = c.Get(path, url.Values{}, http.Header{})
+	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {

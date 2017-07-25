@@ -69,9 +69,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 		},
 	)
 
-	if err != nil {
-		check.ErrorExit(err, 1)
-	}
+	check.ErrorExit(err, 1)
 
 	c := client.NewClient(&client.Config{
 		RootUrl:     BaseRegUrl(cmd),
@@ -81,9 +79,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 
 	path := fmt.Sprintf("/%s/%s/tags/list", userpass.Username, image)
 	body, err = c.Get(path, url.Values{}, http.Header{})
-	if err != nil {
-		check.ErrorExit(err, 1)
-	}
+	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -96,9 +92,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 
 		var t tags
 		err = json.Unmarshal(body, &t)
-		if err != nil {
-			check.ErrorExit(err, 1)
-		}
+		check.ErrorExit(err, 1)
 
 		stbl := term.NewTable(0, 10, 5, ' ', 0)
 		fmt.Fprintf(stbl, "IMAGE\tTAG\n")
