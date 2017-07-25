@@ -38,18 +38,11 @@ Example:
 }
 
 func printCatalog(cmd *cobra.Command, args []string) {
-	up := userPass(cmd)
-	base := cli.GetCliStringFlag(cmd, "url")
+	userpass := userPass(cmd)
+	base := BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
-	if base == "" {
-		base = constants.PROD_API_BASE
-		if check.IsDevMode() {
-			base = constants.DEV_API_BASE
-		}
-	}
-
 	if scope == "" {
 		scope = "registry:catalog:*"
 	}
@@ -58,7 +51,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		Base:       base,
 		ApiVersion: apiver,
 		TokenCreds: &registry.TokenCredentials{
-			UserPass: up,
+			UserPass: userpass,
 			Service:  svc,
 			Scope:    scope,
 		},

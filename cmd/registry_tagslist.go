@@ -41,32 +41,25 @@ Example:
 }
 
 func tagsList(cmd *cobra.Command, args []string) {
-	up := userPass(cmd)
-	base := cli.GetCliStringFlag(cmd, "url")
+	userpass := userPass(cmd)
+	base := BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
-	if base == "" {
-		base = constants.PROD_API_BASE
-		if check.IsDevMode() {
-			base = constants.DEV_API_BASE
-		}
-	}
-
 	if image == "" {
 		check.ErrorExit("image name cannot be empty", 1)
 	}
 
 	if scope == "" {
-		scope = fmt.Sprintf("repository:%s/%s:pull", up.Username, image)
+		scope = fmt.Sprintf("repository:%s/%s:pull", userpass.Username, image)
 	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
 		Base:       base,
 		ApiVersion: apiver,
 		TokenCreds: &registry.TokenCredentials{
-			UserPass: up,
+			UserPass: userpass,
 			Service:  svc,
 			Scope:    scope,
 		},
@@ -87,7 +80,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 		AccessToken: token,
 	})
 
-	path := fmt.Sprintf("/%s/%s/tags/list", up.Username, image)
+	path := fmt.Sprintf("/%s/%s/tags/list", userpass.Username, image)
 	_, body, errs := c.Get(path)
 	check.ErrorExit(errs, 1)
 

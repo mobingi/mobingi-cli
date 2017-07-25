@@ -66,5 +66,6 @@ func init() {
 		StackCmd(),
 		ServerConfigCmd(),
 		RegistryCmd(),
+		VersionCmd(),
 	)
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/constants"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
@@ -29,24 +28,17 @@ it will only print the token value.`,
 }
 
 func token(cmd *cobra.Command, args []string) {
-	up := userPass(cmd)
-	base := cli.GetCliStringFlag(cmd, "url")
+	userpass := userPass(cmd)
+	base := BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
-	if base == "" {
-		if check.IsDevMode() {
-			base = constants.DEV_API_BASE
-		} else {
-			base = constants.PROD_API_BASE
-		}
-	}
 
 	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
 		Base:       base,
 		ApiVersion: apiver,
 		TokenCreds: &registry.TokenCredentials{
-			UserPass: up,
+			UserPass: userpass,
 			Service:  svc,
 			Scope:    scope,
 		},
