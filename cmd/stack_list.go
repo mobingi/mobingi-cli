@@ -26,17 +26,18 @@ func StackListCmd() *cobra.Command {
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
-Valid format values: min (default), text, json
+Valid format values: min (default), text, json, raw
 
 For now, the 'min' format option cannot yet write to a file
 using the '--out=[filename]' option. You need to specify either
-'text' or 'json'.
+'text', 'json', or 'raw'.
 
 Examples:
 
   $ mocli stack list
   $ mocli stack list --fmt=text
-  $ mocli stack list --fmt=json`,
+  $ mocli stack list --fmt=json --verbose
+  $ mocli stack list --fmt=raw --out=/home/foo/tmp.txt`,
 		Run: stackList,
 	}
 
@@ -54,6 +55,16 @@ func stackList(cmd *cobra.Command, args []string) {
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
+	case "raw":
+		fmt.Println(string(body))
+
+		// write to file option
+		f := cli.GetCliStringFlag(cmd, "out")
+		if f != "" {
+			err = ioutil.WriteFile(f, body, 0644)
+			check.ErrorExit(err, 1)
+			d.Info(fmt.Sprintf("Output written to %s.", f))
+		}
 	case "text":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
