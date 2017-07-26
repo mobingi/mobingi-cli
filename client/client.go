@@ -111,15 +111,12 @@ func (c *Client) hdr(path string, v *url.Values, h *http.Header) (http.Header, e
 	}
 
 	req = c.initReq(req, v, h)
-	verboseHeader(req.Header, "HEADERS-REQUEST")
-
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
 	defer resp.Body.Close()
-	verboseHeader(resp.Header, "HEADERS-RESPONSE")
 	verboseResponse(resp)
 	ret := resp.Header
 	return ret, nil
@@ -166,17 +163,13 @@ func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error)
 }
 
 func (c *Client) send(r *http.Request) ([]byte, error) {
-	verboseHeader(r.Header, fmt.Sprintf("%s-REQUEST", r.Method))
-
 	resp, err := c.client.Do(r)
 	if err != nil {
 		return nil, err
 	}
 
 	defer resp.Body.Close()
-	verboseHeader(resp.Header, fmt.Sprintf("%s-RESPONSE", r.Method))
 	verboseResponse(resp)
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -213,20 +206,20 @@ func (c *Client) initReq(r *http.Request, v *url.Values, h *http.Header) *http.R
 func verboseRequest(r *http.Request) {
 	if d.Verbose {
 		d.Info("[URL]", r.URL.String())
+		d.Info("[METHOD]", r.Method)
+		for n, h := range r.Header {
+			d.Info(fmt.Sprintf("[REQUEST] %s: %s", n, h))
+		}
 	}
 }
 
 func verboseResponse(r *http.Response) {
 	if d.Verbose {
-		d.Info("[STATUS]", r.Status)
-	}
-}
-
-func verboseHeader(hdr http.Header, prefix string) {
-	if d.Verbose {
-		for n, h := range hdr {
-			d.Info(fmt.Sprintf("[%s] %s: %s", prefix, n, h))
+		for n, h := range r.Header {
+			d.Info(fmt.Sprintf("[RESPONSE] %s: %s", n, h))
 		}
+
+		d.Info("[STATUS]", r.Status)
 	}
 }
 
