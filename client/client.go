@@ -1,6 +1,8 @@
 package client
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -59,27 +61,6 @@ func NewClient(cnf *Config) *Client {
 	}
 }
 
-func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (http.Header, error) {
-	req, err := http.NewRequest("GET", c.url()+path, nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
-	for n, h := range hdrs {
-		req.Header.Add(n, h[0])
-	}
-
-	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "HEADERS-REQUEST")
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	verboseHeader(resp.Header, "HEADERS-RESPONSE")
-	defer resp.Body.Close()
-	ret := resp.Header
-	return ret, nil
-}
-
 func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
@@ -105,6 +86,47 @@ func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, 
 	return body, nil
 }
 
+func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (http.Header, error) {
+	req, err := http.NewRequest("GET", c.url()+path, nil)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
+	for n, h := range hdrs {
+		req.Header.Add(n, h[0])
+	}
+
+	req.URL.RawQuery = values.Encode()
+	verboseHeader(req.Header, "HEADERS-REQUEST")
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	verboseHeader(resp.Header, "HEADERS-RESPONSE")
+	defer resp.Body.Close()
+	ret := resp.Header
+	return ret, nil
+}
+
+func (c *Client) GetAccessToken(pl []byte) (string, error) {
+	hdrs := &http.Header{"Content-Type": {"application/json"}}
+	body, err := c.post("/access_token", nil, hdrs, pl)
+	if err != nil {
+		return "", err
+	}
+
+	var m map[string]interface{}
+	if err = json.Unmarshal(body, &m); err != nil {
+		return "", err
+	}
+
+	token, found := m["access_token"]
+	if !found {
+		return "", fmt.Errorf("cannot find access token")
+	}
+
+	return fmt.Sprintf("%s", token), nil
+}
+
 func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
@@ -128,6 +150,50 @@ func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 
 func (c *Client) url() string {
 	return c.config.RootUrl + "/" + c.config.ApiVersion
+}
+
+func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
+	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
+	if h != nil {
+		for name, hdr := range *h {
+			req.Header.Add(name, hdr[0])
+		}
+	}
+
+	verboseRequest(req)
+	verboseHeader(req.Header, "POST-REQUEST")
+
+	if v != nil {
+		values := *v
+		req.URL.RawQuery = values.Encode()
+	}
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	verboseHeader(resp.Header, "POST-RESPONSE")
+	verboseResponse(resp)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func verboseRequest(r *http.Request) {
+	if d.Verbose {
+		d.Info("[URL]", r.URL.String())
+	}
+}
+
+func verboseResponse(r *http.Response) {
+	if d.Verbose {
+		d.Info("[STATUS]", r.Status)
+	}
 }
 
 func verboseHeader(hdr http.Header, prefix string) {

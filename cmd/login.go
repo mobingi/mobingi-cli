@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
@@ -56,11 +55,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	grant := cli.GetCliStringFlag(cmd, "grant-type")
 
-	var m map[string]interface{}
 	var p *authPayload
-	cnf := client.NewApiConfig(cmd)
-	c := client.NewGrClient(cnf)
-
 	if grant == "client_credentials" {
 		p = &authPayload{
 			ClientId:     idsec.Id,
@@ -88,20 +83,12 @@ func login(cmd *cobra.Command, args []string) {
 	payload, err := json.Marshal(p)
 	check.ErrorExit(err, 1)
 
-	resp, body, errs := c.PostU("/access_token", string(payload))
-	check.ErrorExit(errs, 1)
-	serr := check.ResponseError(resp, body)
-	check.ErrorExit(serr, 1)
-
-	err = json.Unmarshal(body, &m)
+	c := client.NewClient(client.NewApiConfig(cmd))
+	token, err := c.GetAccessToken(payload)
 	check.ErrorExit(err, 1)
-	token, found := m["access_token"]
-	if !found {
-		check.ErrorExit("cannot find access token", 1)
-	}
 
 	// always overwrite file
-	err = credentials.SaveToken(fmt.Sprintf("%s", token))
+	err = credentials.SaveToken(token)
 	check.ErrorExit(err, 1)
 	d.Info("Login successful.")
 }
