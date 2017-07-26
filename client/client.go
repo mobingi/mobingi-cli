@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/mobingilabs/mocli/pkg/check"
@@ -67,25 +68,33 @@ func (c *Client) GetStack() ([]byte, error) {
 	return c.get("/alm/stack", nil, hdr)
 }
 
-func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (http.Header, error) {
-	req, err := http.NewRequest("GET", c.url()+path, nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
-	for n, h := range hdrs {
-		req.Header.Add(n, h[0])
+func (c *Client) GetTagDigest(path string) (string, error) {
+	var (
+		digest string
+	)
+
+	hdrs := &http.Header{
+		"Authorization": {"Bearer " + c.config.AccessToken},
+		"Accept":        {"application/vnd.docker.distribution.manifest.v2+json"},
 	}
 
-	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "HEADERS-REQUEST")
-
-	resp, err := c.client.Do(req)
+	h, err := c.hdr(path, nil, hdrs)
 	if err != nil {
-		return nil, err
+		return digest, err
 	}
 
-	verboseHeader(resp.Header, "HEADERS-RESPONSE")
-	defer resp.Body.Close()
-	ret := resp.Header
-	return ret, nil
+	for name, hdr := range h {
+		if name == "Etag" {
+			digest = hdr[0]
+			digest = strings.TrimSuffix(strings.TrimPrefix(digest, "\""), "\"")
+		}
+	}
+
+	if digest == "" {
+		return digest, fmt.Errorf("digest not found")
+	}
+
+	return digest, nil
 }
 
 func (c *Client) GetAccessToken(pl []byte) (string, error) {
@@ -148,6 +157,38 @@ func (c *Client) url() string {
 	return c.config.RootUrl + "/" + c.config.ApiVersion
 }
 
+func (c *Client) hdr(path string, v *url.Values, h *http.Header) (http.Header, error) {
+	req, err := http.NewRequest("GET", c.url()+path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if h != nil {
+		for name, hdr := range *h {
+			req.Header.Add(name, hdr[0])
+		}
+	}
+
+	if v != nil {
+		values := *v
+		req.URL.RawQuery = values.Encode()
+	}
+
+	verboseRequest(req)
+	verboseHeader(req.Header, "HEADERS-REQUEST")
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	verboseHeader(resp.Header, "HEADERS-RESPONSE")
+	verboseResponse(resp)
+	ret := resp.Header
+	return ret, nil
+}
+
 func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
 	if h != nil {
@@ -171,6 +212,7 @@ func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error)
 
 	defer resp.Body.Close()
 	verboseHeader(resp.Header, "GET-RESPONSE")
+	verboseResponse(resp)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

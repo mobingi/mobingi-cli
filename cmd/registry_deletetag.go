@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -79,25 +78,10 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	// get manifest to get tag digest
 	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
-	xhdrs := http.Header{
-		"Accept": {"application/vnd.docker.distribution.manifest.v2+json"},
-	}
-
-	hdrs, err := c.GetHeaders(path, url.Values{}, xhdrs)
+	digest, err := c.GetTagDigest(path)
 	check.ErrorExit(err, 1)
 
-	var digest string
-	for n, h := range hdrs {
-		if n == "Etag" {
-			digest = h[0]
-			digest = strings.TrimSuffix(strings.TrimPrefix(digest, "\""), "\"")
-		}
-	}
-
-	if digest == "" {
-		check.ErrorExit("digest not found", 1)
-	}
-
+	// new token for delete
 	scope = fmt.Sprintf("repository:%s/%s:*", userpass.Username, pair[0])
 	tp.TokenCreds.Scope = scope
 	_, token, err = registry.GetRegistryToken(tp)
