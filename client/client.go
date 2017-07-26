@@ -12,40 +12,7 @@ import (
 
 	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/parnurzeal/gorequest"
 )
-
-type GrClient struct {
-	requester *gorequest.SuperAgent
-	config    *Config
-}
-
-func NewGrClient(cnf *Config) *GrClient {
-	return &GrClient{
-		requester: gorequest.New(),
-		config:    cnf,
-	}
-}
-
-func (c *GrClient) Get(path string) (gorequest.Response, []byte, []error) {
-	return c.requester.Get(c.url()+path).Set("Authorization", "Bearer "+c.config.AccessToken).EndBytes()
-}
-
-func (c *GrClient) PostU(path, payload string) (gorequest.Response, []byte, []error) {
-	return c.requester.Post(c.url() + path).Send(payload).EndBytes()
-}
-
-func (c *GrClient) Put(path, payload string) (gorequest.Response, []byte, []error) {
-	return c.requester.Put(c.url()+path).Set("Authorization", "Bearer "+c.config.AccessToken).Send(payload).EndBytes()
-}
-
-func (c *GrClient) Del(path string) (gorequest.Response, []byte, []error) {
-	return c.requester.Delete(c.url()+path).Set("Authorization", "Bearer "+c.config.AccessToken).EndBytes()
-}
-
-func (c *GrClient) url() string {
-	return c.config.RootUrl + "/" + c.config.ApiVersion
-}
 
 var Timeout int64
 
