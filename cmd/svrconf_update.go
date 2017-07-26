@@ -49,7 +49,7 @@ func update(cmd *cobra.Command, args []string) {
 	// each parameter set is sent separately
 	opts := []string{"env", "filepath"}
 	for _, opt := range opts {
-		var payload string
+		var payload []byte
 		val := cli.GetCliStringFlag(cmd, opt)
 
 		switch opt {
@@ -57,37 +57,29 @@ func update(cmd *cobra.Command, args []string) {
 			in := buildEnvPayload(sid, val)
 			if in != "" {
 				rm := json.RawMessage(in)
-				pl, err := json.Marshal(&rm)
+				p, err := json.Marshal(&rm)
 				check.ErrorExit(err, 1)
-				payload = string(pl)
+				payload = p
 			}
 
 		case "filepath":
 			if val != "" {
 				in := buildFilePathPayload(sid, val)
 				rm := json.RawMessage(in)
-				pl, err := json.Marshal(&rm)
+				p, err := json.Marshal(&rm)
 				check.ErrorExit(err, 1)
-				payload = string(pl)
+				payload = p
 			}
 		}
 
-		if payload == "" {
+		if len(payload) == 0 {
 			continue
 		}
 
-		d.Info("payload:", payload)
-		c := client.NewGrClient(client.NewApiConfig(cmd))
-		resp, body, errs := c.Put(`/alm/serverconfig?stack_id=`+sid, payload)
-		if errs != nil {
-			if len(errs) > 0 {
-				continue
-			}
-		}
-
-		serr := check.ResponseError(resp, body)
-		if serr != "" {
-			d.Error(serr)
+		d.Info("payload:", string(payload))
+		c := client.NewClient(client.NewApiConfig(cmd))
+		body, err := c.AuthPut(`/alm/serverconfig?stack_id=`+sid, payload)
+		if err != nil {
 			continue
 		}
 
@@ -97,8 +89,7 @@ func update(cmd *cobra.Command, args []string) {
 		if status, found := m["status"]; found {
 			s := fmt.Sprintf("%s", status)
 			if s == "success" {
-				line := "[" + resp.Status + "] " + s
-				d.Info(line)
+				d.Info(s)
 				continue
 			}
 		}

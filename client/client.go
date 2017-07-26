@@ -122,6 +122,11 @@ func (c *Client) AuthGet(path string) ([]byte, error) {
 	return c.get(path, nil, &ah)
 }
 
+func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
+	ah := c.authHdr()
+	return c.put(path, nil, &ah, pl)
+}
+
 func (c *Client) AuthDel(path string) ([]byte, error) {
 	ah := c.authHdr()
 	return c.del(path, nil, &ah)
@@ -164,6 +169,16 @@ func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error)
 
 func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
 	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
+	if err != nil {
+		return nil, err
+	}
+
+	req = c.initReq(req, v, h)
+	return c.send(req)
+}
+
+func (c *Client) put(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
+	req, err := http.NewRequest("PUT", c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
 		return nil, err
 	}
