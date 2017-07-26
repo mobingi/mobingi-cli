@@ -142,12 +142,14 @@ func (c *Client) GetRegistryCatalog() ([]byte, error) {
 	return c.get("/_catalog", nil, hdrs)
 }
 
+/*
 func (c *Client) GetRegistryTags(path string) ([]byte, error) {
 	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 	return c.get(path, nil, hdrs)
 }
+*/
 
-func (c *Client) GetRegistryTagManifest(path string) ([]byte, error) {
+func (c *Client) AuthGet(path string) ([]byte, error) {
 	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 	return c.get(path, nil, hdrs)
 }

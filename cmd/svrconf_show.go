@@ -38,9 +38,9 @@ func show(cmd *cobra.Command, args []string) {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := client.NewGrClient(client.NewApiConfig(cmd))
-	resp, body, errs := c.Get(`/alm/serverconfig?stack_id=` + sid)
-	check.ErrorExit(errs, 1)
+	c := client.NewClient(client.NewApiConfig(cmd))
+	body, err := c.AuthGet(`/alm/serverconfig?stack_id=` + sid)
+	check.ErrorExit(err, 1)
 
 	out := cli.GetCliStringFlag(cmd, "out")
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -58,9 +58,6 @@ func show(cmd *cobra.Command, args []string) {
 		var sc svrconf.ServerConfig
 		err = json.Unmarshal(body, &sc)
 		check.ErrorExit(err, 1)
-
-		serr := check.ResponseError(resp, body)
-		check.ErrorExit(serr, 1)
 
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sc, "", pretty.Indent(indent))

@@ -76,7 +76,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 	})
 
 	path := fmt.Sprintf("/%s/%s/tags/list", userpass.Username, image)
-	body, err = c.GetRegistryTags(path)
+	body, err = c.AuthGet(path)
 	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
