@@ -28,10 +28,9 @@ func NewApiConfig(cmd *cobra.Command) *Config {
 	}
 
 	if baseurl == "" {
+		baseurl = constants.PROD_API_BASE
 		if check.IsDevMode() {
 			baseurl = constants.DEV_API_BASE
-		} else {
-			baseurl = constants.PROD_API_BASE
 		}
 	}
 
