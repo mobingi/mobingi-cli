@@ -11,10 +11,17 @@ import (
 	"time"
 
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 )
 
 var Timeout int64
+
+type setreq struct {
+	values *url.Values           // when not nil, we populate raw query
+	header *http.Header          // when not nil, we add to headers
+	basic  *credentials.UserPass // when not nil, we set basic auth
+}
 
 type Client struct {
 	client *http.Client
@@ -40,7 +47,7 @@ func (c *Client) GetTagDigest(path string) (string, error) {
 		"Accept":        {"application/vnd.docker.distribution.manifest.v2+json"},
 	}
 
-	h, err := c.hdr(path, nil, hdrs)
+	h, err := c.hdr(path, &setreq{header: hdrs})
 	if err != nil {
 		return digest, err
 	}
@@ -66,7 +73,7 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 	)
 
 	hdrs := &http.Header{"Content-Type": {"application/json"}}
-	body, err := c.post("/access_token", nil, hdrs, pl)
+	body, err := c.post("/access_token", &setreq{header: hdrs}, pl)
 	if err != nil {
 		return token, err
 	}
@@ -86,31 +93,31 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 
 func (c *Client) AuthGet(path string) ([]byte, error) {
 	ah := c.authHdr()
-	return c.get(path, nil, &ah)
+	return c.get(path, &setreq{header: &ah})
 }
 
 func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
-	return c.put(path, nil, &ah, pl)
+	return c.put(path, &setreq{header: &ah}, pl)
 }
 
 func (c *Client) AuthDel(path string) ([]byte, error) {
 	ah := c.authHdr()
-	return c.del(path, nil, &ah)
+	return c.del(path, &setreq{header: &ah})
 }
 
 func (c *Client) url() string {
 	return c.config.RootUrl + "/" + c.config.ApiVersion
 }
 
-func (c *Client) hdr(path string, v *url.Values, h *http.Header) (http.Header, error) {
+func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req = c.initReq(req, v, h)
+	req = c.initReq(req, p)
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -122,43 +129,43 @@ func (c *Client) hdr(path string, v *url.Values, h *http.Header) (http.Header, e
 	return ret, nil
 }
 
-func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error) {
+func (c *Client) get(path string, p *setreq) ([]byte, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req = c.initReq(req, v, h)
+	req = c.initReq(req, p)
 	return c.send(req)
 }
 
-func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
+func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
 	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
 		return nil, err
 	}
 
-	req = c.initReq(req, v, h)
+	req = c.initReq(req, p)
 	return c.send(req)
 }
 
-func (c *Client) put(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
+func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
 	req, err := http.NewRequest("PUT", c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
 		return nil, err
 	}
 
-	req = c.initReq(req, v, h)
+	req = c.initReq(req, p)
 	return c.send(req)
 }
 
-func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error) {
+func (c *Client) del(path string, p *setreq) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", c.url()+path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req = c.initReq(req, v, h)
+	req = c.initReq(req, p)
 	return c.send(req)
 }
 
@@ -187,16 +194,20 @@ func (c *Client) authHdr() http.Header {
 	return http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 }
 
-func (c *Client) initReq(r *http.Request, v *url.Values, h *http.Header) *http.Request {
-	if h != nil {
-		for name, hdr := range *h {
+func (c *Client) initReq(r *http.Request, p *setreq) *http.Request {
+	if p.header != nil {
+		for name, hdr := range *p.header {
 			r.Header.Add(name, hdr[0])
 		}
 	}
 
-	if v != nil {
-		values := *v
+	if p.values != nil {
+		values := *p.values
 		r.URL.RawQuery = values.Encode()
+	}
+
+	if p.basic != nil {
+		r.SetBasicAuth(p.basic.Username, p.basic.Password)
 	}
 
 	verboseRequest(r)
