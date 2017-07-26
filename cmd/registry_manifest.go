@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
@@ -75,7 +73,7 @@ func manifest(cmd *cobra.Command, args []string) {
 	})
 
 	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
-	body, err = c.Get(path, url.Values{}, http.Header{})
+	body, err = c.GetRegistryTagManifest(path)
 	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")

@@ -3,8 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
 
 	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
@@ -78,7 +76,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 	})
 
 	path := fmt.Sprintf("/%s/%s/tags/list", userpass.Username, image)
-	body, err = c.Get(path, url.Values{}, http.Header{})
+	body, err = c.GetRegistryTags(path)
 	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")

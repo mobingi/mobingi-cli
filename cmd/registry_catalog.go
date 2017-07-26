@@ -3,8 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
@@ -69,7 +67,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		AccessToken: token,
 	})
 
-	body, err = c.Get("/_catalog", url.Values{}, http.Header{})
+	body, err = c.GetRegistryCatalog()
 	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -89,23 +87,4 @@ func printCatalog(cmd *cobra.Command, args []string) {
 			fmt.Println(v)
 		}
 	}
-
-	/*
-		out := cli.GetCliStringFlag(cmd, "out")
-		if out != "" {
-			switch out {
-			case "home":
-				err = credentials.SaveRegistryToken(token)
-				if err != nil {
-					check.ErrorExit(err, 1)
-				}
-
-				hd := credentials.CredFolder(false)
-				rf := filepath.Join(hd, constants.REGTOKEN_FILE)
-				d.Info(fmt.Sprintf("output written to %s", rf))
-			default:
-				d.Error("should set '--out=home' option")
-			}
-		}
-	*/
 }

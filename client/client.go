@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/mobingilabs/mocli/pkg/check"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/parnurzeal/gorequest"
 )
@@ -61,29 +62,9 @@ func NewClient(cnf *Config) *Client {
 	}
 }
 
-func (c *Client) Get(path string, values url.Values, hdrs http.Header) ([]byte, error) {
-	req, err := http.NewRequest("GET", c.url()+path, nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
-	for n, h := range hdrs {
-		req.Header.Add(n, h[0])
-	}
-
-	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "GET-REQUEST")
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	verboseHeader(resp.Header, "GET-RESPONSE")
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+func (c *Client) GetStack() ([]byte, error) {
+	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.get("/alm/stack", nil, hdr)
 }
 
 func (c *Client) GetHeaders(path string, values url.Values, hdrs http.Header) (http.Header, error) {
@@ -127,6 +108,21 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 	return fmt.Sprintf("%s", token), nil
 }
 
+func (c *Client) GetRegistryCatalog() ([]byte, error) {
+	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.get("/_catalog", nil, hdrs)
+}
+
+func (c *Client) GetRegistryTags(path string) ([]byte, error) {
+	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.get(path, nil, hdrs)
+}
+
+func (c *Client) GetRegistryTagManifest(path string) ([]byte, error) {
+	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.get(path, nil, hdrs)
+}
+
 func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", c.url()+path, nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
@@ -150,6 +146,42 @@ func (c *Client) Del(path string, values url.Values) ([]byte, error) {
 
 func (c *Client) url() string {
 	return c.config.RootUrl + "/" + c.config.ApiVersion
+}
+
+func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error) {
+	req, err := http.NewRequest("GET", c.url()+path, nil)
+	if h != nil {
+		for name, hdr := range *h {
+			req.Header.Add(name, hdr[0])
+		}
+	}
+
+	if v != nil {
+		values := *v
+		req.URL.RawQuery = values.Encode()
+	}
+
+	verboseRequest(req)
+	verboseHeader(req.Header, "GET-REQUEST")
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	verboseHeader(resp.Header, "GET-RESPONSE")
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	re := respError(resp, body)
+	if re != "" {
+		return body, fmt.Errorf(re)
+	}
+
+	return body, nil
 }
 
 func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
@@ -202,4 +234,42 @@ func verboseHeader(hdr http.Header, prefix string) {
 			d.Info(fmt.Sprintf("[%s] %s: %s", prefix, n, h))
 		}
 	}
+}
+
+func respError(r *http.Response, b []byte) string {
+	errcnt := 0
+	var m map[string]interface{}
+	err := json.Unmarshal(b, &m)
+	if err != nil {
+		// considered success; our expected error format
+		// is marshallable to 'm'
+		return ""
+	}
+
+	var serr, cem string
+	if !check.IsHttpSuccess(r.StatusCode) {
+		serr = serr + "[" + r.Status + "]"
+	}
+
+	// these three should be present to be considered error
+	if c, found := m["code"]; found {
+		cem = cem + "[" + fmt.Sprintf("%s", c) + "]"
+		errcnt += 1
+	}
+
+	if e, found := m["error"]; found {
+		cem = cem + fmt.Sprintf(" %s:", e)
+		errcnt += 1
+	}
+
+	if s, found := m["message"]; found {
+		cem = cem + fmt.Sprintf(" %s", s)
+		errcnt += 1
+	}
+
+	if errcnt == 3 {
+		serr = serr + cem
+	}
+
+	return serr
 }

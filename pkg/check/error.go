@@ -41,6 +41,15 @@ func ErrorExit(err interface{}, code int) {
 	}
 }
 
+func IsHttpSuccess(code int) bool {
+	// only 2xx = OK
+	if code >= 200 && code < 300 {
+		return true
+	}
+
+	return false
+}
+
 func ResponseError(r gorequest.Response, b []byte) string {
 	errcnt := 0
 	var m map[string]interface{}

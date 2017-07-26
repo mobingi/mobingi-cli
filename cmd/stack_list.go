@@ -37,23 +37,20 @@ Examples:
   $ mocli stack list
   $ mocli stack list --fmt=text
   $ mocli stack list --fmt=json`,
-		Run: slist,
+		Run: stackList,
 	}
 
 	return cmd
 }
 
-func slist(cmd *cobra.Command, args []string) {
-	c := client.NewGrClient(client.NewApiConfig(cmd))
-	resp, body, errs := c.Get("/alm/stack")
-	check.ErrorExit(errs, 1)
+func stackList(cmd *cobra.Command, args []string) {
+	c := client.NewClient(client.NewApiConfig(cmd))
+	body, err := c.GetStack()
+	check.ErrorExit(err, 1)
 
 	var stacks []stack.ListStack
-	err := json.Unmarshal(body, &stacks)
-	if err != nil {
-		serr := check.ResponseError(resp, body)
-		check.ErrorExit(serr, 1)
-	}
+	err = json.Unmarshal(body, &stacks)
+	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
