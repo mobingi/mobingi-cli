@@ -63,21 +63,6 @@ func NewClient(cnf *Config) *Client {
 	}
 }
 
-func (c *Client) GetStacks() ([]byte, error) {
-	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.get("/alm/stack", nil, hdr)
-}
-
-func (c *Client) GetStack(id string) ([]byte, error) {
-	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.get("/alm/stack/"+id, nil, hdr)
-}
-
-func (c *Client) DelStack(id string) ([]byte, error) {
-	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.del("/alm/stack/"+id, nil, hdr)
-}
-
 func (c *Client) GetTagDigest(path string) (string, error) {
 	var (
 		digest string
@@ -107,11 +92,6 @@ func (c *Client) GetTagDigest(path string) (string, error) {
 	return digest, nil
 }
 
-func (c *Client) DelTag(path string) ([]byte, error) {
-	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.del(path, nil, hdr)
-}
-
 func (c *Client) GetAccessToken(pl []byte) (string, error) {
 	var (
 		token string
@@ -137,21 +117,14 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 	return token, nil
 }
 
-func (c *Client) GetRegistryCatalog() ([]byte, error) {
-	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.get("/_catalog", nil, hdrs)
-}
-
-/*
-func (c *Client) GetRegistryTags(path string) ([]byte, error) {
-	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.get(path, nil, hdrs)
-}
-*/
-
 func (c *Client) AuthGet(path string) ([]byte, error) {
 	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 	return c.get(path, nil, hdrs)
+}
+
+func (c *Client) AuthDel(path string) ([]byte, error) {
+	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.del(path, nil, hdrs)
 }
 
 func (c *Client) url() string {

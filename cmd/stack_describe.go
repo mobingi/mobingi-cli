@@ -46,7 +46,7 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.GetStack(fmt.Sprintf("%s", id))
+	body, err := c.AuthGet("/alm/stack/" + fmt.Sprintf("%s", id))
 	check.ErrorExit(err, 1)
 
 	// we process `--fmt=raw` option first

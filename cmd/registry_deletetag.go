@@ -93,7 +93,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	})
 
 	path = fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], digest)
-	_, err = c2.DelTag(path)
+	_, err = c2.AuthDel(path)
 	check.ErrorExit(err, 1)
 
 	d.Info(fmt.Sprintf("Tag '%s:%s' deleted.", pair[0], pair[1]))

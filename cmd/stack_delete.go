@@ -34,7 +34,7 @@ func delete(cmd *cobra.Command, args []string) {
 	}
 
 	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.DelStack(fmt.Sprintf("%s", id))
+	body, err := c.AuthDel("/alm/stack/" + fmt.Sprintf("%s", id))
 	check.ErrorExit(err, 1)
 
 	var m map[string]interface{}

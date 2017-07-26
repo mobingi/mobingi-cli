@@ -67,7 +67,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		AccessToken: token,
 	})
 
-	body, err = c.GetRegistryCatalog()
+	body, err = c.AuthGet("/_catalog")
 	check.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
