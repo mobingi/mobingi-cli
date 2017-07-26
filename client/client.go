@@ -124,6 +124,7 @@ func (c *Client) AuthGet(path string) ([]byte, error) {
 
 func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
+	ah.Add("Content-Type", "application/json")
 	return c.put(path, nil, &ah, pl)
 }
 
