@@ -137,18 +137,7 @@ func (c *Client) hdr(path string, v *url.Values, h *http.Header) (http.Header, e
 		return nil, err
 	}
 
-	if h != nil {
-		for name, hdr := range *h {
-			req.Header.Add(name, hdr[0])
-		}
-	}
-
-	if v != nil {
-		values := *v
-		req.URL.RawQuery = values.Encode()
-	}
-
-	verboseRequest(req)
+	req = c.initReq(req, v, h)
 	verboseHeader(req.Header, "HEADERS-REQUEST")
 
 	resp, err := c.client.Do(req)
@@ -169,18 +158,7 @@ func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error)
 		return nil, err
 	}
 
-	if h != nil {
-		for name, hdr := range *h {
-			req.Header.Add(name, hdr[0])
-		}
-	}
-
-	if v != nil {
-		values := *v
-		req.URL.RawQuery = values.Encode()
-	}
-
-	verboseRequest(req)
+	req = c.initReq(req, v, h)
 	verboseHeader(req.Header, "GET-REQUEST")
 
 	resp, err := c.client.Do(req)
@@ -246,18 +224,7 @@ func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error)
 		return nil, err
 	}
 
-	if h != nil {
-		for name, hdr := range *h {
-			req.Header.Add(name, hdr[0])
-		}
-	}
-
-	if v != nil {
-		values := *v
-		req.URL.RawQuery = values.Encode()
-	}
-
-	verboseRequest(req)
+	req = c.initReq(req, v, h)
 	verboseHeader(req.Header, "DEL-REQUEST")
 
 	resp, err := c.client.Do(req)
@@ -274,6 +241,22 @@ func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error)
 	}
 
 	return body, nil
+}
+
+func (c *Client) initReq(r *http.Request, v *url.Values, h *http.Header) *http.Request {
+	if h != nil {
+		for name, hdr := range *h {
+			r.Header.Add(name, hdr[0])
+		}
+	}
+
+	if v != nil {
+		values := *v
+		r.URL.RawQuery = values.Encode()
+	}
+
+	verboseRequest(r)
+	return r
 }
 
 func verboseRequest(r *http.Request) {
