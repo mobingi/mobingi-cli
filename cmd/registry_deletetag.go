@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"net/url"
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
@@ -94,7 +93,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	})
 
 	path = fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], digest)
-	_, err = c2.Del(path, url.Values{})
+	_, err = c2.DelTag(path)
 	check.ErrorExit(err, 1)
 
 	d.Info(fmt.Sprintf("Tag '%s:%s' deleted.", pair[0], pair[1]))

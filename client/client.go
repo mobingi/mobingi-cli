@@ -73,6 +73,11 @@ func (c *Client) GetStack(id string) ([]byte, error) {
 	return c.get("/alm/stack/"+id, nil, hdr)
 }
 
+func (c *Client) DelStack(id string) ([]byte, error) {
+	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.del("/alm/stack/"+id, nil, hdr)
+}
+
 func (c *Client) GetTagDigest(path string) (string, error) {
 	var (
 		digest string
@@ -100,6 +105,11 @@ func (c *Client) GetTagDigest(path string) (string, error) {
 	}
 
 	return digest, nil
+}
+
+func (c *Client) DelTag(path string) ([]byte, error) {
+	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.del(path, nil, hdr)
 }
 
 func (c *Client) GetAccessToken(pl []byte) (string, error) {
@@ -142,27 +152,6 @@ func (c *Client) GetRegistryTagManifest(path string) ([]byte, error) {
 	return c.get(path, nil, hdrs)
 }
 
-func (c *Client) Del(path string, values url.Values) ([]byte, error) {
-	req, err := http.NewRequest("DELETE", c.url()+path, nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.AccessToken))
-	req.URL.RawQuery = values.Encode()
-	verboseHeader(req.Header, "DEL-REQUEST")
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	verboseHeader(resp.Header, "DEL-RESPONSE")
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
-}
-
 func (c *Client) url() string {
 	return c.config.RootUrl + "/" + c.config.ApiVersion
 }
@@ -201,6 +190,10 @@ func (c *Client) hdr(path string, v *url.Values, h *http.Header) (http.Header, e
 
 func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error) {
 	req, err := http.NewRequest("GET", c.url()+path, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	if h != nil {
 		for name, hdr := range *h {
 			req.Header.Add(name, hdr[0])
@@ -238,19 +231,23 @@ func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error)
 
 func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
 	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
+	if err != nil {
+		return nil, err
+	}
+
 	if h != nil {
 		for name, hdr := range *h {
 			req.Header.Add(name, hdr[0])
 		}
 	}
 
-	verboseRequest(req)
-	verboseHeader(req.Header, "POST-REQUEST")
-
 	if v != nil {
 		values := *v
 		req.URL.RawQuery = values.Encode()
 	}
+
+	verboseRequest(req)
+	verboseHeader(req.Header, "POST-REQUEST")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -259,6 +256,42 @@ func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]
 
 	defer resp.Body.Close()
 	verboseHeader(resp.Header, "POST-RESPONSE")
+	verboseResponse(resp)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error) {
+	req, err := http.NewRequest("DELETE", c.url()+path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if h != nil {
+		for name, hdr := range *h {
+			req.Header.Add(name, hdr[0])
+		}
+	}
+
+	if v != nil {
+		values := *v
+		req.URL.RawQuery = values.Encode()
+	}
+
+	verboseRequest(req)
+	verboseHeader(req.Header, "DEL-REQUEST")
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	verboseHeader(resp.Header, "DEL-RESPONSE")
 	verboseResponse(resp)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
