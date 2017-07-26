@@ -118,13 +118,13 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 }
 
 func (c *Client) AuthGet(path string) ([]byte, error) {
-	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.get(path, nil, hdrs)
+	ah := c.authHdr()
+	return c.get(path, nil, &ah)
 }
 
 func (c *Client) AuthDel(path string) ([]byte, error) {
-	hdrs := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
-	return c.del(path, nil, hdrs)
+	ah := c.authHdr()
+	return c.del(path, nil, &ah)
 }
 
 func (c *Client) url() string {
@@ -159,16 +159,41 @@ func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error)
 	}
 
 	req = c.initReq(req, v, h)
-	verboseHeader(req.Header, "GET-REQUEST")
+	return c.send(req)
+}
 
-	resp, err := c.client.Do(req)
+func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
+	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
+	if err != nil {
+		return nil, err
+	}
+
+	req = c.initReq(req, v, h)
+	return c.send(req)
+}
+
+func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error) {
+	req, err := http.NewRequest("DELETE", c.url()+path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req = c.initReq(req, v, h)
+	return c.send(req)
+}
+
+func (c *Client) send(r *http.Request) ([]byte, error) {
+	verboseHeader(r.Header, fmt.Sprintf("%s-REQUEST", r.Method))
+
+	resp, err := c.client.Do(r)
 	if err != nil {
 		return nil, err
 	}
 
 	defer resp.Body.Close()
-	verboseHeader(resp.Header, "GET-RESPONSE")
+	verboseHeader(resp.Header, fmt.Sprintf("%s-RESPONSE", r.Method))
 	verboseResponse(resp)
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -182,65 +207,8 @@ func (c *Client) get(path string, v *url.Values, h *http.Header) ([]byte, error)
 	return body, nil
 }
 
-func (c *Client) post(path string, v *url.Values, h *http.Header, pl []byte) ([]byte, error) {
-	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
-	if err != nil {
-		return nil, err
-	}
-
-	if h != nil {
-		for name, hdr := range *h {
-			req.Header.Add(name, hdr[0])
-		}
-	}
-
-	if v != nil {
-		values := *v
-		req.URL.RawQuery = values.Encode()
-	}
-
-	verboseRequest(req)
-	verboseHeader(req.Header, "POST-REQUEST")
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	verboseHeader(resp.Header, "POST-RESPONSE")
-	verboseResponse(resp)
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
-}
-
-func (c *Client) del(path string, v *url.Values, h *http.Header) ([]byte, error) {
-	req, err := http.NewRequest("DELETE", c.url()+path, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req = c.initReq(req, v, h)
-	verboseHeader(req.Header, "DEL-REQUEST")
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	verboseHeader(resp.Header, "DEL-RESPONSE")
-	verboseResponse(resp)
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+func (c *Client) authHdr() http.Header {
+	return http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 }
 
 func (c *Client) initReq(r *http.Request, v *url.Values, h *http.Header) *http.Request {
