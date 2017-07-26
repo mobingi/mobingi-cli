@@ -20,9 +20,9 @@ type Configuration struct {
 	Architecture        string `json:"architecture,omitempty"`
 	Code                string `json:"code,omitempty"`
 	Image               string `json:"image,omitempty"`
-	Max                 string `json:"max,omitempty"`
+	Max                 int    `json:"max,omitempty"`
 	MaxOrigin           int    `json:"maxOrigin,omitempty"`
-	Min                 string `json:"min,omitempty"`
+	Min                 int    `json:"min,omitempty"`
 	MinOrigin           int    `json:"minOrigin,omitempty"`
 	Nickname            string `json:"nickname,omitempty"`
 	Region              string `json:"region,omitempty"`

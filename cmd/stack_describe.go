@@ -45,9 +45,9 @@ func describe(cmd *cobra.Command, args []string) {
 		check.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := client.NewGrClient(client.NewApiConfig(cmd))
-	resp, body, errs := c.Get("/alm/stack/" + fmt.Sprintf("%s", id))
-	check.ErrorExit(errs, 1)
+	c := client.NewClient(client.NewApiConfig(cmd))
+	body, err := c.GetStack(fmt.Sprintf("%s", id))
+	check.ErrorExit(err, 1)
 
 	// we process `--fmt=raw` option first
 	out := cli.GetCliStringFlag(cmd, "out")
@@ -71,15 +71,11 @@ func describe(cmd *cobra.Command, args []string) {
 	err = json.Unmarshal(body, &stacks1)
 	if err != nil {
 		err = json.Unmarshal(body, &stacks2)
-		if err != nil {
-			serr := check.ResponseError(resp, body)
-			check.ErrorExit(serr, 1)
-			check.ErrorExit(err, 1)
-		} else {
-			ptr = &stacks2[0]
-			sptr = stacks2
-			valid = 2
-		}
+		check.ErrorExit(err, 1)
+
+		ptr = &stacks2[0]
+		sptr = stacks2
+		valid = 2
 	} else {
 		ptr = &stacks1[0]
 		sptr = stacks1

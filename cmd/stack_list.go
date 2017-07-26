@@ -46,7 +46,7 @@ Examples:
 
 func stackList(cmd *cobra.Command, args []string) {
 	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.GetStack()
+	body, err := c.GetStacks()
 	check.ErrorExit(err, 1)
 
 	var stacks []stack.ListStack

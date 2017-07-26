@@ -63,9 +63,14 @@ func NewClient(cnf *Config) *Client {
 	}
 }
 
-func (c *Client) GetStack() ([]byte, error) {
+func (c *Client) GetStacks() ([]byte, error) {
 	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 	return c.get("/alm/stack", nil, hdr)
+}
+
+func (c *Client) GetStack(id string) ([]byte, error) {
+	hdr := &http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
+	return c.get("/alm/stack/"+id, nil, hdr)
 }
 
 func (c *Client) GetTagDigest(path string) (string, error) {
@@ -98,23 +103,28 @@ func (c *Client) GetTagDigest(path string) (string, error) {
 }
 
 func (c *Client) GetAccessToken(pl []byte) (string, error) {
+	var (
+		token string
+		m     map[string]interface{}
+	)
+
 	hdrs := &http.Header{"Content-Type": {"application/json"}}
 	body, err := c.post("/access_token", nil, hdrs, pl)
 	if err != nil {
-		return "", err
+		return token, err
 	}
 
-	var m map[string]interface{}
 	if err = json.Unmarshal(body, &m); err != nil {
-		return "", err
+		return token, err
 	}
 
-	token, found := m["access_token"]
+	t, found := m["access_token"]
 	if !found {
-		return "", fmt.Errorf("cannot find access token")
+		return token, fmt.Errorf("cannot find access token")
 	}
 
-	return fmt.Sprintf("%s", token), nil
+	token = fmt.Sprintf("%s", t)
+	return token, nil
 }
 
 func (c *Client) GetRegistryCatalog() ([]byte, error) {
@@ -279,16 +289,20 @@ func verboseHeader(hdr http.Header, prefix string) {
 }
 
 func respError(r *http.Response, b []byte) string {
-	errcnt := 0
-	var m map[string]interface{}
+	var (
+		errcnt int
+		m      map[string]interface{}
+		serr   string
+		cem    string
+	)
+
 	err := json.Unmarshal(b, &m)
 	if err != nil {
 		// considered success; our expected error format
 		// is marshallable to 'm'
-		return ""
+		return serr
 	}
 
-	var serr, cem string
 	if !check.IsHttpSuccess(r.StatusCode) {
 		serr = serr + "[" + r.Status + "]"
 	}
