@@ -41,15 +41,15 @@ func GetRegistryToken(tp *TokenParams) ([]byte, string, error) {
 		ApiVersion: tp.ApiVersion,
 	})
 
-	v := url.Values{}
-	v.Add("service", tp.TokenCreds.Service)
-	v.Add("scope", tp.TokenCreds.Scope)
+	values := url.Values{}
+	values.Add("service", tp.TokenCreds.Service)
+	values.Add("scope", tp.TokenCreds.Scope)
 
 	body, err := c.BasicAuthGet(
 		"/docker/token",
 		tp.TokenCreds.UserPass.Username,
 		tp.TokenCreds.UserPass.Password,
-		&v,
+		&values,
 	)
 
 	if err != nil {
