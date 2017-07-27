@@ -38,10 +38,7 @@ func NewClient(cnf *Config) *Client {
 }
 
 func (c *Client) GetTagDigest(path string) (string, error) {
-	var (
-		digest string
-	)
-
+	var digest string
 	hdrs := &http.Header{
 		"Authorization": {"Bearer " + c.config.AccessToken},
 		"Accept":        {"application/vnd.docker.distribution.manifest.v2+json"},
@@ -89,6 +86,19 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 
 	token = fmt.Sprintf("%s", t)
 	return token, nil
+}
+
+func (c *Client) BasicAuthGet(path, user, pass string, v *url.Values) ([]byte, error) {
+	return c.get(
+		path,
+		&setreq{
+			values: v,
+			basic: &credentials.UserPass{
+				Username: user,
+				Password: pass,
+			},
+		},
+	)
 }
 
 func (c *Client) AuthGet(path string) ([]byte, error) {
@@ -210,17 +220,19 @@ func (c *Client) initReq(r *http.Request, p *setreq) *http.Request {
 		r.SetBasicAuth(p.basic.Username, p.basic.Password)
 	}
 
-	verboseRequest(r)
+	c.verboseRequest(r)
 	return r
 }
 
-func verboseRequest(r *http.Request) {
+func (c *Client) verboseRequest(r *http.Request) {
 	if d.Verbose {
 		d.Info("[URL]", r.URL.String())
 		d.Info("[METHOD]", r.Method)
 		for n, h := range r.Header {
 			d.Info(fmt.Sprintf("[REQUEST] %s: %s", n, h))
 		}
+
+		d.Info("[TIMEOUT]", c.client.Timeout)
 	}
 }
 
