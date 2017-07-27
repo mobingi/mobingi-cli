@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"time"
 
 	"github.com/mobingilabs/mocli/client"
@@ -44,8 +42,7 @@ Otherwise,
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Println(err)
-		os.Exit(-1)
+		check.ErrorExit(err, 1)
 	}
 }
 
