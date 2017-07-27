@@ -7,28 +7,31 @@ import (
 
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/parnurzeal/gorequest"
+	"github.com/pkg/errors"
 )
 
 func isError(err interface{}) bool {
+	var derr error
 	valid := false
 	switch err.(type) {
 	case string:
 		if err != "" {
+			derr = errors.WithStack(fmt.Errorf(fmt.Sprintf("%s", err)))
 			d.Error(err)
 			valid = true
 		}
 	case error:
 		if err != nil {
+			e, _ := err.(error)
+			derr = errors.WithStack(e)
 			d.Error(err)
 			valid = true
 		}
-	case []error:
-		s, ok := err.([]error)
-		if ok {
-			if len(s) > 0 {
-				d.Error(s)
-				valid = true
-			}
+	}
+
+	if valid {
+		if IsDbgMode() {
+			fmt.Printf("%+v\n", derr)
 		}
 	}
 

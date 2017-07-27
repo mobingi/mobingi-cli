@@ -56,6 +56,7 @@ func init() {
 	rootCmd.PersistentFlags().IntP("indent", "n", 4, "indent padding when fmt is 'text' or 'json'")
 	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(check.DevMode(), "devmode", true, "development mode")
+	rootCmd.PersistentFlags().BoolVar(check.DbgMode(), "debug", false, "debug mode when error")
 	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
 
 	rootCmd.AddCommand(
