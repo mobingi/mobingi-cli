@@ -34,10 +34,10 @@ using the '--out=[filename]' option. You need to specify either
 
 Examples:
 
-  $ mocli stack list
-  $ mocli stack list --fmt=text
-  $ mocli stack list --fmt=json --verbose
-  $ mocli stack list --fmt=raw --out=/home/foo/tmp.txt`,
+  $ ` + cli.BinName() + ` stack list
+  $ ` + cli.BinName() + ` stack list --fmt=text
+  $ ` + cli.BinName() + ` stack list --fmt=json --verbose
+  $ ` + cli.BinName() + ` stack list --fmt=raw --out=/home/foo/tmp.txt`,
 		Run: stackList,
 	}
 

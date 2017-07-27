@@ -19,7 +19,7 @@ it will only print the token value.
 
 Example:
 
-  $ mocli registry token \
+  $ ` + cli.BinName() + ` registry token \
       --username=foo \
       --password=bar \
       --scope="repository:foo/sample:pull"`,

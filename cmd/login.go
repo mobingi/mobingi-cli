@@ -24,13 +24,13 @@ func LoginCmd() *cobra.Command {
 		Use:   "login",
 		Short: "login to Mobingi API",
 		Long: `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to
-enter your username and password. Token will be saved in $HOME/.mocli/credentials.
+enter your username and password. Token will be saved in $HOME/.` + cli.BinName() + `/credentials.
 
 Valid 'grant-type' values: client_credentials, password
 
 Examples:
 
-  $ mocli login --client-id=foo --client-secret=bar`,
+  $ ` + cli.BinName() + ` login --client-id=foo --client-secret=bar`,
 		Run: login,
 	}
 
