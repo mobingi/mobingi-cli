@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -24,15 +25,13 @@ type setreq struct {
 }
 
 type Client struct {
-	client *http.Client
-	config *Config
+	client *http.Client // our http client
+	config *Config      // client configuration(s)
 }
 
 func NewClient(cnf *Config) *Client {
 	return &Client{
-		client: &http.Client{
-			Timeout: time.Second * time.Duration(Timeout),
-		},
+		client: &http.Client{},
 		config: cnf,
 	}
 }
@@ -127,7 +126,10 @@ func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
 		return nil, err
 	}
 
-	req = c.initReq(req, p)
+	var cancel context.CancelFunc
+	req, cancel = c.initReq(req, p)
+	defer cancel()
+
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -145,8 +147,9 @@ func (c *Client) get(path string, p *setreq) ([]byte, error) {
 		return nil, err
 	}
 
-	req = c.initReq(req, p)
-	return c.send(req)
+	var cancel context.CancelFunc
+	req, cancel = c.initReq(req, p)
+	return c.send(req, cancel)
 }
 
 func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
@@ -155,8 +158,9 @@ func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	req = c.initReq(req, p)
-	return c.send(req)
+	var cancel context.CancelFunc
+	req, cancel = c.initReq(req, p)
+	return c.send(req, cancel)
 }
 
 func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
@@ -165,8 +169,9 @@ func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	req = c.initReq(req, p)
-	return c.send(req)
+	var cancel context.CancelFunc
+	req, cancel = c.initReq(req, p)
+	return c.send(req, cancel)
 }
 
 func (c *Client) del(path string, p *setreq) ([]byte, error) {
@@ -175,11 +180,16 @@ func (c *Client) del(path string, p *setreq) ([]byte, error) {
 		return nil, err
 	}
 
-	req = c.initReq(req, p)
-	return c.send(req)
+	var cancel context.CancelFunc
+	req, cancel = c.initReq(req, p)
+	return c.send(req, cancel)
 }
 
-func (c *Client) send(r *http.Request) ([]byte, error) {
+func (c *Client) send(r *http.Request, cancel context.CancelFunc) ([]byte, error) {
+	if cancel != nil {
+		defer cancel()
+	}
+
 	resp, err := c.client.Do(r)
 	if err != nil {
 		return nil, err
@@ -204,7 +214,10 @@ func (c *Client) authHdr() http.Header {
 	return http.Header{"Authorization": {"Bearer " + c.config.AccessToken}}
 }
 
-func (c *Client) initReq(r *http.Request, p *setreq) *http.Request {
+func (c *Client) initReq(r *http.Request, p *setreq) (*http.Request, context.CancelFunc) {
+	ctx, cancel := context.WithTimeout(r.Context(), time.Second*time.Duration(Timeout))
+	r = r.WithContext(ctx)
+
 	if p.header != nil {
 		for name, hdr := range *p.header {
 			r.Header.Add(name, hdr[0])
@@ -221,7 +234,7 @@ func (c *Client) initReq(r *http.Request, p *setreq) *http.Request {
 	}
 
 	c.verboseRequest(r)
-	return r
+	return r, cancel
 }
 
 func (c *Client) verboseRequest(r *http.Request) {
@@ -231,8 +244,6 @@ func (c *Client) verboseRequest(r *http.Request) {
 		for n, h := range r.Header {
 			d.Info(fmt.Sprintf("[REQUEST] %s: %s", n, h))
 		}
-
-		d.Info("[TIMEOUT]", c.client.Timeout)
 	}
 }
 

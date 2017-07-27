@@ -59,7 +59,7 @@
   branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "90fc11bbc0a789c29272c21b5ff9e93db183f8dc"
+  revision = "34594c771f2c18301dc152640ad40ece28795373"
 
 [[projects]]
   name = "github.com/spf13/pflag"
@@ -71,19 +71,19 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "6914964337150723782436d56b3f21610a74ce7b"
+  revision = "2faea1465de239e4babd8f5905cc25b781712442"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["idna","publicsuffix"]
-  revision = "ab5485076ff3407ad2d02db054635913f017b0ed"
+  revision = "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "c4489faa6e5ab84c0ef40d6ee878f7a030281f0f"
+  revision = "02a66801d979d706a4b445e24e03916eeaa2a404"
 
 [[projects]]
   branch = "master"
