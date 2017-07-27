@@ -20,7 +20,7 @@ Usage:
   mocli [command]
 
 Available Commands:
-  help        Help about any command
+  help        help about any command
   login       login to Mobingi API
   registry    manage your docker registry
   stack       manage your stack
@@ -29,6 +29,7 @@ Available Commands:
 
 Flags:
       --apiver string   API version (default "v2")
+      --debug           debug mode when error
       --devmode         development mode (default true)
   -f, --fmt string      output format (values depends on command)
   -h, --help            help for mocli
