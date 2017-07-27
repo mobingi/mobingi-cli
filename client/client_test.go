@@ -19,27 +19,16 @@ func TestGetTagDigest(t *testing.T) {
 			t.Errorf("Expected method GET; got %q", r.Method)
 		}
 
-		found := false
-		for n, h := range r.Header {
-			if n == "Accept" {
-				found = true
-				if h[0] != "application/vnd.docker.distribution.manifest.v2+json" {
-					t.Errorf("Expected 'application/vnd.docker.distribution.manifest.v2+json'; got %q, h[0]")
-				}
-			}
+		accpt := r.Header.Get("Accept")
+		if accpt != "application/vnd.docker.distribution.manifest.v2+json" {
+			t.Errorf("Expected 'application/vnd.docker.distribution.manifest.v2+json'; got %q, h[0]")
 		}
 
-		if !found {
-			t.Errorf("Cannot find 'Accept' header")
-		}
-
+		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Etag", "\"sha256:testdigest\"")
 	}))
 
 	defer ts.Close()
 	c := NewClient(&Config{RootUrl: ts.URL})
-	digest, _ := c.GetTagDigest("/test")
-	if digest == "" {
-		t.Errorf("Expected sample digest; got none")
-	}
+	c.GetTagDigest("/test")
 }

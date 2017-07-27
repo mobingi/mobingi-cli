@@ -85,7 +85,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 	default:
 		if d.Verbose {
-			d.Info("Token used:", token)
+			d.Info("[TOKEN USED]", token)
 		}
 
 		var t tags
