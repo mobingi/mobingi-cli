@@ -58,6 +58,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(check.DevMode(), "devmode", true, "development mode")
 	rootCmd.PersistentFlags().BoolVar(check.DbgMode(), "debug", false, "debug mode when error")
 	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
+	rootCmd.SetHelpCommand(HelpCmd())
 
 	rootCmd.AddCommand(
 		LoginCmd(),
