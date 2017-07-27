@@ -121,7 +121,7 @@ func (c *Client) url() string {
 }
 
 func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
-	req, err := http.NewRequest("GET", c.url()+path, nil)
+	req, err := http.NewRequest(http.MethodGet, c.url()+path, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
 }
 
 func (c *Client) get(path string, p *setreq) ([]byte, error) {
-	req, err := http.NewRequest("GET", c.url()+path, nil)
+	req, err := http.NewRequest(http.MethodGet, c.url()+path, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func (c *Client) get(path string, p *setreq) ([]byte, error) {
 }
 
 func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
-	req, err := http.NewRequest("POST", c.url()+path, bytes.NewBuffer(pl))
+	req, err := http.NewRequest(http.MethodPost, c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
 }
 
 func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
-	req, err := http.NewRequest("PUT", c.url()+path, bytes.NewBuffer(pl))
+	req, err := http.NewRequest(http.MethodPut, c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
 }
 
 func (c *Client) del(path string, p *setreq) ([]byte, error) {
-	req, err := http.NewRequest("DELETE", c.url()+path, nil)
+	req, err := http.NewRequest(http.MethodDelete, c.url()+path, nil)
 	if err != nil {
 		return nil, err
 	}
