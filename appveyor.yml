@@ -25,3 +25,4 @@ build_script:
   - go test -v ./pkg/check
   - go test -v ./pkg/pretty
   - go test -v ./cmd
+  - go test -v ./client
