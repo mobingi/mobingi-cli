@@ -2,8 +2,8 @@ package cli
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -31,5 +31,5 @@ func GetCliIntFlag(cmd *cobra.Command, f string) int {
 }
 
 func BinName() string {
-	return strings.TrimPrefix(os.Args[0], "./")
+	return filepath.Base(os.Args[0])
 }
