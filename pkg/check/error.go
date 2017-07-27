@@ -11,8 +11,11 @@ import (
 )
 
 func isError(err interface{}) bool {
-	var derr error
-	valid := false
+	var (
+		derr  error
+		valid bool
+	)
+
 	switch err.(type) {
 	case string:
 		if err != "" {
@@ -31,6 +34,7 @@ func isError(err interface{}) bool {
 
 	if valid {
 		if IsDbgMode() {
+			// stack trace from 'errors'
 			fmt.Printf("%+v\n", derr)
 		}
 	}
