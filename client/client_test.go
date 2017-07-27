@@ -27,8 +27,6 @@ func TestGetTagDigest(t *testing.T) {
 		w.Header().Add("Etag", "\"sha256:testdigest\"")
 	}))
 
-	Timeout = 120
-
 	defer ts.Close()
 	c := NewClient(&Config{RootUrl: ts.URL})
 	digest, err := c.GetTagDigest("/test")

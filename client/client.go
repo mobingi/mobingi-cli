@@ -16,7 +16,7 @@ import (
 	d "github.com/mobingilabs/mocli/pkg/debug"
 )
 
-var Timeout int64
+var Timeout int64 = 120 // same default value with cmdline flag (seconds)
 
 type setreq struct {
 	values *url.Values           // when not nil, we populate raw query
