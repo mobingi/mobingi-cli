@@ -15,20 +15,28 @@ func TestNewClient(t *testing.T) {
 
 func TestGetTagDigest(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			t.Errorf("Expected method GET; got %q", r.Method)
+		if r.Method != http.MethodGet {
+			t.Errorf("Expected method %s; got %q", http.MethodGet, r.Method)
 		}
 
 		accpt := r.Header.Get("Accept")
 		if accpt != "application/vnd.docker.distribution.manifest.v2+json" {
-			t.Errorf("Expected 'application/vnd.docker.distribution.manifest.v2+json'; got %q, h[0]")
+			t.Errorf("Expected 'application/vnd.docker.distribution.manifest.v2+json'; got %q", accpt)
 		}
 
-		w.WriteHeader(http.StatusOK)
 		w.Header().Add("Etag", "\"sha256:testdigest\"")
 	}))
 
+	Timeout = 120
+
 	defer ts.Close()
 	c := NewClient(&Config{RootUrl: ts.URL})
-	c.GetTagDigest("/test")
+	digest, err := c.GetTagDigest("/test")
+	if err != nil {
+		t.Errorf("Expected success; got %v", err)
+	}
+
+	if digest == "" {
+		t.Errorf("Expected a digest value; got none")
+	}
 }
