@@ -25,7 +25,8 @@ Supported formats: raw, json
 Examples:
 
   $ ` + cli.BinName() + ` creds list
-  $ ` + cli.BinName() + ` creds list --fmt=json`,
+  $ ` + cli.BinName() + ` creds list --fmt=json
+  $ ` + cli.BinName() + ` creds list --fmt=raw`,
 		Run: credsList,
 	}
 

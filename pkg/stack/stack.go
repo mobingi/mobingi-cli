@@ -210,6 +210,25 @@ type DescribeStack2 struct {
 	UserId        string        `json:"user_id,omitempty"`
 }
 
+type CreateStackDb struct {
+	Engine string `json:"Engine,omitempty"`
+}
+
+type CreateStackConfig struct {
+	Architecture      string `json:"architecture,omitempty"`
+	Type              string `json:"type,omitempty"`
+	Image             string `json:"image,omitempty"`
+	DockerHubUsername string `json:"dockerHubUsername,omitempty"`
+	DockerHubPassword string `json:"dockerHubPassword,omitempty"`
+	Min               int    `json:"min,omitempty"`
+	Max               int    `json:"max,omitempty"`
+	SpotRange         int    `json:"spotRange,omitempty"`
+	Nickname          string `json:"nickname,omitempty"`
+	Code              string `json:"code,omitempty"`
+	GitReference      string `json:"gitReference,omitempty"`
+	GitPrivateKey     string `json:"gitPrivateKey,omitempty"`
+}
+
 // PrintR prints the `field: value` of the input struct recursively. Recursion level `lvl` and `indent`
 // are provided for indention in printing. For slices, we have to do an explicit type assertion
 // to get the underlying slice from reflect.
