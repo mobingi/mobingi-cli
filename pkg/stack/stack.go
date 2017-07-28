@@ -8,25 +8,29 @@ import (
 	"github.com/mobingilabs/mocli/pkg/pretty"
 )
 
+// Changes:
+//
+// 2017-07-18:
+//   - Max, MaxOrigin, Min, MinOrigin - changed to int (we still need to support old string)
 type Configuration struct {
-	AWS                 string `json:"AWS,omitempty"`
-	AWSAccountName      string `json:"AWS_ACCOUNT_NAME,omitempty"`
-	AssociatePublicIp   string `json:"AssociatePublicIP,omitempty"`
-	ELBOpen443Port      string `json:"ELBOpen443Port,omitempty"`
-	ELBOpen80Port       string `json:"ELBOpen80Port,omitempty"`
-	SpotInstanceMaxSize int    `json:"SpotInstanceMaxSize,omitempty"`
-	SpotInstanceMinSize int    `json:"SpotInstanceMinSize,omitempty"`
-	SpotPrice           string `json:"SpotPrice,omitempty"`
-	Architecture        string `json:"architecture,omitempty"`
-	Code                string `json:"code,omitempty"`
-	Image               string `json:"image,omitempty"`
-	Max                 int    `json:"max,omitempty"`
-	MaxOrigin           int    `json:"maxOrigin,omitempty"`
-	Min                 int    `json:"min,omitempty"`
-	MinOrigin           int    `json:"minOrigin,omitempty"`
-	Nickname            string `json:"nickname,omitempty"`
-	Region              string `json:"region,omitempty"`
-	Type                string `json:"type,omitempty"`
+	AWS                 string      `json:"AWS,omitempty"`
+	AWSAccountName      string      `json:"AWS_ACCOUNT_NAME,omitempty"`
+	AssociatePublicIp   string      `json:"AssociatePublicIP,omitempty"`
+	ELBOpen443Port      string      `json:"ELBOpen443Port,omitempty"`
+	ELBOpen80Port       string      `json:"ELBOpen80Port,omitempty"`
+	SpotInstanceMaxSize int         `json:"SpotInstanceMaxSize,omitempty"`
+	SpotInstanceMinSize int         `json:"SpotInstanceMinSize,omitempty"`
+	SpotPrice           string      `json:"SpotPrice,omitempty"`
+	Architecture        string      `json:"architecture,omitempty"`
+	Code                string      `json:"code,omitempty"`
+	Image               string      `json:"image,omitempty"`
+	Max                 interface{} `json:"max,omitempty"`
+	MaxOrigin           interface{} `json:"maxOrigin,omitempty"`
+	Min                 interface{} `json:"min,omitempty"`
+	MinOrigin           interface{} `json:"minOrigin,omitempty"`
+	Nickname            string      `json:"nickname,omitempty"`
+	Region              string      `json:"region,omitempty"`
+	Type                string      `json:"type,omitempty"`
 }
 
 type StackOutput struct {
@@ -219,6 +223,8 @@ func PrintR(w io.Writer, s interface{}, lvl, indent int) {
 		value := rv.Field(i).Interface()
 
 		switch rv.Field(i).Kind() {
+		case reflect.Interface:
+			fmt.Fprintf(w, "%s%s: %v\n", pad, field, value)
 		case reflect.String:
 			fmt.Fprintf(w, "%s%s: %s\n", pad, field, value)
 		case reflect.Int32:
