@@ -69,6 +69,7 @@ func init() {
 		LoginCmd(),
 		StackCmd(),
 		ServerConfigCmd(),
+		CredentialsCmd(),
 		RegistryCmd(),
 		VersionCmd(),
 	)
