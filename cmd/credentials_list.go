@@ -18,8 +18,15 @@ func CredentialsListCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "list your credentials",
-		Long:  `List your credentials.`,
-		Run:   credsList,
+		Long: `List your credentials.
+
+Supported formats: raw, json
+
+Examples:
+
+  $ ` + cli.BinName() + ` creds list
+  $ ` + cli.BinName() + ` creds list --fmt=json`,
+		Run: credsList,
 	}
 
 	cmd.Flags().String("vendor", "aws", "credentials vendor")
