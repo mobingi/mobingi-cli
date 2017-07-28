@@ -104,65 +104,66 @@ $ mocli stack list --fmt=json
 $ mocli stack list --fmt=raw --out=`echo $HOME`/out.txt
 ```
 
+Enclose with double quotes if absolute file path has whitespace(s) in it.
+
 ### Describe a stack
 
-To describe a specific stack, run
+Examples:
 
 ```
-$ mocli stack describe --id=stack_id
-```
-
-You can get the stack id from the `stack list` command. This command supports `text`, `json`, `raw`, and `min` output formats via the `--fmt=text|json|raw|min` option, as well as writing to a file via the `--out=full_path_to_file` option.
-
-### Delete a stack
-
-To delete a stack, run
-
-```
-$ mocli stack delete --id=stack_id
+$ mocli stack describe --id=foo
+$ mocli stack describe --id=foo --fmt=raw --out=/home/bar/out.txt
 ```
 
 You can get the stack id from the `stack list` command.
+
+### Delete a stack
+
+Example:
+
+```
+$ mocli stack delete --id=foo
+```
 
 ## Server config operations
 
 ### Show server config
 
-To show server config of a specific stack, run
+Example:
 
 ```
-$ mocli svrconf show --id=stack_id
+$ mocli svrconf show --id=foo
 ```
 
-You can get the stack id from the `stack list` command. This command supports `json`, and `raw` output formats via the `--fmt=json|raw` option, as well as writing to a file via the `--out=full_path_to_file` option.
+You can get the stack id from the `stack list` command.
 
 ### Update server config
 
-To update server config environment variables, run
+Examples:
 
 ```
-$ mocli svrconf update --id=stack_id --env=KEY1:value1,KEY2:value2,KEYx:valuex...
+$ mocli svrconf update --id=foo --env=KEY1:value1,KEY2:value2,KEYx:valuex
 ```
 
-or if you have whitespaces in the input, enclose it with double quotes.
+If you have whitespaces in the input, enclose it with double quotes
 
 ```
-$ mocli svrconf update --id=stack_id --env="KEY1: value1, KEY2: value2, KEYx: valuex, ..."
+$ mocli svrconf update --id=foo --env="KEY1: value1, KEY2: value2, KEYx: valuex"
 ```
 
-To clear all environment variables, set `--env=null` option.
+To clear all environment variables, set `--env=null` option
 
 ```
-$ mocli svrconf update --id=stack_id --env=null
+$ mocli svrconf update --id=foo --env=null
 ```
 
 To update server config filepath, run
 
 ```
-$ mocli svrconf update --id=stack_id --filepath=new_file_path
+$ mocli svrconf update --id=foo --filepath=git://github.com/mobingilabs/default
 ```
 
-Note that when you provide update options simultaneously (for example, you provide `--env=value` and `--filepath=value` at the same time), the tool will send each option as a separate request.
+Note that when you provide update options simultaneously (for example, you provide `--env=FOO:bar` and `--filepath=test` at the same time), the tool will send each option as a separate request.
 
 ## Vendor credentials
 
