@@ -84,7 +84,7 @@ $ go build -v
 This is the first command you need to run to use the other commands. To login, run
 
 ```
-$ mocli login --client-id=value --client-secret=value
+$ mocli login --client-id=foo --client-secret=bar
 ```
 
 This will create a file `credentials` under `{home}/.mocli/` folder that will contain the API token to be used for your subsequent commands.
@@ -93,19 +93,19 @@ This will create a file `credentials` under `{home}/.mocli/` folder that will co
 
 ### List stacks
 
-To list your stacks, run
+Examples:
 
 ```
+# simplest form
 $ mocli stack list
-```
 
-By default, this will list your stack(s) in a tabular form with minimal information (`--fmt=min`). If you want to display more information, run
+# different formats
+$ mocli stack list --fmt=text
+$ mocli stack list --fmt=json
 
+# write output to file
+$ mocli stack list --fmt=raw --out=`echo $HOME`/out.txt
 ```
-$ mocli stack list --fmt=[text|json]
-```
-
-You can also save the output to a file by adding the option `--out=full_path_to_file`. If your path contains whitespaces, enclose `full_path_to_file` with double-quotes.
 
 ### Describe a stack
 
