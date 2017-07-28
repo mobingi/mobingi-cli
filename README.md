@@ -97,10 +97,8 @@ Examples:
 
 ```
 $ mocli stack list
-
 $ mocli stack list --fmt=text
 $ mocli stack list --fmt=json
-
 $ mocli stack list --fmt=raw --out=`echo $HOME`/out.txt
 ```
 
@@ -192,7 +190,7 @@ $ mocli registry token \
       --scope="repository:foo/container:*"
 ```
 
-where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`. By default, it will only print the token value. To print the raw JSON output, append the `--fmt=raw` option.
+where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`.
 
 ```
 $ mocli registry token --scope="repository:foo/container:*"
@@ -200,6 +198,8 @@ Username:
 Password:
 ```
 
+By default, it will only print the token value. To print the raw JSON output, append the `--fmt=raw` option.
+ 
 This is useful when you want to access the registry directly using other tools. For example, you can use the token when using Docker Registry API via `curl`.
 
 ```
