@@ -6,15 +6,19 @@
 ```
 Command line interface for Mobingi API and services.
 
-When '--devmode=true', the following base urls are used:
-    
-  https://apidev.mobingi.com         - API access
-  https://dockereg2.labs.mobingi.com - Docker Registry access
+Endpoints based on '--runenv' option:
 
-Otherwise,
+  dev
+    - https://apidev.mobingi.com
+    - https://dockereg2.labs.mobingi.com
 
-  https://api.mobingi.com
-  https://registry.mobingi.com
+  qa
+    - https://apiqa.mobingi.com
+    - https://registry.mobingi.com
+
+  prod
+    - https://api.mobingi.com
+    - https://registry.mobingi.com
 
 Usage:
   mocli [command]
@@ -30,11 +34,11 @@ Available Commands:
 Flags:
       --apiver string   API version (default "v2")
       --debug           debug mode when error
-      --devmode         development mode (default true)
   -f, --fmt string      output format (values depends on command)
   -h, --help            help for mocli
   -n, --indent int      indent padding when fmt is 'text' or 'json' (default 4)
   -o, --out string      full file path to write the output
+      --runenv string   run in environment (dev, qa, prod) (default "dev")
       --rurl string     base url for Docker Registry
       --timeout int     timeout in seconds (default 120)
       --token string    access token
