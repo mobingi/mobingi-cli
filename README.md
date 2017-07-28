@@ -243,3 +243,7 @@ To delete a tag, run
 ```
 $ mocli registry delete [--username=foo] [--password=bar] --image=hello:latest
 ```
+
+## Verbose output
+
+You can use the global `--verbose` option if you want to see more information during the command execution.
