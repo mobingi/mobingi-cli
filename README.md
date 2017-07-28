@@ -96,14 +96,11 @@ This will create a file `credentials` under `{home}/.mocli/` folder that will co
 Examples:
 
 ```
-# simplest form
 $ mocli stack list
 
-# different formats
 $ mocli stack list --fmt=text
 $ mocli stack list --fmt=json
 
-# write output to file
 $ mocli stack list --fmt=raw --out=`echo $HOME`/out.txt
 ```
 
