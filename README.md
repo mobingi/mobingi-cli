@@ -167,6 +167,18 @@ $ mocli svrconf update --id=stack_id --filepath=new_file_path
 
 Note that when you provide update options simultaneously (for example, you provide `--env=value` and `--filepath=value` at the same time), the tool will send each option as a separate request.
 
+## Vendor credentials
+
+### View vendor credentials
+
+Examples:
+
+```
+$ mocli creds list
+$ mocli creds list --fmt=json
+$ mocli creds list --fmt=raw
+```
+
 ## Mobingi Docker registry
 
 ### Get token for Docker Registry API
