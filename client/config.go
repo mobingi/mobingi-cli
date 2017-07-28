@@ -2,7 +2,6 @@ package client
 
 import (
 	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	"github.com/spf13/cobra"
 )
@@ -15,21 +14,14 @@ type Config struct {
 
 func NewApiConfig(cmd *cobra.Command) *Config {
 	token := cli.GetCliStringFlag(cmd, "token")
-	baseurl := cli.GetCliStringFlag(cmd, "url")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
+	baseurl := cli.BaseApiUrl(cmd)
 
 	// if already logged in
 	if token == "" {
 		t, err := credentials.GetToken()
 		if err == nil {
 			token = string(t)
-		}
-	}
-
-	if baseurl == "" {
-		baseurl = constants.PROD_API_BASE
-		if cli.IsDevMode() {
-			baseurl = constants.DEV_API_BASE
 		}
 	}
 

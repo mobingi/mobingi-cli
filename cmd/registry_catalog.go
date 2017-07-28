@@ -39,7 +39,7 @@ Example:
 
 func printCatalog(cmd *cobra.Command, args []string) {
 	userpass := userPass(cmd)
-	base := BaseApiUrl(cmd)
+	base := cli.BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
@@ -62,7 +62,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 	}
 
 	c := client.NewClient(&client.Config{
-		RootUrl:     BaseRegUrl(cmd),
+		RootUrl:     cli.BaseRegUrl(cmd),
 		ApiVersion:  constants.DOCKER_API_VER,
 		AccessToken: token,
 	})

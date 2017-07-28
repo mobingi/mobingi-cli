@@ -36,7 +36,7 @@ Example:
 
 func deleteTag(cmd *cobra.Command, args []string) {
 	userpass := userPass(cmd)
-	base := BaseApiUrl(cmd)
+	base := cli.BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
@@ -68,7 +68,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	_, token, err := registry.GetRegistryToken(tp)
 	check.ErrorExit(err, 1)
 
-	rurl := BaseRegUrl(cmd)
+	rurl := cli.BaseRegUrl(cmd)
 	c := client.NewClient(&client.Config{
 		RootUrl:     rurl,
 		ApiVersion:  constants.DOCKER_API_VER,

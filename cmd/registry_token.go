@@ -35,7 +35,7 @@ Example:
 
 func token(cmd *cobra.Command, args []string) {
 	userpass := userPass(cmd)
-	base := BaseApiUrl(cmd)
+	base := cli.BaseApiUrl(cmd)
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
