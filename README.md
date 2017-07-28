@@ -24,6 +24,7 @@ Usage:
   mocli [command]
 
 Available Commands:
+  creds       manage your credentials
   help        help about any command
   login       login to Mobingi API
   registry    manage your docker registry
