@@ -6,6 +6,7 @@ import (
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
 )
@@ -55,8 +56,8 @@ func init() {
 	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
 	rootCmd.PersistentFlags().IntP("indent", "n", 4, "indent padding when fmt is 'text' or 'json'")
 	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVar(check.DevMode(), "devmode", true, "development mode")
-	rootCmd.PersistentFlags().BoolVar(check.DbgMode(), "debug", false, "debug mode when error")
+	rootCmd.PersistentFlags().BoolVar(cli.DevMode(), "devmode", true, "development mode")
+	rootCmd.PersistentFlags().BoolVar(cli.DbgMode(), "debug", false, "debug mode when error")
 	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.SetHelpCommand(HelpCmd())
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
@@ -33,7 +34,7 @@ func isError(err interface{}) bool {
 	}
 
 	if valid {
-		if IsDbgMode() {
+		if cli.IsDbgMode() {
 			// stack trace from 'errors'
 			fmt.Printf("%+v\n", derr)
 		}

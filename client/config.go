@@ -1,7 +1,6 @@
 package client
 
 import (
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/constants"
 	"github.com/mobingilabs/mocli/pkg/credentials"
@@ -29,7 +28,7 @@ func NewApiConfig(cmd *cobra.Command) *Config {
 
 	if baseurl == "" {
 		baseurl = constants.PROD_API_BASE
-		if check.IsDevMode() {
+		if cli.IsDevMode() {
 			baseurl = constants.DEV_API_BASE
 		}
 	}
