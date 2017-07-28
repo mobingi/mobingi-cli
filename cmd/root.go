@@ -18,15 +18,19 @@ var (
 		Short: "Mobingi API command line interface.",
 		Long: `Command line interface for Mobingi API and services.
 
-When '--devmode=true', the following base urls are used:
-    
-  https://apidev.mobingi.com         - API access
-  https://dockereg2.labs.mobingi.com - Docker Registry access
-	
-Otherwise,
+Endpoints based on '--runenv' option:
 
-  https://api.mobingi.com
-  https://registry.mobingi.com`,
+  dev
+    - https://apidev.mobingi.com
+    - https://dockereg2.labs.mobingi.com
+
+  qa
+    - https://apiqa.mobingi.com
+    - https://registry.mobingi.com
+
+  prod
+    - https://api.mobingi.com
+    - https://registry.mobingi.com`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			startTime = time.Now()
 		},
