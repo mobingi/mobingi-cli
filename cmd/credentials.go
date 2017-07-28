@@ -14,6 +14,7 @@ func CredentialsCmd() *cobra.Command {
 
 	cmd.AddCommand(
 		CredentialsListCmd(),
+		// CredentialsAddCmd(),
 	)
 
 	return cmd

@@ -105,6 +105,12 @@ func (c *Client) AuthGet(path string) ([]byte, error) {
 	return c.get(path, &setreq{header: &ah})
 }
 
+func (c *Client) AuthPost(path string, pl []byte) ([]byte, error) {
+	ah := c.authHdr()
+	ah.Add("Content-Type", "application/json")
+	return c.post(path, &setreq{header: &ah}, pl)
+}
+
 func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
