@@ -59,7 +59,7 @@ The easiest way to get mocli is to use one of the [pre-built release binaries](h
 
 If you want to try the latest version, you can build mocli from the master branch. You need to have Go installed (version 1.7+ is required). Note that the master branch may be in an unstable or even broken state during development.
 
-To build mocli, run
+### Building mocli
 
 ```
 $ git clone https://github.com/mobingilabs/mocli
@@ -68,7 +68,7 @@ $ go build -v
 $ ./mocli
 ```
 
-Or you can also install the binary to your `$GOPATH/bin` folder.
+You can also install the binary to your `$GOPATH/bin` folder (`$GOPATH/bin` should be added to your `$PATH` environment variable). 
 
 ```
 $ go get -u github.com/mobingilabs/mocli
