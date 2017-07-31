@@ -65,9 +65,10 @@ To build mocli, run
 $ git clone https://github.com/mobingilabs/mocli
 $ cd mocli
 $ go build -v
+$ ./mocli
 ```
 
-Or simply
+Or install the binary to your `$GOPATH/bin` folder.
 
 ```
 $ go get -u github.com/mobingilabs/mocli
