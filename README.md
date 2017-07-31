@@ -51,18 +51,26 @@ Flags:
 Use "mocli [command] --help" for more information about a command.
 ```
 
-# Installation
+# Getting started
 
-Make sure you have a [`Go`](https://golang.org/doc/install) environment.
+### Getting mocli
+
+The easiest way to get mocli is to use one of the pre-built release binaries which are available for OSX, Linux, Windows.
+
+If you want to try latest version, build mocli from the master branch. You need to have Go installed (version 1.7+ is required). Note that the master branch may be in an unstable or even broken state during development.
+
+To build mocli, run
+
+```
+$ git clone https://github.com/mobingilabs/mocli
+$ cd mocli
+$ go build -v
+```
+
+Or simply
 
 ```
 $ go get -u github.com/mobingilabs/mocli
-```
-
-# Build
-
-```
-$ go build -v
 ```
 
 # Usage
