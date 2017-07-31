@@ -68,10 +68,11 @@ $ go build -v
 $ ./mocli
 ```
 
-Or install the binary to your `$GOPATH/bin` folder.
+Or you can also install the binary to your `$GOPATH/bin` folder.
 
 ```
 $ go get -u github.com/mobingilabs/mocli
+$ mocli
 ```
 
 # Usage
