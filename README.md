@@ -185,7 +185,6 @@ To get token for Docker Registry API access, run
 $ mocli registry token \
       --username=foo \
       --password=bar \
-      --account=foo \
       --service="Mobingi Docker Registry" \
       --scope="repository:foo/container:*"
 ```
