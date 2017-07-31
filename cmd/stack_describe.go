@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"text/tabwriter"
 
-	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -84,11 +84,11 @@ func describe(cmd *cobra.Command, args []string) {
 
 	switch pfmt {
 	case "min":
-		stbl := term.NewTable(0, 10, 5, ' ', 0)
-		fmt.Fprintf(stbl, "INSTANCE ID\tINSTANCE TYPE\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
+		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+		fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
 		if valid == 1 {
 			for _, inst := range stacks1[0].Instances {
-				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\n",
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
 					inst.InstanceType,
 					inst.PublicIpAddress,
@@ -99,7 +99,7 @@ func describe(cmd *cobra.Command, args []string) {
 
 		if valid == 2 {
 			for _, inst := range stacks2[0].Instances {
-				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\n",
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
 					inst.InstanceType,
 					inst.PublicIpAddress,
@@ -108,8 +108,7 @@ func describe(cmd *cobra.Command, args []string) {
 			}
 		}
 
-		term.Print(stbl)
-		term.Flush()
+		w.Flush()
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", pretty.Indent(indent))

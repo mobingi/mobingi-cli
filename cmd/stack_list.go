@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"text/tabwriter"
 	"time"
 
-	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -97,8 +97,8 @@ func stackList(cmd *cobra.Command, args []string) {
 		}
 	default:
 		if pfmt == "min" || pfmt == "" {
-			stbl := term.NewTable(0, 10, 5, ' ', 0)
-			fmt.Fprintf(stbl, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
+			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+			fmt.Fprintf(w, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
 			for _, s := range stacks {
 				timestr := s.CreateTime
 				t, err := time.Parse(time.RFC3339, s.CreateTime)
@@ -111,7 +111,7 @@ func stackList(cmd *cobra.Command, args []string) {
 					platform = "AWS"
 				}
 
-				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\t%s\t%s\n",
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
 					s.StackId,
 					s.Nickname,
 					platform,
@@ -120,8 +120,7 @@ func stackList(cmd *cobra.Command, args []string) {
 					timestr)
 			}
 
-			term.Print(stbl)
-			term.Flush()
+			w.Flush()
 		}
 	}
 }

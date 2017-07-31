@@ -3,8 +3,9 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"text/tabwriter"
 
-	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -92,14 +93,14 @@ func tagsList(cmd *cobra.Command, args []string) {
 		err = json.Unmarshal(body, &t)
 		check.ErrorExit(err, 1)
 
-		stbl := term.NewTable(0, 10, 5, ' ', 0)
-		fmt.Fprintf(stbl, "IMAGE\tTAG\n")
+		// write table
+		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+		fmt.Fprintf(w, "IMAGE\tTAG\n")
 		for _, v := range t.Tags {
-			fmt.Fprintf(stbl, "%s\t%s\n", t.Name, v)
+			fmt.Fprintf(w, "%s\t%s\n", t.Name, v)
 		}
 
-		term.Print(stbl)
-		term.Flush()
+		w.Flush()
 	}
 
 	/*

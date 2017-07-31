@@ -3,9 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"text/tabwriter"
 	"time"
 
-	term "github.com/buger/goterm"
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -55,8 +56,8 @@ func credsList(cmd *cobra.Command, args []string) {
 
 		fmt.Println(string(mi))
 	default:
-		stbl := term.NewTable(0, 10, 5, ' ', 0)
-		fmt.Fprintf(stbl, "VENDOR\tID\tACCOUNT\tLAST MODIFIED\n")
+		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+		fmt.Fprintf(w, "VENDOR\tID\tACCOUNT\tLAST MODIFIED\n")
 		for _, cred := range creds {
 			timestr := cred.LastModified
 			t, err := time.Parse(time.RFC3339, cred.LastModified)
@@ -64,14 +65,13 @@ func credsList(cmd *cobra.Command, args []string) {
 				timestr = t.Format(time.RFC1123)
 			}
 
-			fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\n",
+			fmt.Fprintf(w, "%s\t%s\t%s\t%s\n",
 				vendor,
 				cred.Id,
 				cred.Account,
 				timestr)
 		}
 
-		term.Print(stbl)
-		term.Flush()
+		w.Flush()
 	}
 }
