@@ -57,7 +57,7 @@ Use "mocli [command] --help" for more information about a command.
 
 The easiest way to get mocli is to use one of the [pre-built release binaries](https://github.com/mobingilabs/mocli/releases) which are available for OSX, Linux, and Windows.
 
-If you want to try the latest version, you can build mocli from the master branch. You need to have Go installed (version 1.7+ is required). Note that the master branch may be in an unstable or even broken state during development.
+If you want to try the latest version, you can build mocli from the master branch. You need to have [Go](https://golang.org/) installed (version 1.7+ is required). Note that the master branch may be in an unstable or even broken state during development.
 
 ### Building mocli
 
