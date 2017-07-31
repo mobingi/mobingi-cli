@@ -61,20 +61,6 @@ $ go get -u github.com/mobingilabs/mocli
 
 # Build
 
-This tool uses [`dep`](https://github.com/golang/dep) for dependency management. You can install `dep` via
-
-```
-$ go get -u github.com/golang/dep/cmd/dep
-```
-
-If new vendor libraries are added, run
-
-```
-$ dep ensure -update -v
-```
-
-to add them to the `vendor` folder. To build the tool, run
-
 ```
 $ go build -v
 ```
