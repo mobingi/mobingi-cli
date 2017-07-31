@@ -189,7 +189,7 @@ $ mocli registry token \
       --scope="repository:foo/container:*"
 ```
 
-where `username` is a subuser under your Mobingi account. You can also remove `--username` and/or `--password`.
+where `username` is a subuser under your Mobingi account. You can also remove `--service`, `--username` and/or `--password`.
 
 ```
 $ mocli registry token --scope="repository:foo/container:*"
