@@ -51,7 +51,7 @@ Use "mocli [command] --help" for more information about a command.
 
 # Installation
 
-To install `mocli`, run
+Make sure you have a [`Go`](https://golang.org/doc/install) environment.
 
 ```
 $ go get -u github.com/mobingilabs/mocli
