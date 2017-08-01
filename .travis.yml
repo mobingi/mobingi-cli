@@ -1,22 +1,33 @@
 os:
   - linux
   - osx
-  
+
 language: go
 
 go:
   - master
 
-before_install:
+before_install: 
   # - go get -u github.com/golang/dep/cmd/dep
   # - dep ensure -v
-  
+
 script:
-  - go test -v $(go list ./... | grep -v /vendor/) -cover
-  - go build -v
+- go test -v $(go list ./... | grep -v /vendor/) -cover
+- go build -v
 
 after_success:
-  - ls -laF
-  - tar cvzf mocli.tar.gz mocli
-  - ls -laF
-  - git describe --abbrev=0 --tags
+  - echo ${TRAVIS_TAG}
+  - tar cvzf mocli-${TRAVIS_TAG}.tar.gz mocli
+
+before_deploy:
+  - export FILE_TO_UPLOAD=mocli-${TRAVIS_TAG}.tar.gz
+
+deploy:
+  provider: releases
+  api_key:
+    secure: ldzG+n92CICeD4HeRB74jRxPK51WiuMgjkwbLMyqjZpaPtLoRJADUPDng/qy88FNyuZlfSvOb8+r554e2lLNa7ddaKN58UzhDAqIAo54LaYA8RGNHZSH/Fy2gwchoedZlolJzdHWujyzNtOHEB2BHXJseYtALUiqNdSLy1oX8KhwKNiOBuZFFkCcDoDcOJ0ncjTuFgpxDLJu1F2vhiufnNFt7Sq8FFC9Dxa7viUurLln/Qv08m0yreg7YSeHoo4SssEnWU0K76EHyU5LifawOOxvxEoR5p4at3NWUX8E08MrjZs3/JwdXEU84Q5+8iOj/I24bYBInBfCYkB1Rsy/729ZSb+WMlR2RgUoE34W8t3iUkr6ii+Z5sPP8OFcAFvxq+ERKXS2SS3EFM5DisbbmiRFedxXNL3vQV3l0ar+HgRKVO6mqDuZAK21YLhJKiEpbIqa2cf58XSF5yTGd7cL4924TgbkjuJmw88wAxHlI+gQNbRLeK2zyU3kMy1MLV6BfKmC/aEEommgAY3Q+gTLT+rnNJY1EkK0NHe9dPawiM+ptLFqeNi7O2yz4HjuUPzyAn8oFcBe/cGjgUVdkuRzfyjK6raq98sLQlstLtu+C8FC9A49K2yBfDQy9M8kfLdSdAdhifFZBGX72pWsB+zZh5XLu8XFlGpSXWLc8ItyKgQ=
+  file: '${FILE_TO_UPLOAD}'
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
