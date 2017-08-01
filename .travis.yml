@@ -19,6 +19,4 @@ after_success:
   - ls -laF
   - tar cvzf mocli.tar.gz mocli
   - ls -laF
-
-before_deploy:
   - git describe --abbrev=0 --tags
