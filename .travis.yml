@@ -16,11 +16,9 @@ script:
 - go build -v
 
 after_success:
-  - echo ${TRAVIS_TAG}
-  - tar cvzf mocli-${TRAVIS_TAG}.tar.gz mocli
-
-before_deploy:
-  - export FILE_TO_UPLOAD=mocli-${TRAVIS_TAG}.tar.gz
+  - export FILE_TO_UPLOAD=mocli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-$(uname -m).tar.gz
+  - tar cvzf ${FILE_TO_UPLOAD} mocli
+  - ls -laF
 
 deploy:
   provider: releases
