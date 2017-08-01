@@ -32,7 +32,7 @@ after_build:
   - dir /w
 
 deploy:
-  release: %APPVEYOR_REPO_TAG_NAME%
+  release: $(appveyor_repo_tag_name)
   description: 'Test release for windows'
   provider: GitHub
   auth_token:
