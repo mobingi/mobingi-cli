@@ -16,21 +16,7 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "mocli",
 		Short: "Mobingi API command line interface.",
-		Long: `Command line interface for Mobingi API and services.
-
-Endpoints based on '--runenv' option:
-
-  dev
-    - https://apidev.mobingi.com
-    - https://dockereg2.labs.mobingi.com
-
-  qa
-    - https://apiqa.mobingi.com
-    - https://registry.mobingi.com
-
-  prod
-    - https://api.mobingi.com
-    - https://registry.mobingi.com`,
+		Long:  `Command line interface for Mobingi API and services.`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			startTime = time.Now()
 		},
@@ -60,7 +46,7 @@ func init() {
 	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
 	rootCmd.PersistentFlags().IntP("indent", "n", 4, "indent padding when fmt is 'text' or 'json'")
 	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
-	rootCmd.PersistentFlags().StringVar(&cli.RunEnv, "runenv", "dev", "run in environment (dev, qa, prod)")
+	rootCmd.PersistentFlags().StringVar(&cli.RunEnv, "runenv", "prod", "run in environment (dev, qa, prod)")
 	rootCmd.PersistentFlags().BoolVar(cli.DbgMode(), "debug", false, "debug mode when error")
 	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.SetHelpCommand(HelpCmd())

@@ -1,3 +1,3 @@
 package cli
 
-var RunEnv string = "dev" // same as default value in cmdline
+var RunEnv string = "prod" // same as default value in cmdline
