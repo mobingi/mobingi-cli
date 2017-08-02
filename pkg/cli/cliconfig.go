@@ -7,13 +7,13 @@ import (
 	"github.com/mobingilabs/mocli/pkg/pretty"
 )
 
-type cliConfig struct {
+type CliConfig struct {
 	RunEnv  string `json:"runenv"`
 	Verbose bool   `json:"verbose"`
 }
 
 func SetDefaultCliConfig(f string) error {
-	defcfg := cliConfig{RunEnv: "prod"}
+	defcfg := CliConfig{RunEnv: "prod"}
 	contents, err := json.MarshalIndent(defcfg, "", pretty.Indent(3))
 	if err != nil {
 		return err
