@@ -19,8 +19,6 @@ install:
   - go env
 
 build_script:
-  # - go get -u github.com/golang/dep/cmd/dep
-  # - dep ensure -v
   - go build -v
   - go test -v ./pkg/check
   - go test -v ./pkg/pretty
@@ -30,16 +28,17 @@ build_script:
 after_build:
   - 7z a mocli-%APPVEYOR_REPO_TAG_NAME%-windows-amd64.zip %APPVEYOR_BUILD_FOLDER%\mocli.exe
   - dir /w
+  
+artifacts:
+  - path: mocli-$(appveyor_repo_tag_name)-windows-amd64.zip
+    name: moclibin
 
 deploy:
-  release: $(appveyor_repo_tag_name)
-  description: 'Test release for windows'
+  description: 'Should be updated'
   provider: GitHub
   auth_token:
-    secure: ldzG+n92CICeD4HeRB74jRxPK51WiuMgjkwbLMyqjZpaPtLoRJADUPDng/qy88FNyuZlfSvOb8+r554e2lLNa7ddaKN58UzhDAqIAo54LaYA8RGNHZSH/Fy2gwchoedZlolJzdHWujyzNtOHEB2BHXJseYtALUiqNdSLy1oX8KhwKNiOBuZFFkCcDoDcOJ0ncjTuFgpxDLJu1F2vhiufnNFt7Sq8FFC9Dxa7viUurLln/Qv08m0yreg7YSeHoo4SssEnWU0K76EHyU5LifawOOxvxEoR5p4at3NWUX8E08MrjZs3/JwdXEU84Q5+8iOj/I24bYBInBfCYkB1Rsy/729ZSb+WMlR2RgUoE34W8t3iUkr6ii+Z5sPP8OFcAFvxq+ERKXS2SS3EFM5DisbbmiRFedxXNL3vQV3l0ar+HgRKVO6mqDuZAK21YLhJKiEpbIqa2cf58XSF5yTGd7cL4924TgbkjuJmw88wAxHlI+gQNbRLeK2zyU3kMy1MLV6BfKmC/aEEommgAY3Q+gTLT+rnNJY1EkK0NHe9dPawiM+ptLFqeNi7O2yz4HjuUPzyAn8oFcBe/cGjgUVdkuRzfyjK6raq98sLQlstLtu+C8FC9A49K2yBfDQy9M8kfLdSdAdhifFZBGX72pWsB+zZh5XLu8XFlGpSXWLc8ItyKgQ=
-  artifact: mocli-%APPVEYOR_REPO_TAG_NAME%-windows-amd64.zip
-  draft: false
-  prerelease: false
+    secure: FI6YNxZmMUbbp8bZ96s5c9ayKq//yBalxavwX7RlmCVRS5yyi8Qrkr3CoSCt3wg3
+  artifact: moclibin
   on:
-    branch: master                 # release from master branch only
+    branch: master
     appveyor_repo_tag: true
