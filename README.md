@@ -8,20 +8,6 @@
 ```
 Command line interface for Mobingi API and services.
 
-Endpoints based on '--runenv' option:
-
-  dev
-    - https://apidev.mobingi.com
-    - https://dockereg2.labs.mobingi.com
-
-  qa
-    - https://apiqa.mobingi.com
-    - https://registry.mobingi.com
-
-  prod
-    - https://api.mobingi.com
-    - https://registry.mobingi.com
-
 Usage:
   mocli [command]
 
@@ -41,7 +27,7 @@ Flags:
   -h, --help            help for mocli
   -n, --indent int      indent padding when fmt is 'text' or 'json' (default 4)
   -o, --out string      full file path to write the output
-      --runenv string   run in environment (dev, qa, prod) (default "dev")
+      --runenv string   run in environment (dev, qa, prod) (default "prod")
       --rurl string     base url for Docker Registry
       --timeout int     timeout in seconds (default 120)
       --token string    access token
