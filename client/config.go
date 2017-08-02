@@ -13,6 +13,10 @@ type Config struct {
 }
 
 func NewApiConfig(cmd *cobra.Command) *Config {
+	if cmd == nil {
+		return nil
+	}
+
 	token := cli.GetCliStringFlag(cmd, "token")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	baseurl := cli.BaseApiUrl(cmd)
