@@ -9,6 +9,7 @@ import (
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -87,19 +88,6 @@ func login(cmd *cobra.Command, args []string) {
 		check.ErrorExit("read config failed", 1)
 	}
 
-	/*
-		runenv := cli.GetCliStringFlag(cmd, "runenv")
-		if runenv == "" {
-			tmp := viper.GetString(cli.ConfigKey("runenv"))
-			if tmp == nil {
-				runenv = cli.RunProduction
-			}
-		}
-
-		cnf.RunEnv = runenv
-		viper.Set("run_env", runenv)
-	*/
-
 	apiurl := cli.GetCliStringFlag(cmd, "url")
 	if apiurl == "" {
 		tmp := viper.Get(cli.ConfigKey("url"))
@@ -139,15 +127,14 @@ func login(cmd *cobra.Command, args []string) {
 	cnf.ApiVersion = apiver
 	viper.Set(cli.ConfigKey("apiver"), apiver)
 
-	indent := cli.GetCliIntFlag(cmd, "indent")
 	if cmd.Flag("indent").Changed {
-		cnf.Indent = indent
-		viper.Set(cli.ConfigKey("indent"), indent)
+		cnf.Indent = pretty.Pad
+		viper.Set(cli.ConfigKey("indent"), pretty.Pad)
 	} else {
 		tmp := viper.Get(cli.ConfigKey("indent"))
 		if tmp == nil {
-			cnf.Indent = indent
-			viper.Set(cli.ConfigKey("indent"), indent)
+			cnf.Indent = pretty.Pad
+			viper.Set(cli.ConfigKey("indent"), pretty.Pad)
 		}
 	}
 

@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mobingilabs/mocli/client/timeout"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
 	"github.com/spf13/viper"
@@ -66,12 +67,11 @@ func (c *CliConfig) path() string {
 
 func SetDefaultCliConfig() error {
 	defcnf := CliConfig{
-		// RunEnv:          RunProduction,
 		BaseApiUrl:      ProductionBaseApiUrl,
 		BaseRegistryUrl: ProductionBaseRegistryUrl,
 		ApiVersion:      ApiVersion,
 		Indent:          4,
-		Timeout:         120,
+		Timeout:         timeout.Timeout,
 	}
 
 	err := defcnf.WriteToConfig()

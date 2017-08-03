@@ -1,5 +1,7 @@
 package pretty
 
+var Pad int = 2 // same default value with cmdline flag
+
 func Indent(count int) string {
 	pad := ""
 	for i := 0; i < count; i++ {
@@ -8,15 +10,3 @@ func Indent(count int) string {
 
 	return pad
 }
-
-/*
-func WriteToFile(f string, contents []byte) error {
-	err := ioutil.WriteFile(f, contents, 0644)
-	if err != nil {
-		return err
-	}
-
-	log.Println(fmt.Sprintf("output written to %s", f))
-	return nil
-}
-*/
