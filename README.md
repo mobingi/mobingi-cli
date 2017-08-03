@@ -22,12 +22,11 @@ Available Commands:
 
 Flags:
       --apiver string   API version (default "v2")
-      --debug           debug mode when error
+      --debug           debug mode when error occurs
   -f, --fmt string      output format (values depends on command)
   -h, --help            help for mocli
-  -n, --indent int      indent padding when fmt is 'text' or 'json' (default 4)
+      --indent int      indent padding when fmt is 'text' or 'json' (default 2)
   -o, --out string      full file path to write the output
-      --runenv string   run in environment (dev, qa, prod) (default "prod")
       --rurl string     base url for Docker Registry
       --timeout int     timeout in seconds (default 120)
       --token string    access token
