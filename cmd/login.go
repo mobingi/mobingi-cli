@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/mobingilabs/mocli/client"
+	"github.com/mobingilabs/mocli/client/timeout"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
@@ -86,13 +87,103 @@ func login(cmd *cobra.Command, args []string) {
 		check.ErrorExit("read config failed", 1)
 	}
 
-	// we always overwrite 'runenv' during login
-	runenv := cli.GetCliStringFlag(cmd, "runenv")
-	if runenv == "" {
-		runenv = "prod"
+	/*
+		runenv := cli.GetCliStringFlag(cmd, "runenv")
+		if runenv == "" {
+			tmp := viper.GetString(cli.ConfigKey("runenv"))
+			if tmp == nil {
+				runenv = cli.RunProduction
+			}
+		}
+
+		cnf.RunEnv = runenv
+		viper.Set("run_env", runenv)
+	*/
+
+	apiurl := cli.GetCliStringFlag(cmd, "url")
+	if apiurl == "" {
+		tmp := viper.Get(cli.ConfigKey("url"))
+		if tmp == nil {
+			apiurl = cli.ProductionBaseApiUrl
+		} else {
+			apiurl = viper.GetString(cli.ConfigKey("url"))
+		}
 	}
 
-	viper.Set("runenv", runenv)
+	cnf.BaseApiUrl = apiurl
+	viper.Set(cli.ConfigKey("url"), apiurl)
+
+	regurl := cli.GetCliStringFlag(cmd, "rurl")
+	if regurl == "" {
+		tmp := viper.Get(cli.ConfigKey("rurl"))
+		if tmp == nil {
+			regurl = cli.ProductionBaseRegistryUrl
+		} else {
+			regurl = viper.GetString(cli.ConfigKey("rurl"))
+		}
+	}
+
+	cnf.BaseRegistryUrl = regurl
+	viper.Set(cli.ConfigKey("rurl"), regurl)
+
+	apiver := cli.GetCliStringFlag(cmd, "apiver")
+	if apiver == "" {
+		tmp := viper.Get(cli.ConfigKey("apiver"))
+		if tmp == nil {
+			apiver = cli.ApiVersion
+		} else {
+			apiver = viper.GetString(cli.ConfigKey("apiver"))
+		}
+	}
+
+	cnf.ApiVersion = apiver
+	viper.Set(cli.ConfigKey("apiver"), apiver)
+
+	indent := cli.GetCliIntFlag(cmd, "indent")
+	if cmd.Flag("indent").Changed {
+		cnf.Indent = indent
+		viper.Set(cli.ConfigKey("indent"), indent)
+	} else {
+		tmp := viper.Get(cli.ConfigKey("indent"))
+		if tmp == nil {
+			cnf.Indent = indent
+			viper.Set(cli.ConfigKey("indent"), indent)
+		}
+	}
+
+	if cmd.Flag("timeout").Changed {
+		cnf.Timeout = timeout.Timeout
+		viper.Set(cli.ConfigKey("timeout"), timeout.Timeout)
+	} else {
+		tmp := viper.Get(cli.ConfigKey("timeout"))
+		if tmp == nil {
+			cnf.Timeout = timeout.Timeout
+			viper.Set(cli.ConfigKey("timeout"), timeout.Timeout)
+		}
+	}
+
+	if cmd.Flag("verbose").Changed {
+		cnf.Verbose = d.Verbose
+		viper.Set(cli.ConfigKey("verbose"), d.Verbose)
+	} else {
+		tmp := viper.Get(cli.ConfigKey("verbose"))
+		if tmp == nil {
+			cnf.Verbose = d.Verbose
+			viper.Set(cli.ConfigKey("verbose"), d.Verbose)
+		}
+	}
+
+	if cmd.Flag("debug").Changed {
+		cnf.Debug = cli.IsDbgMode()
+		viper.Set(cli.ConfigKey("debug"), cli.IsDbgMode())
+	} else {
+		tmp := viper.Get(cli.ConfigKey("debug"))
+		if tmp == nil {
+			cnf.Debug = cli.IsDbgMode()
+			viper.Set(cli.ConfigKey("debug"), cli.IsDbgMode())
+		}
+	}
+
 	payload, err := json.Marshal(p)
 	check.ErrorExit(err, 1)
 
@@ -101,7 +192,6 @@ func login(cmd *cobra.Command, args []string) {
 	check.ErrorExit(err, 1)
 
 	cnf.AccessToken = token
-	cnf.RunEnv = runenv
 	err = cnf.WriteToConfig()
 	check.ErrorExit(err, 1)
 

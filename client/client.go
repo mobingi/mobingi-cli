@@ -11,12 +11,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mobingilabs/mocli/client/timeout"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 )
 
-var Timeout int64 = 120 // same default value with cmdline flag (seconds)
+// var Timeout int64 = 120 // same default value with cmdline flag (seconds)
 
 type setreq struct {
 	values *url.Values           // when not nil, we populate raw query
@@ -221,7 +222,7 @@ func (c *Client) authHdr() http.Header {
 }
 
 func (c *Client) initReq(r *http.Request, p *setreq) (*http.Request, context.CancelFunc) {
-	ctx, cancel := context.WithTimeout(r.Context(), time.Second*time.Duration(Timeout))
+	ctx, cancel := context.WithTimeout(r.Context(), time.Second*time.Duration(timeout.Timeout))
 	r = r.WithContext(ctx)
 
 	if p.header != nil {

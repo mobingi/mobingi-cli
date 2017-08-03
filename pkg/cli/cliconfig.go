@@ -5,29 +5,24 @@ import (
 	"path/filepath"
 
 	homedir "github.com/mitchellh/go-homedir"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
+	"github.com/spf13/viper"
 	yaml "gopkg.in/yaml.v2"
 )
 
+// CliConfig is the object representation of our config file. The field tags for YAML marshaling and
+// unmarshaling match the defined cli constants with prefix 'Config'.
 type CliConfig struct {
 	AccessToken string `yaml:"access_token"`
-	RunEnv      string `yaml:"runenv"`
-	Verbose     bool   `yaml:"verbose"`
-}
-
-func SetDefaultCliConfig() error {
-	defcnf := CliConfig{RunEnv: "prod"}
-	return defcnf.WriteToConfig()
-}
-
-func ReadCliConfig() *CliConfig {
-	cnf := &CliConfig{}
-	err := cnf.Reload()
-	if err != nil {
-		return nil
-	}
-
-	return cnf
+	// RunEnv          string `yaml:"run_env"`
+	BaseApiUrl      string `yaml:"api_url"`
+	BaseRegistryUrl string `yaml:"registry_url"`
+	ApiVersion      string `yaml:"api_version"`
+	Indent          int    `yaml:"indent"`
+	Timeout         int64  `yaml:"timeout"`
+	Verbose         bool   `yaml:"verbose"`
+	Debug           bool   `yaml:"debug"`
 }
 
 func (c *CliConfig) WriteToConfig() error {
@@ -60,11 +55,40 @@ func (c *CliConfig) ConfigFile() string {
 	}
 
 	cnf := filepath.Join(p, "."+BinName())
-	return filepath.Join(cnf, "config")
+	return filepath.Join(cnf, ConfigFileName)
 }
 
 func (c *CliConfig) path() string {
 	var p string
 	p, _ = homedir.Dir()
 	return p
+}
+
+func SetDefaultCliConfig() error {
+	defcnf := CliConfig{
+		// RunEnv:          RunProduction,
+		BaseApiUrl:      ProductionBaseApiUrl,
+		BaseRegistryUrl: ProductionBaseRegistryUrl,
+		ApiVersion:      ApiVersion,
+		Indent:          4,
+		Timeout:         120,
+	}
+
+	err := defcnf.WriteToConfig()
+	if err != nil {
+		d.Error(err)
+	}
+	// check.ErrorExit(err, 1)
+
+	return viper.ReadInConfig()
+}
+
+func ReadCliConfig() *CliConfig {
+	cnf := &CliConfig{}
+	err := cnf.Reload()
+	if err != nil {
+		return nil
+	}
+
+	return cnf
 }

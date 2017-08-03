@@ -1,11 +1,6 @@
 package iohelper
 
-import (
-	"fmt"
-	"io/ioutil"
-
-	d "github.com/mobingilabs/mocli/pkg/debug"
-)
+import "io/ioutil"
 
 func WriteToFile(f string, contents []byte) error {
 	err := ioutil.WriteFile(f, contents, 0644)
@@ -13,6 +8,5 @@ func WriteToFile(f string, contents []byte) error {
 		return err
 	}
 
-	d.Info(fmt.Sprintf("write to file: %s", f))
 	return nil
 }

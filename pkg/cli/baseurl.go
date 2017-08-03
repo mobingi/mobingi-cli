@@ -1,15 +1,10 @@
 package cli
 
-import (
-	"github.com/mobingilabs/mocli/pkg/constants"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-)
-
+/*
 func BaseApiUrl(cmd *cobra.Command) string {
 	base := GetCliStringFlag(cmd, "url")
 	if base == "" {
-		switch viper.GetString("runenv") {
+		switch viper.GetString("run_env") {
 		case "dev":
 			base = constants.DEV_API_BASE
 		case "qa":
@@ -25,7 +20,7 @@ func BaseApiUrl(cmd *cobra.Command) string {
 func BaseRegUrl(cmd *cobra.Command) string {
 	base := GetCliStringFlag(cmd, "rurl")
 	if base == "" {
-		switch viper.GetString("runenv") {
+		switch viper.GetString("run_env") {
 		case "dev":
 			base = constants.DEV_REG_BASE
 		case "qa":
@@ -37,3 +32,4 @@ func BaseRegUrl(cmd *cobra.Command) string {
 
 	return base
 }
+*/

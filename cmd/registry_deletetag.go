@@ -7,10 +7,10 @@ import (
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/constants"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func RegistryDeleteTag() *cobra.Command {
@@ -36,7 +36,7 @@ Example:
 
 func deleteTag(cmd *cobra.Command, args []string) {
 	userpass := userPass(cmd)
-	base := cli.BaseApiUrl(cmd)
+	base := viper.GetString("api_url")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
@@ -68,10 +68,10 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	_, token, err := registry.GetRegistryToken(tp)
 	check.ErrorExit(err, 1)
 
-	rurl := cli.BaseRegUrl(cmd)
+	rurl := viper.GetString("registry_url")
 	c := client.NewClient(&client.Config{
 		RootUrl:     rurl,
-		ApiVersion:  constants.DOCKER_API_VER,
+		ApiVersion:  cli.DockerApiVersion,
 		AccessToken: token,
 	})
 
@@ -88,7 +88,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	c2 := client.NewClient(&client.Config{
 		RootUrl:     rurl,
-		ApiVersion:  constants.DOCKER_API_VER,
+		ApiVersion:  cli.DockerApiVersion,
 		AccessToken: token,
 	})
 

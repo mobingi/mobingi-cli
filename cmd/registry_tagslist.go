@@ -9,10 +9,10 @@ import (
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/constants"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type tags struct {
@@ -43,7 +43,7 @@ Example:
 
 func tagsList(cmd *cobra.Command, args []string) {
 	userpass := userPass(cmd)
-	base := cli.BaseApiUrl(cmd)
+	base := viper.GetString("api_url")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	svc := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
@@ -71,8 +71,8 @@ func tagsList(cmd *cobra.Command, args []string) {
 	check.ErrorExit(err, 1)
 
 	c := client.NewClient(&client.Config{
-		RootUrl:     cli.BaseRegUrl(cmd),
-		ApiVersion:  constants.DOCKER_API_VER,
+		RootUrl:     viper.GetString("registry_url"),
+		ApiVersion:  cli.DockerApiVersion,
 		AccessToken: token,
 	})
 

@@ -17,9 +17,9 @@ func NewApiConfig(cmd *cobra.Command) *Config {
 		return nil
 	}
 
-	apiver := cli.GetCliStringFlag(cmd, "apiver")
-	baseurl := cli.BaseApiUrl(cmd)
-	token := viper.GetString("access_token")
+	apiver := viper.GetString(cli.ConfigKey("apiver"))
+	baseurl := viper.GetString(cli.ConfigKey("url"))
+	token := viper.GetString(cli.ConfigKey("token"))
 
 	return &Config{
 		RootUrl:     baseurl,

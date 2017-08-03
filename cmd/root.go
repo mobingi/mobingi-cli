@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mobingilabs/mocli/client"
+	"github.com/mobingilabs/mocli/client/timeout"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
@@ -41,20 +41,27 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().String("token", "", "access token")
+	rootCmd.PersistentFlags().String("runenv", "", "run in environment (dev, qa, prod)")
 	rootCmd.PersistentFlags().String("url", "", "base url for API")
 	rootCmd.PersistentFlags().String("rurl", "", "base url for Docker Registry")
 	rootCmd.PersistentFlags().String("apiver", "v2", "API version")
 	rootCmd.PersistentFlags().StringP("fmt", "f", "", "output format (values depends on command)")
 	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
 	rootCmd.PersistentFlags().IntP("indent", "n", 4, "indent padding when fmt is 'text' or 'json'")
-	rootCmd.PersistentFlags().String("runenv", "", "run in environment (dev, qa, prod)")
+	rootCmd.PersistentFlags().Int64Var(&timeout.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(cli.DbgMode(), "debug", false, "debug mode when error")
-	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.SetHelpCommand(HelpCmd())
 
-	viper.BindPFlag("access_token", rootCmd.PersistentFlags().Lookup("token"))
-	viper.BindPFlag("runenv", rootCmd.PersistentFlags().Lookup("runenv"))
+	viper.BindPFlag(cli.ConfigKey("token"), rootCmd.PersistentFlags().Lookup("token"))
+	viper.BindPFlag(cli.ConfigKey("runenv"), rootCmd.PersistentFlags().Lookup("runenv"))
+	viper.BindPFlag(cli.ConfigKey("url"), rootCmd.PersistentFlags().Lookup("url"))
+	viper.BindPFlag(cli.ConfigKey("rurl"), rootCmd.PersistentFlags().Lookup("rurl"))
+	viper.BindPFlag(cli.ConfigKey("apiver"), rootCmd.PersistentFlags().Lookup("apiver"))
+	viper.BindPFlag(cli.ConfigKey("indent"), rootCmd.PersistentFlags().Lookup("indent"))
+	viper.BindPFlag(cli.ConfigKey("timeout"), rootCmd.PersistentFlags().Lookup("timeout"))
+	viper.BindPFlag(cli.ConfigKey("verbose"), rootCmd.PersistentFlags().Lookup("verbose"))
+	viper.BindPFlag(cli.ConfigKey("debug"), rootCmd.PersistentFlags().Lookup("debug"))
 
 	rootCmd.AddCommand(
 		LoginCmd(),
