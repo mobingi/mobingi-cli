@@ -9,6 +9,7 @@ import (
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 func isError(err interface{}) bool {
@@ -34,7 +35,7 @@ func isError(err interface{}) bool {
 	}
 
 	if valid {
-		if cli.IsDbgMode() {
+		if viper.GetBool(cli.ConfigKey("debug")) {
 			// stack trace from 'errors'
 			fmt.Printf("%+v\n", derr)
 		}

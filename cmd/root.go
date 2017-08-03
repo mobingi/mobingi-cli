@@ -23,7 +23,7 @@ var (
 			startTime = time.Now()
 		},
 		PersistentPostRun: func(cmd *cobra.Command, args []string) {
-			if d.Verbose {
+			if viper.GetBool(cli.ConfigKey("verbose")) {
 				delta := int64(time.Now().Sub(startTime) / time.Millisecond)
 				d.Info(fmt.Sprintf("Elapsed time: %vms", delta))
 			}

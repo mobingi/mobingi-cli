@@ -13,8 +13,10 @@ import (
 
 	"github.com/mobingilabs/mocli/client/timeout"
 	"github.com/mobingilabs/mocli/pkg/check"
+	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/spf13/viper"
 )
 
 // var Timeout int64 = 120 // same default value with cmdline flag (seconds)
@@ -245,7 +247,7 @@ func (c *Client) initReq(r *http.Request, p *setreq) (*http.Request, context.Can
 }
 
 func (c *Client) verboseRequest(r *http.Request) {
-	if d.Verbose {
+	if viper.GetBool(cli.ConfigKey("verbose")) {
 		d.Info("[URL]", r.URL.String())
 		d.Info("[METHOD]", r.Method)
 		for n, h := range r.Header {
@@ -255,7 +257,7 @@ func (c *Client) verboseRequest(r *http.Request) {
 }
 
 func verboseResponse(r *http.Response) {
-	if d.Verbose {
+	if viper.GetBool(cli.ConfigKey("verbose")) {
 		for n, h := range r.Header {
 			d.Info(fmt.Sprintf("[RESPONSE] %s: %s", n, h))
 		}

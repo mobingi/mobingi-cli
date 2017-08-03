@@ -85,7 +85,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 	case "raw":
 		fmt.Println(string(body))
 	default:
-		if d.Verbose {
+		if viper.GetBool(cli.ConfigKey("verbose")) {
 			d.Info("[TOKEN USED]", token)
 		}
 
