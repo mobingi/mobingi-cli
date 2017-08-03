@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/client/timeout"
@@ -88,16 +89,7 @@ func login(cmd *cobra.Command, args []string) {
 		check.ErrorExit("read config failed", 1)
 	}
 
-	apiurl := cli.GetCliStringFlag(cmd, "url")
-	if apiurl == "" {
-		tmp := viper.Get(cli.ConfigKey("url"))
-		if tmp == nil {
-			apiurl = cli.ProductionBaseApiUrl
-		} else {
-			apiurl = viper.GetString(cli.ConfigKey("url"))
-		}
-	}
-
+	apiurl := fmt.Sprint(fval(cmd, "url", cli.ProductionBaseApiUrl))
 	cnf.BaseApiUrl = apiurl
 	viper.Set(cli.ConfigKey("url"), apiurl)
 
@@ -185,4 +177,29 @@ func login(cmd *cobra.Command, args []string) {
 	err = viper.ReadInConfig()
 	check.ErrorExit(err, 1)
 	d.Info("Login successful.")
+}
+
+func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
+	var ret interface{}
+	switch defval.(type) {
+	case string:
+		fvalue := cli.GetCliStringFlag(cmd, flag)
+		if fvalue == "" {
+			tmp := viper.Get(cli.ConfigKey(flag))
+			if tmp == nil {
+				return defval
+			} else {
+				ret = viper.GetString(cli.ConfigKey(flag))
+			}
+		} else {
+			ret = fvalue
+		}
+	case int:
+	case int64:
+	case bool:
+	default:
+		check.ErrorExit("internal error", 1)
+	}
+
+	return ret
 }
