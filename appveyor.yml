@@ -43,3 +43,8 @@ deploy:
   on:
     branch: master
     appveyor_repo_tag: true
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: JrW1YiaNWR8kRkpmFriLtdpVPuYsQCI9Moadv4158OwIERSuWfHs1CHREUPpZ9l6K43yEEZdOptPxpHCRLfjqr1CByqMxHx/zdWcUCHM3Ag=
