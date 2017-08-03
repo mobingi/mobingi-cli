@@ -2,8 +2,8 @@ package client
 
 import (
 	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/credentials"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -17,17 +17,9 @@ func NewApiConfig(cmd *cobra.Command) *Config {
 		return nil
 	}
 
-	token := cli.GetCliStringFlag(cmd, "token")
 	apiver := cli.GetCliStringFlag(cmd, "apiver")
 	baseurl := cli.BaseApiUrl(cmd)
-
-	// if already logged in
-	if token == "" {
-		t, err := credentials.GetToken()
-		if err == nil {
-			token = string(t)
-		}
-	}
+	token := viper.GetString("access_token")
 
 	return &Config{
 		RootUrl:     baseurl,

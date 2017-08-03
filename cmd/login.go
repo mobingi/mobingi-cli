@@ -9,6 +9,7 @@ import (
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type authPayload struct {
@@ -80,6 +81,18 @@ func login(cmd *cobra.Command, args []string) {
 		check.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
+	cnf := cli.ReadCliConfig()
+	if cnf == nil {
+		check.ErrorExit("read config failed", 1)
+	}
+
+	// we always overwrite 'runenv' during login
+	runenv := cli.GetCliStringFlag(cmd, "runenv")
+	if runenv == "" {
+		runenv = "prod"
+	}
+
+	viper.Set("runenv", runenv)
 	payload, err := json.Marshal(p)
 	check.ErrorExit(err, 1)
 
@@ -87,8 +100,12 @@ func login(cmd *cobra.Command, args []string) {
 	token, err := c.GetAccessToken(payload)
 	check.ErrorExit(err, 1)
 
-	// always overwrite file
-	err = credentials.SaveToken(token)
+	cnf.AccessToken = token
+	cnf.RunEnv = runenv
+	err = cnf.WriteToConfig()
+	check.ErrorExit(err, 1)
+
+	err = viper.ReadInConfig()
 	check.ErrorExit(err, 1)
 	d.Info("Login successful.")
 }

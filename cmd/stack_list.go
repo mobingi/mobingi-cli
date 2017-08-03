@@ -16,7 +16,6 @@ import (
 	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/mobingilabs/mocli/pkg/stack"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func StackListCmd() *cobra.Command {
@@ -46,8 +45,6 @@ Examples:
 }
 
 func stackList(cmd *cobra.Command, args []string) {
-	d.Info("viper:", viper.Get("runenv"))
-
 	c := client.NewClient(client.NewApiConfig(cmd))
 	body, err := c.AuthGet("/alm/stack")
 	check.ErrorExit(err, 1)

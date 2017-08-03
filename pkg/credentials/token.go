@@ -20,18 +20,6 @@ func CredFolder(create bool) string {
 	return folder
 }
 
-func SaveToken(token string) error {
-	folder := CredFolder(true)
-	cred := filepath.Join(folder, constants.CRED_FILE)
-	return ioutil.WriteFile(cred, []byte(token), 0644)
-}
-
-func GetToken() ([]byte, error) {
-	folder := CredFolder(false)
-	cred := filepath.Join(folder, constants.CRED_FILE)
-	return ioutil.ReadFile(cred)
-}
-
 func SaveRegistryToken(token string) error {
 	folder := CredFolder(true)
 	rf := filepath.Join(folder, constants.REGTOKEN_FILE)

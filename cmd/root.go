@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"path/filepath"
 	"time"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -55,6 +53,7 @@ func init() {
 	rootCmd.PersistentFlags().Int64Var(&client.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.SetHelpCommand(HelpCmd())
 
+	viper.BindPFlag("access_token", rootCmd.PersistentFlags().Lookup("token"))
 	viper.BindPFlag("runenv", rootCmd.PersistentFlags().Lookup("runenv"))
 
 	rootCmd.AddCommand(
@@ -68,18 +67,15 @@ func init() {
 }
 
 func initConfig() {
-	home, err := homedir.Dir()
-	check.ErrorExit(err, 1)
-
-	cfgpath := filepath.Join(home, "."+cli.BinName())
-	f := filepath.Join(cfgpath, "config")
+	cnf := cli.CliConfig{}
+	f := cnf.ConfigFile()
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile(f)
 
-	err = viper.ReadInConfig()
+	err := viper.ReadInConfig()
 	if err != nil {
-		d.Info("Creating default config file...")
-		err = cli.SetDefaultCliConfig(f)
+		d.Info("No config file found. Creating default.")
+		err = cli.SetDefaultCliConfig()
 		check.ErrorExit(err, 1)
 
 		viper.SetConfigFile(f)
