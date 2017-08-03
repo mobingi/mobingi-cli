@@ -73,7 +73,7 @@ func initConfig() {
 
 	cfgpath := filepath.Join(home, "."+cli.BinName())
 	f := filepath.Join(cfgpath, "config")
-	viper.SetConfigType("json")
+	viper.SetConfigType("yaml")
 	viper.SetConfigFile(f)
 
 	err = viper.ReadInConfig()
