@@ -129,7 +129,7 @@ func login(cmd *cobra.Command, args []string) {
 	cnf.Verbose = verbose.(bool)
 	viper.Set(confmap.ConfigKey("verbose"), verbose.(bool))
 
-	dbg := fval(cmd, "debug", cli.IsDbgMode())
+	dbg := fval(cmd, "debug", cli.Debug)
 	cnf.Debug = dbg.(bool)
 	viper.Set(confmap.ConfigKey("debug"), dbg.(bool))
 

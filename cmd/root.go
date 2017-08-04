@@ -50,7 +50,7 @@ func init() {
 	rootCmd.PersistentFlags().IntVar(&pretty.Pad, "indent", 2, "indent padding when fmt is 'text' or 'json'")
 	rootCmd.PersistentFlags().Int64Var(&timeout.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVar(cli.DbgMode(), "debug", false, "debug mode when error occurs")
+	rootCmd.PersistentFlags().BoolVar(&cli.Debug, "debug", false, "debug mode when error occurs")
 	rootCmd.SetHelpCommand(HelpCmd())
 
 	viper.BindPFlag(confmap.ConfigKey("token"), rootCmd.PersistentFlags().Lookup("token"))
