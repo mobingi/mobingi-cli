@@ -8,6 +8,7 @@ import (
 	"github.com/mobingilabs/mocli/client/timeout"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
+	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/spf13/viper"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -70,7 +71,7 @@ func SetDefaultCliConfig() error {
 		BaseApiUrl:      ProductionBaseApiUrl,
 		BaseRegistryUrl: ProductionBaseRegistryUrl,
 		ApiVersion:      ApiVersion,
-		Indent:          4,
+		Indent:          pretty.Pad,
 		Timeout:         timeout.Timeout,
 	}
 

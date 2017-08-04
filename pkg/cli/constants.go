@@ -1,13 +1,7 @@
 package cli
 
 const (
-	ConfigFileName = "config" // our yaml-based config file name
-
-	/*
-		RunProduction  = "prod" // production environment
-		RunTest        = "qa"   // qa environment
-		RunDevelopment = "dev"  // dev environment
-	*/
+	ConfigFileName = "config.yml" // our yaml-based config file name
 
 	ProductionBaseApiUrl       = "https://api.mobingi.com"            // production API base url
 	ProductionBaseRegistryUrl  = "https://registry.mobingi.com"       // production Docker Registry base url
@@ -16,6 +10,6 @@ const (
 	DevelopmentBaseApiUrl      = "https://apidev.mobingi.com"         // dev API base url
 	DevelopmentBaseRegistryUrl = "https://dockereg2.labs.mobingi.com" // dev Docker Registry base url
 
-	ApiVersion       = "v2" // Docker API version
+	ApiVersion       = "v2" // Mobingi API version
 	DockerApiVersion = "v2" // Docker API version
 )
