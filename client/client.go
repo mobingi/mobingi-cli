@@ -15,6 +15,7 @@ import (
 	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -69,7 +70,7 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 	)
 
 	hdrs := &http.Header{"Content-Type": {"application/json"}}
-	body, err := c.post("/access_token", &setreq{header: hdrs}, pl)
+	_, body, err := c.post("/access_token", &setreq{header: hdrs}, pl)
 	if err != nil {
 		return token, err
 	}
@@ -88,7 +89,7 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 }
 
 func (c *Client) BasicAuthGet(path, user, pass string, v *url.Values) ([]byte, error) {
-	return c.get(
+	_, body, err := c.get(
 		path,
 		&setreq{
 			values: v,
@@ -98,28 +99,34 @@ func (c *Client) BasicAuthGet(path, user, pass string, v *url.Values) ([]byte, e
 			},
 		},
 	)
+
+	return body, err
 }
 
 func (c *Client) AuthGet(path string) ([]byte, error) {
 	ah := c.authHdr()
-	return c.get(path, &setreq{header: &ah})
+	_, body, err := c.get(path, &setreq{header: &ah})
+	return body, err
 }
 
 func (c *Client) AuthPost(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
-	return c.post(path, &setreq{header: &ah}, pl)
+	_, body, err := c.post(path, &setreq{header: &ah}, pl)
+	return body, err
 }
 
 func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
-	return c.put(path, &setreq{header: &ah}, pl)
+	_, body, err := c.put(path, &setreq{header: &ah}, pl)
+	return body, err
 }
 
 func (c *Client) AuthDel(path string) ([]byte, error) {
 	ah := c.authHdr()
-	return c.del(path, &setreq{header: &ah})
+	_, body, err := c.del(path, &setreq{header: &ah})
+	return body, err
 }
 
 func (c *Client) url() string {
@@ -147,10 +154,10 @@ func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
 	return ret, nil
 }
 
-func (c *Client) get(path string, p *setreq) ([]byte, error) {
+func (c *Client) get(path string, p *setreq) (*http.Response, []byte, error) {
 	req, err := http.NewRequest(http.MethodGet, c.url()+path, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, errors.Wrap(err, "new request failed")
 	}
 
 	var cancel context.CancelFunc
@@ -158,10 +165,10 @@ func (c *Client) get(path string, p *setreq) ([]byte, error) {
 	return c.send(req, cancel)
 }
 
-func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
+func (c *Client) post(path string, p *setreq, pl []byte) (*http.Response, []byte, error) {
 	req, err := http.NewRequest(http.MethodPost, c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
-		return nil, err
+		return nil, nil, errors.Wrap(err, "new request failed")
 	}
 
 	var cancel context.CancelFunc
@@ -169,10 +176,10 @@ func (c *Client) post(path string, p *setreq, pl []byte) ([]byte, error) {
 	return c.send(req, cancel)
 }
 
-func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
+func (c *Client) put(path string, p *setreq, pl []byte) (*http.Response, []byte, error) {
 	req, err := http.NewRequest(http.MethodPut, c.url()+path, bytes.NewBuffer(pl))
 	if err != nil {
-		return nil, err
+		return nil, nil, errors.Wrap(err, "new request failed")
 	}
 
 	var cancel context.CancelFunc
@@ -180,10 +187,10 @@ func (c *Client) put(path string, p *setreq, pl []byte) ([]byte, error) {
 	return c.send(req, cancel)
 }
 
-func (c *Client) del(path string, p *setreq) ([]byte, error) {
+func (c *Client) del(path string, p *setreq) (*http.Response, []byte, error) {
 	req, err := http.NewRequest(http.MethodDelete, c.url()+path, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, errors.Wrap(err, "new request failed")
 	}
 
 	var cancel context.CancelFunc
@@ -191,29 +198,29 @@ func (c *Client) del(path string, p *setreq) ([]byte, error) {
 	return c.send(req, cancel)
 }
 
-func (c *Client) send(r *http.Request, cancel context.CancelFunc) ([]byte, error) {
+func (c *Client) send(r *http.Request, cancel context.CancelFunc) (*http.Response, []byte, error) {
 	if cancel != nil {
 		defer cancel()
 	}
 
 	resp, err := c.client.Do(r)
 	if err != nil {
-		return nil, err
+		return resp, nil, errors.Wrap(err, "do failed")
 	}
 
 	defer resp.Body.Close()
 	verboseResponse(resp)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return resp, nil, errors.Wrap(err, "read body failed")
 	}
 
 	re := respError(resp, body)
 	if re != "" {
-		return body, fmt.Errorf(re)
+		return resp, body, fmt.Errorf(re)
 	}
 
-	return body, nil
+	return resp, body, nil
 }
 
 func (c *Client) authHdr() http.Header {
