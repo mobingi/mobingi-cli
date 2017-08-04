@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/pkg/cli"
@@ -72,8 +73,6 @@ func printCatalog(cmd *cobra.Command, args []string) {
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
-	case "raw":
-		fmt.Println(string(body))
 	default:
 		if viper.GetBool(confmap.ConfigKey("verbose")) {
 			d.Info("[TOKEN USED]", token)
@@ -84,7 +83,12 @@ func printCatalog(cmd *cobra.Command, args []string) {
 		d.ErrorExit(err, 1)
 
 		for _, v := range ct.Repositories {
-			fmt.Println(v)
+			pair := strings.Split(v, "/")
+			if len(pair) == 2 {
+				if pair[0] == userpass.Username {
+					fmt.Println(v)
+				}
+			}
 		}
 	}
 }
