@@ -69,6 +69,7 @@ func init() {
 		CredentialsCmd(),
 		RegistryCmd(),
 		VersionCmd(),
+		ResetCmd(),
 	)
 }
 
