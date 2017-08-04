@@ -11,6 +11,7 @@ import (
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/pretty"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -28,7 +29,7 @@ func LoginCmd() *cobra.Command {
 		Use:   "login",
 		Short: "login to Mobingi API",
 		Long: `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to
-enter your username and password. Token will be saved in $HOME/.` + cli.BinName() + `/credentials.
+enter your username and password. Token will be saved in $HOME/.` + cli.BinName() + `/` + cli.ConfigFileName + `.
 
 Valid 'grant-type' values: client_credentials, password
 
@@ -43,6 +44,7 @@ Examples:
 	cmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type")
 	cmd.Flags().StringP("username", "u", "", "user name")
 	cmd.Flags().StringP("password", "p", "", "password")
+	cmd.Flags().String("endpoints", "prod", "set endpoints (dev, qa, prod)")
 	return cmd
 }
 
@@ -89,13 +91,27 @@ func login(cmd *cobra.Command, args []string) {
 		d.ErrorExit("read config failed", 1)
 	}
 
-	apiurl := fmt.Sprint(fval(cmd, "url", cli.ProductionBaseApiUrl))
-	cnf.BaseApiUrl = apiurl
-	viper.Set(confmap.ConfigKey("url"), apiurl)
-
-	regurl := fmt.Sprint(fval(cmd, "rurl", cli.ProductionBaseRegistryUrl))
-	cnf.BaseRegistryUrl = regurl
-	viper.Set(confmap.ConfigKey("rurl"), regurl)
+	switch cli.GetCliStringFlag(cmd, "endpoints") {
+	case "dev":
+		cnf.BaseApiUrl = cli.DevelopmentBaseApiUrl
+		cnf.BaseRegistryUrl = cli.DevelopmentBaseRegistryUrl
+		viper.Set(confmap.ConfigKey("url"), cli.DevelopmentBaseApiUrl)
+		viper.Set(confmap.ConfigKey("rurl"), cli.DevelopmentBaseRegistryUrl)
+	case "qa":
+		cnf.BaseApiUrl = cli.TestBaseApiUrl
+		cnf.BaseRegistryUrl = cli.TestBaseRegistryUrl
+		viper.Set(confmap.ConfigKey("url"), cli.TestBaseApiUrl)
+		viper.Set(confmap.ConfigKey("rurl"), cli.TestBaseRegistryUrl)
+	case "prod":
+		cnf.BaseApiUrl = cli.ProductionBaseApiUrl
+		cnf.BaseRegistryUrl = cli.ProductionBaseRegistryUrl
+		viper.Set(confmap.ConfigKey("url"), cli.ProductionBaseApiUrl)
+		viper.Set(confmap.ConfigKey("rurl"), cli.ProductionBaseRegistryUrl)
+	default:
+		err = fmt.Errorf("endpoint value not supported")
+		err = errors.Wrap(err, "invalid flag")
+		d.ErrorExit(err, 1)
+	}
 
 	apiver := fmt.Sprint(fval(cmd, "apiver", pretty.Pad))
 	cnf.ApiVersion = apiver
