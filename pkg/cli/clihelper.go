@@ -30,6 +30,15 @@ func GetCliIntFlag(cmd *cobra.Command, f string) int {
 	return v
 }
 
+func GetCliInt64Flag(cmd *cobra.Command, f string) int64 {
+	v, err := strconv.ParseInt(flag(cmd, f), 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return v
+}
+
 func BinName() string {
 	name, err := os.Executable()
 	if err != nil {

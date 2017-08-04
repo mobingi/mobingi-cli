@@ -93,75 +93,29 @@ func login(cmd *cobra.Command, args []string) {
 	cnf.BaseApiUrl = apiurl
 	viper.Set(cli.ConfigKey("url"), apiurl)
 
-	regurl := cli.GetCliStringFlag(cmd, "rurl")
-	if regurl == "" {
-		tmp := viper.Get(cli.ConfigKey("rurl"))
-		if tmp == nil {
-			regurl = cli.ProductionBaseRegistryUrl
-		} else {
-			regurl = viper.GetString(cli.ConfigKey("rurl"))
-		}
-	}
-
+	regurl := fmt.Sprint(fval(cmd, "rurl", cli.ProductionBaseRegistryUrl))
 	cnf.BaseRegistryUrl = regurl
 	viper.Set(cli.ConfigKey("rurl"), regurl)
 
-	apiver := cli.GetCliStringFlag(cmd, "apiver")
-	if apiver == "" {
-		tmp := viper.Get(cli.ConfigKey("apiver"))
-		if tmp == nil {
-			apiver = cli.ApiVersion
-		} else {
-			apiver = viper.GetString(cli.ConfigKey("apiver"))
-		}
-	}
-
+	apiver := fmt.Sprint(fval(cmd, "apiver", pretty.Pad))
 	cnf.ApiVersion = apiver
 	viper.Set(cli.ConfigKey("apiver"), apiver)
 
-	if cmd.Flag("indent").Changed {
-		cnf.Indent = pretty.Pad
-		viper.Set(cli.ConfigKey("indent"), pretty.Pad)
-	} else {
-		tmp := viper.Get(cli.ConfigKey("indent"))
-		if tmp == nil {
-			cnf.Indent = pretty.Pad
-			viper.Set(cli.ConfigKey("indent"), pretty.Pad)
-		}
-	}
+	indent := fval(cmd, "indent", pretty.Pad)
+	cnf.Indent = indent.(int)
+	viper.Set(cli.ConfigKey("indent"), indent.(int))
 
-	if cmd.Flag("timeout").Changed {
-		cnf.Timeout = timeout.Timeout
-		viper.Set(cli.ConfigKey("timeout"), timeout.Timeout)
-	} else {
-		tmp := viper.Get(cli.ConfigKey("timeout"))
-		if tmp == nil {
-			cnf.Timeout = timeout.Timeout
-			viper.Set(cli.ConfigKey("timeout"), timeout.Timeout)
-		}
-	}
+	tm := fval(cmd, "timeout", timeout.Timeout)
+	cnf.Timeout = tm.(int64)
+	viper.Set(cli.ConfigKey("timeout"), tm.(int64))
 
-	if cmd.Flag("verbose").Changed {
-		cnf.Verbose = d.Verbose
-		viper.Set(cli.ConfigKey("verbose"), d.Verbose)
-	} else {
-		tmp := viper.Get(cli.ConfigKey("verbose"))
-		if tmp == nil {
-			cnf.Verbose = d.Verbose
-			viper.Set(cli.ConfigKey("verbose"), d.Verbose)
-		}
-	}
+	verbose := fval(cmd, "verbose", d.Verbose)
+	cnf.Verbose = verbose.(bool)
+	viper.Set(cli.ConfigKey("verbose"), verbose.(bool))
 
-	if cmd.Flag("debug").Changed {
-		cnf.Debug = cli.IsDbgMode()
-		viper.Set(cli.ConfigKey("debug"), cli.IsDbgMode())
-	} else {
-		tmp := viper.Get(cli.ConfigKey("debug"))
-		if tmp == nil {
-			cnf.Debug = cli.IsDbgMode()
-			viper.Set(cli.ConfigKey("debug"), cli.IsDbgMode())
-		}
-	}
+	dbg := fval(cmd, "debug", cli.IsDbgMode())
+	cnf.Debug = dbg.(bool)
+	viper.Set(cli.ConfigKey("debug"), dbg.(bool))
 
 	payload, err := json.Marshal(p)
 	check.ErrorExit(err, 1)
@@ -174,8 +128,10 @@ func login(cmd *cobra.Command, args []string) {
 	err = cnf.WriteToConfig()
 	check.ErrorExit(err, 1)
 
+	// reload updated config to viper
 	err = viper.ReadInConfig()
 	check.ErrorExit(err, 1)
+
 	d.Info("Login successful.")
 }
 
@@ -195,10 +151,41 @@ func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
 			ret = fvalue
 		}
 	case int:
+		if cmd.Flag(flag).Changed {
+			return cli.GetCliIntFlag(cmd, flag)
+		} else {
+			tmp := viper.Get(cli.ConfigKey(flag))
+			if tmp == nil {
+				return cli.GetCliIntFlag(cmd, flag)
+			} else {
+				ret = tmp
+			}
+		}
 	case int64:
+		if cmd.Flag(flag).Changed {
+			return cli.GetCliInt64Flag(cmd, flag)
+		} else {
+			tmp := viper.Get(cli.ConfigKey(flag))
+			if tmp == nil {
+				return cli.GetCliInt64Flag(cmd, flag)
+			} else {
+				// viper's get returns int, not int64
+				ret = viper.GetInt64(cli.ConfigKey(flag))
+			}
+		}
 	case bool:
+		if cmd.Flag(flag).Changed {
+			return defval
+		} else {
+			tmp := viper.Get(cli.ConfigKey(flag))
+			if tmp == nil {
+				return defval
+			} else {
+				ret = tmp
+			}
+		}
 	default:
-		check.ErrorExit("internal error", 1)
+		check.ErrorExit("defval type not supported", 1)
 	}
 
 	return ret
