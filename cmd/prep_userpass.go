@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ func userPass(cmd *cobra.Command) *credentials.UserPass {
 
 	in, err := userpass.EnsureInput(false)
 	if err != nil {
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 	}
 
 	if in[1] {

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/mobingilabs/mocli/client/timeout"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/spf13/cobra"
@@ -23,7 +23,7 @@ var (
 			startTime = time.Now()
 		},
 		PersistentPostRun: func(cmd *cobra.Command, args []string) {
-			if viper.GetBool(cli.ConfigKey("verbose")) {
+			if viper.GetBool(confmap.ConfigKey("verbose")) {
 				delta := int64(time.Now().Sub(startTime) / time.Millisecond)
 				d.Info(fmt.Sprintf("Elapsed time: %vms", delta))
 			}
@@ -35,7 +35,7 @@ var (
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 	}
 }
 
@@ -53,14 +53,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(cli.DbgMode(), "debug", false, "debug mode when error occurs")
 	rootCmd.SetHelpCommand(HelpCmd())
 
-	viper.BindPFlag(cli.ConfigKey("token"), rootCmd.PersistentFlags().Lookup("token"))
-	viper.BindPFlag(cli.ConfigKey("url"), rootCmd.PersistentFlags().Lookup("url"))
-	viper.BindPFlag(cli.ConfigKey("rurl"), rootCmd.PersistentFlags().Lookup("rurl"))
-	viper.BindPFlag(cli.ConfigKey("apiver"), rootCmd.PersistentFlags().Lookup("apiver"))
-	viper.BindPFlag(cli.ConfigKey("indent"), rootCmd.PersistentFlags().Lookup("indent"))
-	viper.BindPFlag(cli.ConfigKey("timeout"), rootCmd.PersistentFlags().Lookup("timeout"))
-	viper.BindPFlag(cli.ConfigKey("verbose"), rootCmd.PersistentFlags().Lookup("verbose"))
-	viper.BindPFlag(cli.ConfigKey("debug"), rootCmd.PersistentFlags().Lookup("debug"))
+	viper.BindPFlag(confmap.ConfigKey("token"), rootCmd.PersistentFlags().Lookup("token"))
+	viper.BindPFlag(confmap.ConfigKey("url"), rootCmd.PersistentFlags().Lookup("url"))
+	viper.BindPFlag(confmap.ConfigKey("rurl"), rootCmd.PersistentFlags().Lookup("rurl"))
+	viper.BindPFlag(confmap.ConfigKey("apiver"), rootCmd.PersistentFlags().Lookup("apiver"))
+	viper.BindPFlag(confmap.ConfigKey("indent"), rootCmd.PersistentFlags().Lookup("indent"))
+	viper.BindPFlag(confmap.ConfigKey("timeout"), rootCmd.PersistentFlags().Lookup("timeout"))
+	viper.BindPFlag(confmap.ConfigKey("verbose"), rootCmd.PersistentFlags().Lookup("verbose"))
+	viper.BindPFlag(confmap.ConfigKey("debug"), rootCmd.PersistentFlags().Lookup("debug"))
 
 	rootCmd.AddCommand(
 		LoginCmd(),
@@ -82,11 +82,11 @@ func initConfig() {
 	if err != nil {
 		d.Info("No config file found. Creating default.")
 		err = cli.SetDefaultCliConfig()
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		viper.SetConfigFile(f)
 	}
 
 	err = viper.ReadInConfig()
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 }

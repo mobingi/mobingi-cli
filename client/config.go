@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -17,9 +17,9 @@ func NewApiConfig(cmd *cobra.Command) *Config {
 		return nil
 	}
 
-	apiver := viper.GetString(cli.ConfigKey("apiver"))
-	baseurl := viper.GetString(cli.ConfigKey("url"))
-	token := viper.GetString(cli.ConfigKey("token"))
+	apiver := viper.GetString(confmap.ConfigKey("apiver"))
+	baseurl := viper.GetString(confmap.ConfigKey("url"))
+	token := viper.GetString(confmap.ConfigKey("token"))
 
 	return &Config{
 		RootUrl:     baseurl,

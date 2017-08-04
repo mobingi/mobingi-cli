@@ -20,7 +20,7 @@ install:
 
 build_script:
   - go build -v
-  - go test -v ./pkg/check
+  - go test -v ./pkg/debug
   - go test -v ./pkg/pretty
   - go test -v ./cmd
   - go test -v ./client

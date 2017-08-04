@@ -1,4 +1,4 @@
-package check
+package debug
 
 import (
 	"net/http"

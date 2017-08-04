@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
@@ -43,7 +42,7 @@ Example on how to input environment variables via --env option:
 func update(cmd *cobra.Command, args []string) {
 	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		check.ErrorExit("stack id cannot be empty", 1)
+		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	// each parameter set is sent separately
@@ -58,7 +57,7 @@ func update(cmd *cobra.Command, args []string) {
 			if in != "" {
 				rm := json.RawMessage(in)
 				p, err := json.Marshal(&rm)
-				check.ErrorExit(err, 1)
+				d.ErrorExit(err, 1)
 				payload = p
 			}
 
@@ -67,7 +66,7 @@ func update(cmd *cobra.Command, args []string) {
 				in := buildFilePathPayload(sid, val)
 				rm := json.RawMessage(in)
 				p, err := json.Marshal(&rm)
-				check.ErrorExit(err, 1)
+				d.ErrorExit(err, 1)
 				payload = p
 			}
 		}

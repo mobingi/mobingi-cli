@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
@@ -30,20 +29,20 @@ Example:
 func delete(cmd *cobra.Command, args []string) {
 	id := cli.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		check.ErrorExit("stack id cannot be empty", 1)
+		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := client.NewClient(client.NewApiConfig(cmd))
 	body, err := c.AuthDel("/alm/stack/" + fmt.Sprintf("%s", id))
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	status, found := m["status"]
 	if !found {
-		check.ErrorExit("cannot read status", 1)
+		d.ErrorExit("cannot read status", 1)
 	}
 
 	d.Info(fmt.Sprintf("%s", status))

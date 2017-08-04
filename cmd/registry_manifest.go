@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
@@ -42,12 +42,12 @@ func manifest(cmd *cobra.Command, args []string) {
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
 	if image == "" {
-		check.ErrorExit("image name cannot be empty", 1)
+		d.ErrorExit("image name cannot be empty", 1)
 	}
 
 	pair := strings.Split(image, ":")
 	if len(pair) != 2 {
-		check.ErrorExit("--image format is `image:tag`", 1)
+		d.ErrorExit("--image format is `image:tag`", 1)
 	}
 
 	if scope == "" {
@@ -64,7 +64,7 @@ func manifest(cmd *cobra.Command, args []string) {
 		},
 	})
 
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	c := client.NewClient(&client.Config{
 		RootUrl:     viper.GetString("registry_url"),
@@ -74,7 +74,7 @@ func manifest(cmd *cobra.Command, args []string) {
 
 	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
 	body, err = c.AuthGet(path)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -85,6 +85,6 @@ func manifest(cmd *cobra.Command, args []string) {
 	out := cli.GetCliStringFlag(cmd, "out")
 	if out != "" {
 		err = iohelper.WriteToFile(out, body)
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
@@ -42,12 +41,12 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
 	if image == "" {
-		check.ErrorExit("image name cannot be empty", 1)
+		d.ErrorExit("image name cannot be empty", 1)
 	}
 
 	pair := strings.Split(image, ":")
 	if len(pair) != 2 {
-		check.ErrorExit("--image format is `image:tag`", 1)
+		d.ErrorExit("--image format is `image:tag`", 1)
 	}
 
 	if scope == "" {
@@ -66,7 +65,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	// request token for get manifest (pull)
 	_, token, err := registry.GetRegistryToken(tp)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	rurl := viper.GetString("registry_url")
 	c := client.NewClient(&client.Config{
@@ -78,13 +77,13 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	// get manifest to get tag digest
 	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
 	digest, err := c.GetTagDigest(path)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	// new token for delete
 	scope = fmt.Sprintf("repository:%s/%s:*", userpass.Username, pair[0])
 	tp.TokenCreds.Scope = scope
 	_, token, err = registry.GetRegistryToken(tp)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	c2 := client.NewClient(&client.Config{
 		RootUrl:     rurl,
@@ -94,7 +93,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 
 	path = fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], digest)
 	_, err = c2.AuthDel(path)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	d.Info(fmt.Sprintf("Tag '%s:%s' deleted.", pair[0], pair[1]))
 }

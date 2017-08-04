@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
 	"github.com/spf13/cobra"
@@ -58,7 +58,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 	})
 
 	if err != nil {
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 	}
 
 	c := client.NewClient(&client.Config{
@@ -68,20 +68,20 @@ func printCatalog(cmd *cobra.Command, args []string) {
 	})
 
 	body, err = c.AuthGet("/_catalog")
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
 	case "raw":
 		fmt.Println(string(body))
 	default:
-		if viper.GetBool(cli.ConfigKey("verbose")) {
+		if viper.GetBool(confmap.ConfigKey("verbose")) {
 			d.Info("[TOKEN USED]", token)
 		}
 
 		var ct catalog
 		err = json.Unmarshal(body, &ct)
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		for _, v := range ct.Repositories {
 			fmt.Println(v)

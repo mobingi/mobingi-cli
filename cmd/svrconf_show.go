@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
@@ -35,12 +34,12 @@ func show(cmd *cobra.Command, args []string) {
 	var err error
 	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		check.ErrorExit("stack id cannot be empty", 1)
+		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := client.NewClient(client.NewApiConfig(cmd))
 	body, err := c.AuthGet(`/alm/serverconfig?stack_id=` + sid)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	out := cli.GetCliStringFlag(cmd, "out")
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -48,7 +47,7 @@ func show(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = iohelper.WriteToFile(out, body)
-			check.ErrorExit(err, 1)
+			d.ErrorExit(err, 1)
 		}
 
 		return
@@ -57,11 +56,11 @@ func show(cmd *cobra.Command, args []string) {
 	if pfmt == "json" || pfmt == "" {
 		var sc svrconf.ServerConfig
 		err = json.Unmarshal(body, &sc)
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sc, "", pretty.Indent(indent))
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
@@ -69,7 +68,7 @@ func show(cmd *cobra.Command, args []string) {
 		out := cli.GetCliStringFlag(cmd, "out")
 		if out != "" {
 			err = iohelper.WriteToFile(out, mi)
-			check.ErrorExit(err, 1)
+			d.ErrorExit(err, 1)
 		}
 
 		// parse `updated` field for easier reading

@@ -6,8 +6,8 @@ import (
 
 	"github.com/mobingilabs/mocli/client"
 	"github.com/mobingilabs/mocli/client/timeout"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/pretty"
@@ -54,7 +54,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	err := idsec.EnsureInput(false)
 	if err != nil {
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 	}
 
 	grant := cli.GetCliStringFlag(cmd, "grant-type")
@@ -81,56 +81,56 @@ func login(cmd *cobra.Command, args []string) {
 
 	// should not be nil when `grant_type` is valid
 	if p == nil {
-		check.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
+		d.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
 	cnf := cli.ReadCliConfig()
 	if cnf == nil {
-		check.ErrorExit("read config failed", 1)
+		d.ErrorExit("read config failed", 1)
 	}
 
 	apiurl := fmt.Sprint(fval(cmd, "url", cli.ProductionBaseApiUrl))
 	cnf.BaseApiUrl = apiurl
-	viper.Set(cli.ConfigKey("url"), apiurl)
+	viper.Set(confmap.ConfigKey("url"), apiurl)
 
 	regurl := fmt.Sprint(fval(cmd, "rurl", cli.ProductionBaseRegistryUrl))
 	cnf.BaseRegistryUrl = regurl
-	viper.Set(cli.ConfigKey("rurl"), regurl)
+	viper.Set(confmap.ConfigKey("rurl"), regurl)
 
 	apiver := fmt.Sprint(fval(cmd, "apiver", pretty.Pad))
 	cnf.ApiVersion = apiver
-	viper.Set(cli.ConfigKey("apiver"), apiver)
+	viper.Set(confmap.ConfigKey("apiver"), apiver)
 
 	indent := fval(cmd, "indent", pretty.Pad)
 	cnf.Indent = indent.(int)
-	viper.Set(cli.ConfigKey("indent"), indent.(int))
+	viper.Set(confmap.ConfigKey("indent"), indent.(int))
 
 	tm := fval(cmd, "timeout", timeout.Timeout)
 	cnf.Timeout = tm.(int64)
-	viper.Set(cli.ConfigKey("timeout"), tm.(int64))
+	viper.Set(confmap.ConfigKey("timeout"), tm.(int64))
 
 	verbose := fval(cmd, "verbose", d.Verbose)
 	cnf.Verbose = verbose.(bool)
-	viper.Set(cli.ConfigKey("verbose"), verbose.(bool))
+	viper.Set(confmap.ConfigKey("verbose"), verbose.(bool))
 
 	dbg := fval(cmd, "debug", cli.IsDbgMode())
 	cnf.Debug = dbg.(bool)
-	viper.Set(cli.ConfigKey("debug"), dbg.(bool))
+	viper.Set(confmap.ConfigKey("debug"), dbg.(bool))
 
 	payload, err := json.Marshal(p)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	c := client.NewClient(client.NewApiConfig(cmd))
 	token, err := c.GetAccessToken(payload)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	cnf.AccessToken = token
 	err = cnf.WriteToConfig()
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	// reload updated config to viper
 	err = viper.ReadInConfig()
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	d.Info("Login successful.")
 }
@@ -141,11 +141,11 @@ func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
 	case string:
 		fvalue := cli.GetCliStringFlag(cmd, flag)
 		if fvalue == "" {
-			tmp := viper.Get(cli.ConfigKey(flag))
+			tmp := viper.Get(confmap.ConfigKey(flag))
 			if tmp == nil {
 				return defval
 			} else {
-				ret = viper.GetString(cli.ConfigKey(flag))
+				ret = viper.GetString(confmap.ConfigKey(flag))
 			}
 		} else {
 			ret = fvalue
@@ -154,7 +154,7 @@ func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
 		if cmd.Flag(flag).Changed {
 			return cli.GetCliIntFlag(cmd, flag)
 		} else {
-			tmp := viper.Get(cli.ConfigKey(flag))
+			tmp := viper.Get(confmap.ConfigKey(flag))
 			if tmp == nil {
 				return cli.GetCliIntFlag(cmd, flag)
 			} else {
@@ -165,19 +165,19 @@ func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
 		if cmd.Flag(flag).Changed {
 			return cli.GetCliInt64Flag(cmd, flag)
 		} else {
-			tmp := viper.Get(cli.ConfigKey(flag))
+			tmp := viper.Get(confmap.ConfigKey(flag))
 			if tmp == nil {
 				return cli.GetCliInt64Flag(cmd, flag)
 			} else {
 				// viper's get returns int, not int64
-				ret = viper.GetInt64(cli.ConfigKey(flag))
+				ret = viper.GetInt64(confmap.ConfigKey(flag))
 			}
 		}
 	case bool:
 		if cmd.Flag(flag).Changed {
 			return defval
 		} else {
-			tmp := viper.Get(cli.ConfigKey(flag))
+			tmp := viper.Get(confmap.ConfigKey(flag))
 			if tmp == nil {
 				return defval
 			} else {
@@ -185,7 +185,7 @@ func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
 			}
 		}
 	default:
-		check.ErrorExit("defval type not supported", 1)
+		d.ErrorExit("defval type not supported", 1)
 	}
 
 	return ret

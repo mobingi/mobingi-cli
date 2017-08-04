@@ -9,6 +9,7 @@ import (
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
 	"github.com/mobingilabs/mocli/pkg/pretty"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -76,10 +77,8 @@ func SetDefaultCliConfig() error {
 	}
 
 	err := defcnf.WriteToConfig()
-	if err != nil {
-		d.Error(err)
-	}
-	// check.ErrorExit(err, 1)
+	err = errors.Wrap(err, "write default config failed")
+	d.ErrorExit(err, 1)
 
 	return viper.ReadInConfig()
 }

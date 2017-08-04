@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	"github.com/mobingilabs/mocli/pkg/credentials"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/pretty"
 	"github.com/spf13/cobra"
 )
@@ -39,11 +39,11 @@ func credsList(cmd *cobra.Command, args []string) {
 	vendor := cli.GetCliStringFlag(cmd, "vendor")
 	c := client.NewClient(client.NewApiConfig(cmd))
 	body, err := c.AuthGet("/credentials/" + vendor)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	var creds []credentials.VendorCredentials
 	err = json.Unmarshal(body, &creds)
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -52,7 +52,7 @@ func credsList(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(creds, "", pretty.Indent(indent))
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 	default:

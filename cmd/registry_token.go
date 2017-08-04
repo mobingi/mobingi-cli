@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/registry"
@@ -53,7 +52,7 @@ func token(cmd *cobra.Command, args []string) {
 		},
 	)
 
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -62,23 +61,4 @@ func token(cmd *cobra.Command, args []string) {
 	default:
 		d.Info("token:", token)
 	}
-
-	/*
-		out := cli.GetCliStringFlag(cmd, "out")
-		if out != "" {
-			switch out {
-			case "home":
-				err = credentials.SaveRegistryToken(token)
-				if err != nil {
-					check.ErrorExit(err, 1)
-				}
-
-				hd := credentials.CredFolder(false)
-				rf := filepath.Join(hd, constants.REGTOKEN_FILE)
-				d.Info(fmt.Sprintf("output written to %s", rf))
-			default:
-				d.Error("should set '--out=home' option")
-			}
-		}
-	*/
 }

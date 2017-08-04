@@ -19,11 +19,11 @@ func createStack(cmd *cobra.Command, args []string) {
 	/*
 		c := client.NewClient(client.NewApiConfig(cmd))
 		body, err := c.AuthGet("/alm/stack")
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		var stacks []stack.ListStack
 		err = json.Unmarshal(body, &stacks)
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		pfmt := cli.GetCliStringFlag(cmd, "fmt")
 		switch pfmt {
@@ -34,7 +34,7 @@ func createStack(cmd *cobra.Command, args []string) {
 			f := cli.GetCliStringFlag(cmd, "out")
 			if f != "" {
 				err = ioutil.WriteFile(f, body, 0644)
-				check.ErrorExit(err, 1)
+				d.ErrorExit(err, 1)
 				d.Info(fmt.Sprintf("Output written to %s.", f))
 			}
 		case "text":
@@ -45,7 +45,7 @@ func createStack(cmd *cobra.Command, args []string) {
 			f := cli.GetCliStringFlag(cmd, "out")
 			if f != "" {
 				fp, err := os.Create(f)
-				check.ErrorExit(err, 1)
+				d.ErrorExit(err, 1)
 
 				defer fp.Close()
 				w := bufio.NewWriter(fp)
@@ -56,7 +56,7 @@ func createStack(cmd *cobra.Command, args []string) {
 		case "json":
 			indent := cli.GetCliIntFlag(cmd, "indent")
 			mi, err := json.MarshalIndent(stacks, "", pretty.Indent(indent))
-			check.ErrorExit(err, 1)
+			d.ErrorExit(err, 1)
 
 			fmt.Println(string(mi))
 
@@ -64,7 +64,7 @@ func createStack(cmd *cobra.Command, args []string) {
 			f := cli.GetCliStringFlag(cmd, "out")
 			if f != "" {
 				err = ioutil.WriteFile(f, mi, 0644)
-				check.ErrorExit(err, 1)
+				d.ErrorExit(err, 1)
 				d.Info(fmt.Sprintf("Output written to %s.", f))
 			}
 		default:

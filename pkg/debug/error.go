@@ -1,12 +1,11 @@
-package check
+package debug
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
 
-	"github.com/mobingilabs/mocli/pkg/cli"
-	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -22,20 +21,20 @@ func isError(err interface{}) bool {
 	case string:
 		if err != "" {
 			derr = errors.WithStack(fmt.Errorf(fmt.Sprintf("%s", err)))
-			d.Error(err)
+			Error(err)
 			valid = true
 		}
 	case error:
 		if err != nil {
 			e, _ := err.(error)
 			derr = errors.WithStack(e)
-			d.Error(err)
+			Error(err)
 			valid = true
 		}
 	}
 
 	if valid {
-		if viper.GetBool(cli.ConfigKey("debug")) {
+		if viper.GetBool(confmap.ConfigKey("debug")) {
 			// stack trace from 'errors'
 			fmt.Printf("%+v\n", derr)
 		}

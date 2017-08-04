@@ -12,14 +12,11 @@ import (
 	"time"
 
 	"github.com/mobingilabs/mocli/client/timeout"
-	"github.com/mobingilabs/mocli/pkg/check"
-	"github.com/mobingilabs/mocli/pkg/cli"
+	"github.com/mobingilabs/mocli/pkg/cli/confmap"
 	"github.com/mobingilabs/mocli/pkg/credentials"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/viper"
 )
-
-// var Timeout int64 = 120 // same default value with cmdline flag (seconds)
 
 type setreq struct {
 	values *url.Values           // when not nil, we populate raw query
@@ -247,7 +244,7 @@ func (c *Client) initReq(r *http.Request, p *setreq) (*http.Request, context.Can
 }
 
 func (c *Client) verboseRequest(r *http.Request) {
-	if viper.GetBool(cli.ConfigKey("verbose")) {
+	if viper.GetBool(confmap.ConfigKey("verbose")) {
 		d.Info("[URL]", r.URL.String())
 		d.Info("[METHOD]", r.Method)
 		for n, h := range r.Header {
@@ -257,7 +254,7 @@ func (c *Client) verboseRequest(r *http.Request) {
 }
 
 func verboseResponse(r *http.Response) {
-	if viper.GetBool(cli.ConfigKey("verbose")) {
+	if viper.GetBool(confmap.ConfigKey("verbose")) {
 		for n, h := range r.Header {
 			d.Info(fmt.Sprintf("[RESPONSE] %s: %s", n, h))
 		}
@@ -281,7 +278,7 @@ func respError(r *http.Response, b []byte) string {
 		return serr
 	}
 
-	if !check.IsHttpSuccess(r.StatusCode) {
+	if !d.IsHttpSuccess(r.StatusCode) {
 		serr = serr + "[" + r.Status + "]"
 	}
 

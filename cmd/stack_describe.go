@@ -8,7 +8,6 @@ import (
 	"text/tabwriter"
 
 	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/check"
 	"github.com/mobingilabs/mocli/pkg/cli"
 	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/mobingilabs/mocli/pkg/iohelper"
@@ -42,12 +41,12 @@ func describe(cmd *cobra.Command, args []string) {
 	var err error
 	id := cli.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		check.ErrorExit("stack id cannot be empty", 1)
+		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	c := client.NewClient(client.NewApiConfig(cmd))
 	body, err := c.AuthGet("/alm/stack/" + fmt.Sprintf("%s", id))
-	check.ErrorExit(err, 1)
+	d.ErrorExit(err, 1)
 
 	// we process `--fmt=raw` option first
 	out := cli.GetCliStringFlag(cmd, "out")
@@ -56,7 +55,7 @@ func describe(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = iohelper.WriteToFile(out, body)
-			check.ErrorExit(err, 1)
+			d.ErrorExit(err, 1)
 		}
 
 		return
@@ -71,7 +70,7 @@ func describe(cmd *cobra.Command, args []string) {
 	err = json.Unmarshal(body, &stacks1)
 	if err != nil {
 		err = json.Unmarshal(body, &stacks2)
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		ptr = &stacks2[0]
 		sptr = stacks2
@@ -112,14 +111,14 @@ func describe(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", pretty.Indent(indent))
-		check.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
 		// write to file option
 		if out != "" {
 			err = iohelper.WriteToFile(out, mi)
-			check.ErrorExit(err, 1)
+			d.ErrorExit(err, 1)
 		}
 	default:
 		if pfmt == "text" || pfmt == "" {
@@ -129,7 +128,7 @@ func describe(cmd *cobra.Command, args []string) {
 			// write to file option
 			if out != "" {
 				fp, err := os.Create(out)
-				check.ErrorExit(err, 1)
+				d.ErrorExit(err, 1)
 
 				defer fp.Close()
 				w := bufio.NewWriter(fp)
