@@ -22,7 +22,6 @@ deploy:
   file: '${FILE_TO_UPLOAD}'
   skip_cleanup: true
   overwrite: true
-  draft: true
   on:
     tags: true
 
