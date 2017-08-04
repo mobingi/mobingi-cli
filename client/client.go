@@ -89,7 +89,7 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 }
 
 func (c *Client) BasicAuthGet(path, user, pass string, v *url.Values) ([]byte, error) {
-	_, body, err := c.get(
+	resp, body, err := c.get(
 		path,
 		&setreq{
 			values: v,
@@ -100,32 +100,37 @@ func (c *Client) BasicAuthGet(path, user, pass string, v *url.Values) ([]byte, e
 		},
 	)
 
+	exitOn401(resp)
 	return body, err
 }
 
 func (c *Client) AuthGet(path string) ([]byte, error) {
 	ah := c.authHdr()
-	_, body, err := c.get(path, &setreq{header: &ah})
+	resp, body, err := c.get(path, &setreq{header: &ah})
+	exitOn401(resp)
 	return body, err
 }
 
 func (c *Client) AuthPost(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
-	_, body, err := c.post(path, &setreq{header: &ah}, pl)
+	resp, body, err := c.post(path, &setreq{header: &ah}, pl)
+	exitOn401(resp)
 	return body, err
 }
 
 func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
-	_, body, err := c.put(path, &setreq{header: &ah}, pl)
+	resp, body, err := c.put(path, &setreq{header: &ah}, pl)
+	exitOn401(resp)
 	return body, err
 }
 
 func (c *Client) AuthDel(path string) ([]byte, error) {
 	ah := c.authHdr()
-	_, body, err := c.del(path, &setreq{header: &ah})
+	resp, body, err := c.del(path, &setreq{header: &ah})
+	exitOn401(resp)
 	return body, err
 }
 
@@ -310,4 +315,10 @@ func respError(r *http.Response, b []byte) string {
 	}
 
 	return serr
+}
+
+func exitOn401(resp *http.Response) {
+	if resp.StatusCode == 401 {
+		d.ErrorExit(fmt.Errorf(resp.Status), 1)
+	}
 }
