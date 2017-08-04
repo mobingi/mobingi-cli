@@ -56,18 +56,6 @@
   revision = "d0303fe809921458f417bcf828397a65db30a7e4"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/moul/http2curl"
-  packages = ["."]
-  revision = "4e24498b31dba4683efb9d35c1c8a91e2eda28c8"
-
-[[projects]]
-  name = "github.com/parnurzeal/gorequest"
-  packages = ["."]
-  revision = "a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3"
-  version = "v0.2.15"
-
-[[projects]]
   name = "github.com/pelletier/go-buffruneio"
   packages = ["."]
   revision = "c37440a7cf42ac63b919c752ca73a85067e05992"
@@ -125,24 +113,18 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "358f15eacb587b056fc93273b930314a5cda12fe"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/net"
-  packages = ["idna","publicsuffix"]
-  revision = "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f"
+  revision = "42ff06aea7c329876e5a0fe94acc96902accf0ad"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix"]
-  revision = "e312636bdaa2fac4f0acde9d17ab9fbad2b4ad10"
+  packages = ["unix","windows"]
+  revision = "d8f5ea21b9295e315e612b4bcf4bedea93454d4d"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
-  packages = ["internal/gen","internal/triegen","internal/ucd","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
+  packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
   revision = "3bd178b88a8180be2df394a1fbb81313916f0e7b"
 
 [[projects]]
@@ -154,6 +136,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a96a8ad07d10dcb7f3233cce1259a5749d09e169ed9216bad3d15a0e8c737221"
+  inputs-digest = "b86eb735d79c3340ac16e15808808c60225bd73a3d2a47ac12eebbbd5de75c4b"
   solver-name = "gps-cdcl"
   solver-version = 1
