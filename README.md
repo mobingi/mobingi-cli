@@ -94,6 +94,7 @@ Examples:
 
 ```
 $ mocli stack describe --id=foo
+$ mocli stack describe --id=foo --fmt=min
 $ mocli stack describe --id=foo --fmt=raw --out=/home/bar/out.txt
 ```
 
