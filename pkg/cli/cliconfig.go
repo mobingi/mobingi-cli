@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/mobingilabs/mocli/client/timeout"
@@ -34,6 +35,10 @@ func (c *CliConfig) WriteToConfig() error {
 		return err
 	}
 
+	if !exists(c.ConfigDir()) {
+		_ = os.Mkdir(c.ConfigDir(), os.ModePerm)
+	}
+
 	return iohelper.WriteToFile(c.ConfigFile(), contents)
 }
 
@@ -57,8 +62,25 @@ func (c *CliConfig) ConfigFile() string {
 		return p
 	}
 
-	cnf := filepath.Join(p, "."+BinName())
-	return filepath.Join(cnf, ConfigFileName)
+	return filepath.Join(c.ConfigDir(), ConfigFileName)
+}
+
+func (c *CliConfig) ConfigDir() string {
+	p := c.path()
+	if p == "" {
+		return p
+	}
+
+	dirname := BinName()
+	pair := strings.Split(BinName(), ".")
+	// check for .exe (Windows)
+	if len(pair) == 2 {
+		if pair[1] == "exe" {
+			dirname = pair[0]
+		}
+	}
+
+	return filepath.Join(p, "."+dirname)
 }
 
 func (c *CliConfig) path() string {
