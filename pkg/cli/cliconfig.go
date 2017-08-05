@@ -2,6 +2,7 @@ package cli
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -17,8 +18,7 @@ import (
 // CliConfig is the object representation of our config file. The field tags for YAML marshaling and
 // unmarshaling match the defined cli constants with prefix 'Config'.
 type CliConfig struct {
-	AccessToken string `yaml:"access_token"`
-	// RunEnv          string `yaml:"run_env"`
+	AccessToken     string `yaml:"access_token"`
 	BaseApiUrl      string `yaml:"api_url"`
 	BaseRegistryUrl string `yaml:"registry_url"`
 	ApiVersion      string `yaml:"api_version"`
@@ -91,4 +91,17 @@ func ReadCliConfig() *CliConfig {
 	}
 
 	return cnf
+}
+
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return true
 }
