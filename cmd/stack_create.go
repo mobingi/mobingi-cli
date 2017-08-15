@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"github.com/mobingilabs/mocli/pkg/cli"
+	d "github.com/mobingilabs/mocli/pkg/debug"
 	"github.com/spf13/cobra"
 )
 
@@ -8,14 +10,24 @@ func StackCreateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "create a stack",
-		Long:  `Create a stack.`,
-		Run:   createStack,
+		Long: `Create a stack. For now, 'aws' is the only supported vendor.
+
+You can get your credential id using the command:
+
+  $ ` + cli.BinName() + ` creds list
+
+If credential id is empty, cli will attempt to get the list using the
+command above and use the first one in the list (if more than one).`,
+		Run: createStack,
 	}
 
+	cmd.Flags().String("vendor", "aws", "vendor/provider")
+	cmd.Flags().String("cred", "", "credential id")
 	return cmd
 }
 
 func createStack(cmd *cobra.Command, args []string) {
+	d.Info("Todo")
 	/*
 		c := client.NewClient(client.NewApiConfig(cmd))
 		body, err := c.AuthGet("/alm/stack")
