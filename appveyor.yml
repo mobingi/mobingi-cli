@@ -34,7 +34,7 @@ artifacts:
     name: mobingi-cli
 
 deploy:
-  description: 'Should be updated'
+  description: 'To be updated...'
   provider: GitHub
   auth_token:
     secure: FI6YNxZmMUbbp8bZ96s5c9ayKq//yBalxavwX7RlmCVRS5yyi8Qrkr3CoSCt3wg3
