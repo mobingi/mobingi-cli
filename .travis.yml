@@ -12,8 +12,8 @@ script:
 - go build -v
 
 after_success:
-  - export FILE_TO_UPLOAD=mocli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-$(uname -m).tar.gz
-  - tar cvzf ${FILE_TO_UPLOAD} mocli
+  - export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-$(uname -m).tar.gz
+  - tar cvzf ${FILE_TO_UPLOAD} mobingi-cli
 
 deploy:
   provider: releases
