@@ -16,7 +16,7 @@ import (
 var (
 	// main parent (root) command
 	rootCmd = &cobra.Command{
-		Use:   "mocli",
+		Use:   "mobingi-cli",
 		Short: "Mobingi API command line interface.",
 		Long:  `Command line interface for Mobingi API and services.`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
