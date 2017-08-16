@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mobingilabs/mocli/client/timeout"
-	"github.com/mobingilabs/mocli/pkg/cli/confmap"
-	"github.com/mobingilabs/mocli/pkg/credentials"
-	d "github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/client/timeout"
+	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
+	"github.com/mobingi/mobingi-cli/pkg/credentials"
+	d "github.com/mobingi/mobingi-cli/pkg/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )

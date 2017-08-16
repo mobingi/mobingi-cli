@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/mobingilabs/mocli/pkg/cli/confmap"
+	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/mobingilabs/mocli/pkg/pretty"
+	"github.com/mobingi/mobingi-cli/pkg/pretty"
 )
 
 // Changes:

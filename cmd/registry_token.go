@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/mobingilabs/mocli/pkg/cli"
-	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/registry"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
+	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

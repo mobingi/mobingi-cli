@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/credentials"
+	"github.com/mobingi/mobingi-cli/client"
+	"github.com/mobingi/mobingi-cli/pkg/credentials"
 )
 
 type TokenCredentials struct {

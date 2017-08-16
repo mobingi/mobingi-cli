@@ -7,12 +7,12 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/cli"
-	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/iohelper"
-	"github.com/mobingilabs/mocli/pkg/pretty"
-	"github.com/mobingilabs/mocli/pkg/stack"
+	"github.com/mobingi/mobingi-cli/client"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
+	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/iohelper"
+	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	"github.com/mobingi/mobingi-cli/pkg/stack"
 	"github.com/spf13/cobra"
 )
 

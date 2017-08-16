@@ -1,14 +1,14 @@
-// Package mocli is a command line interface client for Mobingi API.
+// Package mobingi-cli is a command line interface client for Mobingi API.
 package main
 
 import (
 	"log"
 
-	"github.com/mobingilabs/mocli/cmd"
+	"github.com/mobingi/mobingi-cli/cmd"
 )
 
 func main() {
-	log.SetPrefix("[mocli]: ")
+	log.SetPrefix("[mobingi-cli]: ")
 	log.SetFlags(0)
 	cmd.Execute()
 }

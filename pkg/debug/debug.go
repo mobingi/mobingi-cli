@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/fatih/color"
-	"github.com/mobingilabs/mocli/pkg/cli/confmap"
+	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )

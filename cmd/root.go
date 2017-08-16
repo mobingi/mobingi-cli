@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mobingilabs/mocli/client/timeout"
-	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/cli/confmap"
-	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/pretty"
+	"github.com/mobingi/mobingi-cli/client/timeout"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
+	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

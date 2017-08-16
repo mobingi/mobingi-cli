@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mobingilabs/mocli/client"
-	"github.com/mobingilabs/mocli/pkg/cli"
-	d "github.com/mobingilabs/mocli/pkg/debug"
-	"github.com/mobingilabs/mocli/pkg/iohelper"
-	"github.com/mobingilabs/mocli/pkg/registry"
+	"github.com/mobingi/mobingi-cli/client"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
+	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/iohelper"
+	"github.com/mobingi/mobingi-cli/pkg/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

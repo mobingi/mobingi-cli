@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/mobingilabs/mocli/pkg/cli"
-	"github.com/mobingilabs/mocli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingi/mobingi-cli/pkg/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
