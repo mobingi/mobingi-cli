@@ -1,6 +1,6 @@
 [![logo](./logos/mobinginewlogo.png)](https://mobingi.co.jp/)
 
-[![Build Status](https://travis-ci.org/mobingilabs/mocli.svg?branch=master)](https://travis-ci.org/mobingilabs/mocli)
+[![Build Status](https://travis-ci.org/mobingi/mobingi-cli.svg?branch=master)](https://travis-ci.org/mobingi/mobingi-cli)
 [![Build status](https://ci.appveyor.com/api/projects/status/hv1y1n3oku9frxye?svg=true)](https://ci.appveyor.com/project/flowerinthenight/mocli)
 
 # mobingi-cli
