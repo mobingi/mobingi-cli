@@ -77,4 +77,5 @@ func credsList(cmd *cobra.Command, args []string) {
 }
 
 func getCredsList(cmd *cobra.Command) ([]credentials.VendorCredentials, error) {
+	return nil, nil
 }
