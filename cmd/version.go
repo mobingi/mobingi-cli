@@ -13,7 +13,7 @@ func VersionCmd() *cobra.Command {
 		Long:  `Print the version.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			// TODO: provide a formal versioning system
-			fmt.Println("v0.1.0")
+			fmt.Println("v0.1.3-beta")
 		},
 	}
 }
