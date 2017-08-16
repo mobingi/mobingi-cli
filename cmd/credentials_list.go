@@ -12,6 +12,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
 	d "github.com/mobingi/mobingi-cli/pkg/debug"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -36,13 +37,18 @@ Examples:
 }
 
 func credsList(cmd *cobra.Command, args []string) {
-	vendor := cli.GetCliStringFlag(cmd, "vendor")
-	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.AuthGet("/credentials/" + vendor)
-	d.ErrorExit(err, 1)
+	/*
+		vendor := cli.GetCliStringFlag(cmd, "vendor")
+		c := client.NewClient(client.NewApiConfig(cmd))
+		body, err := c.AuthGet("/credentials/" + vendor)
+		d.ErrorExit(err, 1)
 
-	var creds []credentials.VendorCredentials
-	err = json.Unmarshal(body, &creds)
+		var creds []credentials.VendorCredentials
+		err = json.Unmarshal(body, &creds)
+		d.ErrorExit(err, 1)
+	*/
+
+	creds, body, err := getCredsList(cmd)
 	d.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -66,7 +72,7 @@ func credsList(cmd *cobra.Command, args []string) {
 			}
 
 			fmt.Fprintf(w, "%s\t%s\t%s\t%s\n",
-				vendor,
+				cli.GetCliStringFlag(cmd, "vendor"),
 				cred.Id,
 				cred.Account,
 				timestr)
@@ -76,6 +82,19 @@ func credsList(cmd *cobra.Command, args []string) {
 	}
 }
 
-func getCredsList(cmd *cobra.Command) ([]credentials.VendorCredentials, error) {
-	return nil, nil
+func getCredsList(cmd *cobra.Command) ([]credentials.VendorCredentials, []byte, error) {
+	vendor := cli.GetCliStringFlag(cmd, "vendor")
+	c := client.NewClient(client.NewApiConfig(cmd))
+	body, err := c.AuthGet("/credentials/" + vendor)
+	if err != nil {
+		return nil, body, errors.Wrap(err, "http get failed")
+	}
+
+	var creds []credentials.VendorCredentials
+	err = json.Unmarshal(body, &creds)
+	if err != nil {
+		return nil, body, errors.Wrap(err, "unmarshal failed")
+	}
+
+	return creds, body, nil
 }
