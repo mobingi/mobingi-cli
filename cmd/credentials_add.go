@@ -53,44 +53,4 @@ func credsAdd(cmd *cobra.Command, args []string) {
 	d.ErrorExit(err, 1)
 
 	fmt.Println(string(body))
-
-	/*
-		body, err := c.AuthGet("/credentials/" + vendor)
-		d.ErrorExit(err, 1)
-
-		var creds []credentials.VendorCredentials
-		err = json.Unmarshal(body, &creds)
-		d.ErrorExit(err, 1)
-
-		pfmt := cli.GetCliStringFlag(cmd, "fmt")
-		switch pfmt {
-		case "raw":
-			fmt.Println(string(body))
-		case "json":
-			indent := cli.GetCliIntFlag(cmd, "indent")
-			mi, err := json.MarshalIndent(creds, "", pretty.Indent(indent))
-			d.ErrorExit(err, 1)
-
-			fmt.Println(string(mi))
-		default:
-			stbl := term.NewTable(0, 10, 5, ' ', 0)
-			fmt.Fprintf(stbl, "VENDOR\tID\tACCOUNT\tLAST MODIFIED\n")
-			for _, cred := range creds {
-				timestr := cred.LastModified
-				t, err := time.Parse(time.RFC3339, cred.LastModified)
-				if err == nil {
-					timestr = t.Format(time.RFC1123)
-				}
-
-				fmt.Fprintf(stbl, "%s\t%s\t%s\t%s\n",
-					vendor,
-					cred.Id,
-					cred.Account,
-					timestr)
-			}
-
-			term.Print(stbl)
-			term.Flush()
-		}
-	*/
 }

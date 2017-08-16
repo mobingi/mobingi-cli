@@ -75,3 +75,6 @@ func credsList(cmd *cobra.Command, args []string) {
 		w.Flush()
 	}
 }
+
+func getCredsList(cmd *cobra.Command) ([]credentials.VendorCredentials, error) {
+}
