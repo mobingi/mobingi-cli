@@ -25,7 +25,7 @@ Flags:
       --apiver string   API version (default "v2")
       --debug           debug mode when error occurs
   -f, --fmt string      output format (values depends on command)
-  -h, --help            help for mocli
+  -h, --help            help for mobingi-cli
       --indent int      indent padding when fmt is 'text' or 'json' (default 2)
   -o, --out string      full file path to write the output
       --rurl string     base url for Docker Registry
