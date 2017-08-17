@@ -32,7 +32,7 @@ type CliConfig struct {
 func (c *CliConfig) WriteToConfig() error {
 	contents, err := yaml.Marshal(c)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "marshal failed")
 	}
 
 	if !exists(c.ConfigDir()) {
@@ -45,12 +45,12 @@ func (c *CliConfig) WriteToConfig() error {
 func (c *CliConfig) Reload() error {
 	contents, err := ioutil.ReadFile(c.ConfigFile())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "readfile failed")
 	}
 
 	err = yaml.Unmarshal(contents, c)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unmarshal failed")
 	}
 
 	return nil
