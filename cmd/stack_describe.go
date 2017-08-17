@@ -24,12 +24,12 @@ func StackDescribeCmd() *cobra.Command {
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
-Valid format values: text (default), json, raw, min
+Valid format values: min (default), json, raw, text
 
 Examples:
 
   $ ` + cli.BinName() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk
-  $ ` + cli.BinName() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk --fmt=min`,
+  $ ` + cli.BinName() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk --fmt=json`,
 		Run: describe,
 	}
 
@@ -82,44 +82,21 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	switch pfmt {
-	case "min":
-		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
-		fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
-		if valid == 1 {
-			for _, inst := range stacks1[0].Instances {
-				instype := "on-demand"
-				if inst.InstanceLifecycle == "spot" {
-					instype = inst.InstanceLifecycle
-				}
+	case "text":
+		indent := cli.GetCliIntFlag(cmd, "indent")
+		stack.PrintR(os.Stdout, ptr, 0, indent)
 
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-					inst.InstanceId,
-					instype,
-					inst.InstanceType,
-					inst.PublicIpAddress,
-					inst.PrivateIpAddress,
-					inst.State.Name)
-			}
+		// write to file option
+		if out != "" {
+			fp, err := os.Create(out)
+			d.ErrorExit(err, 1)
+
+			defer fp.Close()
+			w := bufio.NewWriter(fp)
+			defer w.Flush()
+			stack.PrintR(w, ptr, 0, indent)
+			d.Info(fmt.Sprintf("output written to %s", out))
 		}
-
-		if valid == 2 {
-			for _, inst := range stacks2[0].Instances {
-				instype := "on-demand"
-				if inst.InstanceLifecycle == "spot" {
-					instype = inst.InstanceLifecycle
-				}
-
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-					inst.InstanceId,
-					instype,
-					inst.InstanceType,
-					inst.PublicIpAddress,
-					inst.PrivateIpAddress,
-					inst.State.Name)
-			}
-		}
-
-		w.Flush()
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sptr, "", pretty.Indent(indent))
@@ -133,21 +110,44 @@ func describe(cmd *cobra.Command, args []string) {
 			d.ErrorExit(err, 1)
 		}
 	default:
-		if pfmt == "text" || pfmt == "" {
-			indent := cli.GetCliIntFlag(cmd, "indent")
-			stack.PrintR(os.Stdout, ptr, 0, indent)
+		if pfmt == "min" || pfmt == "" {
+			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
+			if valid == 1 {
+				for _, inst := range stacks1[0].Instances {
+					instype := "on-demand"
+					if inst.InstanceLifecycle == "spot" {
+						instype = inst.InstanceLifecycle
+					}
 
-			// write to file option
-			if out != "" {
-				fp, err := os.Create(out)
-				d.ErrorExit(err, 1)
-
-				defer fp.Close()
-				w := bufio.NewWriter(fp)
-				defer w.Flush()
-				stack.PrintR(w, ptr, 0, indent)
-				d.Info(fmt.Sprintf("output written to %s", out))
+					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+						inst.InstanceId,
+						instype,
+						inst.InstanceType,
+						inst.PublicIpAddress,
+						inst.PrivateIpAddress,
+						inst.State.Name)
+				}
 			}
+
+			if valid == 2 {
+				for _, inst := range stacks2[0].Instances {
+					instype := "on-demand"
+					if inst.InstanceLifecycle == "spot" {
+						instype = inst.InstanceLifecycle
+					}
+
+					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+						inst.InstanceId,
+						instype,
+						inst.InstanceType,
+						inst.PublicIpAddress,
+						inst.PrivateIpAddress,
+						inst.State.Name)
+				}
+			}
+
+			w.Flush()
 		}
 	}
 }
