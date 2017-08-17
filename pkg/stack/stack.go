@@ -227,6 +227,7 @@ type CreateStackElasticache struct {
 	NodeCount string `json:"ElastiCacheNodes,omitempty"`
 }
 
+/*
 type CreateStackConfig struct {
 	Region            string      `json:"region,omitempty"`
 	Architecture      string      `json:"architecture,omitempty"`
@@ -241,6 +242,25 @@ type CreateStackConfig struct {
 	Code              string      `json:"code,omitempty"`
 	GitReference      string      `json:"gitReference,omitempty"`
 	GitPrivateKey     string      `json:"gitPrivateKey,omitempty"`
+	Database          interface{} `json:"database,omitempty"`
+	ElastiCache       interface{} `json:"elasticache,omitempty"`
+}
+*/
+
+type CreateStackConfig struct {
+	Region            interface{} `json:"region,omitempty"`
+	Architecture      interface{} `json:"architecture,omitempty"`
+	Type              interface{} `json:"type,omitempty"`
+	Image             interface{} `json:"image,omitempty"`
+	DockerHubUsername interface{} `json:"dockerHubUsername,omitempty"`
+	DockerHubPassword interface{} `json:"dockerHubPassword,omitempty"`
+	Min               interface{} `json:"min,omitempty"`
+	Max               interface{} `json:"max,omitempty"`
+	SpotRange         interface{} `json:"spotRange,omitempty"`
+	Nickname          interface{} `json:"nickname,omitempty"`
+	Code              interface{} `json:"code,omitempty"`
+	GitReference      interface{} `json:"gitReference,omitempty"`
+	GitPrivateKey     interface{} `json:"gitPrivateKey,omitempty"`
 	Database          interface{} `json:"database,omitempty"`
 	ElastiCache       interface{} `json:"elasticache,omitempty"`
 }

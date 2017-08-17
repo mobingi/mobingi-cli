@@ -78,7 +78,7 @@ func update(cmd *cobra.Command, args []string) {
 
 		d.Info("payload:", string(payload))
 		c := client.NewClient(client.NewApiConfig(cmd))
-		body, err := c.AuthPut(`/alm/serverconfig?stack_id=`+sid, payload)
+		_, body, err := c.AuthPut(`/alm/serverconfig?stack_id=`+sid, payload)
 		if err != nil {
 			continue
 		}

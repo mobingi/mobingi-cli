@@ -117,6 +117,15 @@ If the `--cred` option is not provided (just like in the examples above), cli wi
 $ mobingi-cli creds list
 ```
 
+### Update stack
+
+Examples:
+
+```
+$ mobingi-cli stack update --id=foo --min=5 --max=20
+$ mobingi-cli stack update --id=foo --spot-range=25
+```
+
 ### Delete a stack
 
 Example:

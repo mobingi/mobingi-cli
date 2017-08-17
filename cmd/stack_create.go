@@ -48,7 +48,7 @@ As an example for --spot-range, if you have a total of 20 instances running
 in the autoscaling group and your spot range is set to 50 (50%), then there
 will be a fleet of 10 spot instances and 10 on-demand instances.
 
-Examples:
+Example(s):
 
   $ ` + cli.BinName() + ` stack create --nickname=sample`,
 		Run: createStack,

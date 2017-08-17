@@ -16,6 +16,7 @@ func StackCmd() *cobra.Command {
 		StackListCmd(),
 		StackDescribeCmd(),
 		StackCreateCmd(),
+		StackUpdateCmd(),
 		StackDeleteCmd(),
 	)
 

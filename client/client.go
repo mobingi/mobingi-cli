@@ -127,12 +127,12 @@ func (c *Client) AuthPost(path string, pl []byte) ([]byte, error) {
 	return body, err
 }
 
-func (c *Client) AuthPut(path string, pl []byte) ([]byte, error) {
+func (c *Client) AuthPut(path string, pl []byte) (*http.Response, []byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")
 	resp, body, err := c.put(path, &setreq{header: &ah}, pl)
 	exitOn401(resp)
-	return body, err
+	return resp, body, err
 }
 
 func (c *Client) AuthDel(path string) ([]byte, error) {
