@@ -37,17 +37,6 @@ Examples:
 }
 
 func credsList(cmd *cobra.Command, args []string) {
-	/*
-		vendor := cli.GetCliStringFlag(cmd, "vendor")
-		c := client.NewClient(client.NewApiConfig(cmd))
-		body, err := c.AuthGet("/credentials/" + vendor)
-		d.ErrorExit(err, 1)
-
-		var creds []credentials.VendorCredentials
-		err = json.Unmarshal(body, &creds)
-		d.ErrorExit(err, 1)
-	*/
-
 	creds, body, err := getCredsList(cmd)
 	d.ErrorExit(err, 1)
 
