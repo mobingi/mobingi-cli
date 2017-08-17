@@ -228,6 +228,7 @@ func (c *Client) send(r *http.Request, cancel context.CancelFunc) (*http.Respons
 		return resp, nil, errors.Wrap(err, "read body failed")
 	}
 
+	verboseBody(body)
 	re := respError(resp, body)
 	if re != "" {
 		return resp, body, fmt.Errorf(re)
@@ -283,6 +284,12 @@ func verboseResponse(r *http.Response) {
 	}
 }
 
+func verboseBody(body []byte) {
+	if viper.GetBool(confmap.ConfigKey("verbose")) {
+		d.Info("[BODY]", string(body))
+	}
+}
+
 func respError(r *http.Response, b []byte) string {
 	var (
 		errcnt int
@@ -326,7 +333,9 @@ func respError(r *http.Response, b []byte) string {
 }
 
 func exitOn401(resp *http.Response) {
-	if resp.StatusCode == 401 {
-		d.ErrorExit(fmt.Errorf(resp.Status), 1)
+	if resp != nil {
+		if resp.StatusCode == 401 {
+			d.ErrorExit(fmt.Errorf(resp.Status), 1)
+		}
 	}
 }
