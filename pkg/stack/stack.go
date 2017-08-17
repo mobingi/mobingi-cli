@@ -148,6 +148,8 @@ type Instance struct {
 	ImageId               string                `json:"ImageId,omitempty"`
 	InstanceId            string                `json:"InstanceId,omitempty"`
 	InstanceType          string                `json:"InstanceType,omitempty"`
+	InstanceLifecycle     string                `json:"InstanceLifecycle,omitempty"`
+	SpotInstanceRequestId string                `json:"SpotInstanceRequestId,omitempty"`
 	KeyName               string                `json:"KeyName,omitempty"`
 	LaunchTime            string                `json:"LaunchTime,omitempty"`
 	Monitoring            Monitoring            `json:"Monitoring,omitempty"`

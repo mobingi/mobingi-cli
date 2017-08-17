@@ -84,11 +84,17 @@ func describe(cmd *cobra.Command, args []string) {
 	switch pfmt {
 	case "min":
 		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
-		fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
+		fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
 		if valid == 1 {
 			for _, inst := range stacks1[0].Instances {
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
+				instype := "on-demand"
+				if inst.InstanceLifecycle == "spot" {
+					instype = inst.InstanceLifecycle
+				}
+
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
+					instype,
 					inst.InstanceType,
 					inst.PublicIpAddress,
 					inst.PrivateIpAddress,
@@ -98,8 +104,14 @@ func describe(cmd *cobra.Command, args []string) {
 
 		if valid == 2 {
 			for _, inst := range stacks2[0].Instances {
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
+				instype := "on-demand"
+				if inst.InstanceLifecycle == "spot" {
+					instype = inst.InstanceLifecycle
+				}
+
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
+					instype,
 					inst.InstanceType,
 					inst.PublicIpAddress,
 					inst.PrivateIpAddress,
