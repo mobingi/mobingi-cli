@@ -104,7 +104,7 @@ You can get the stack id from the `stack list` command.
 
 You can run `$ mobingi-cli stack create -h` to see the defaults.
 
-Example:
+Examples:
 
 ```
 $ mobingi-cli stack create --nickname=sample
