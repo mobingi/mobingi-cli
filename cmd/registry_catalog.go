@@ -31,6 +31,7 @@ Example:
 		Run: printCatalog,
 	}
 
+	cmd.Flags().SortFlags = false
 	cmd.Flags().String("username", "", "username (account subuser)")
 	cmd.Flags().String("password", "", "password (account subuser)")
 	cmd.Flags().String("service", "Mobingi Docker Registry", "service for authentication")

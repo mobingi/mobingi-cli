@@ -33,6 +33,7 @@ Example on how to input environment variables via --env option:
 		Run: update,
 	}
 
+	cmd.Flags().SortFlags = false
 	cmd.Flags().StringP("id", "i", "", "stack id to query")
 	cmd.Flags().StringP("env", "e", "", "comma-separated key/val pair(s)")
 	cmd.Flags().StringP("filepath", "p", "", "file path")

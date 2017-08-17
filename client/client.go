@@ -111,6 +111,14 @@ func (c *Client) AuthGet(path string) ([]byte, error) {
 	return body, err
 }
 
+func (c *Client) AuthPostUrlEncoded(path string, v *url.Values, pl []byte) (*http.Response, []byte, error) {
+	ah := c.authHdr()
+	ah.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+	resp, body, err := c.post(path, &setreq{header: &ah, values: v}, pl)
+	exitOn401(resp)
+	return resp, body, err
+}
+
 func (c *Client) AuthPost(path string, pl []byte) ([]byte, error) {
 	ah := c.authHdr()
 	ah.Add("Content-Type", "application/json")

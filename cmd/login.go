@@ -39,6 +39,7 @@ Examples:
 		Run: login,
 	}
 
+	cmd.Flags().SortFlags = false
 	cmd.Flags().StringP("client-id", "i", "", "client id (required)")
 	cmd.Flags().StringP("client-secret", "s", "", "client secret (required)")
 	cmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type")

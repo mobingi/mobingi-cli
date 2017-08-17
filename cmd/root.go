@@ -41,6 +41,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.Flags().SortFlags = false
+	rootCmd.PersistentFlags().SortFlags = false
 	rootCmd.PersistentFlags().String("token", "", "access token")
 	rootCmd.PersistentFlags().String("url", "", "base url for API")
 	rootCmd.PersistentFlags().String("rurl", "", "base url for Docker Registry")

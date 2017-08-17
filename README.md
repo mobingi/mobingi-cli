@@ -100,6 +100,23 @@ $ mobingi-cli stack describe --id=foo --fmt=raw --out=/home/bar/out.txt
 
 You can get the stack id from the `stack list` command.
 
+### Create a stack
+
+You can run `$ mobingi-cli stack create -h` to see the defaults.
+
+Example:
+
+```
+$ mobingi-cli stack create --nickname=sample
+$ mobingi-cli stack create --nickname=sample --min=2 --max=2
+```
+
+If the `--cred` option is not provided (just like in the examples above), cli will attempt to get your list of credentials and use the first one (if more than one). You can view your credentials list using the command:
+
+```
+$ mobingi-cli creds list
+```
+
 ### Delete a stack
 
 Example:
