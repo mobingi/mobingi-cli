@@ -46,7 +46,7 @@ func (c *Client) GetTagDigest(path string) (string, error) {
 
 	h, err := c.hdr(path, &setreq{header: hdrs})
 	if err != nil {
-		return digest, err
+		return digest, errors.Wrap(err, "hdr failed")
 	}
 
 	for name, hdr := range h {
@@ -72,11 +72,11 @@ func (c *Client) GetAccessToken(pl []byte) (string, error) {
 	hdrs := &http.Header{"Content-Type": {"application/json"}}
 	_, body, err := c.post("/access_token", &setreq{header: hdrs}, pl)
 	if err != nil {
-		return token, err
+		return token, errors.Wrap(err, "post failed")
 	}
 
 	if err = json.Unmarshal(body, &m); err != nil {
-		return token, err
+		return token, errors.Wrap(err, "unmarshal failed")
 	}
 
 	t, found := m["access_token"]
@@ -149,7 +149,7 @@ func (c *Client) url() string {
 func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
 	req, err := http.NewRequest(http.MethodGet, c.url()+path, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "new request failed")
 	}
 
 	var cancel context.CancelFunc
@@ -158,7 +158,7 @@ func (c *Client) hdr(path string, p *setreq) (http.Header, error) {
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "http client do failed")
 	}
 
 	defer resp.Body.Close()
