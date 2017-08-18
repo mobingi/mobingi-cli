@@ -8,9 +8,9 @@ import (
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/mobingi/mobingi-cli/client/timeout"
-	d "github.com/mobingi/mobingi-cli/pkg/debug"
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	yaml "gopkg.in/yaml.v2"

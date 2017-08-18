@@ -10,8 +10,8 @@ import (
 	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
-	d "github.com/mobingi/mobingi-cli/pkg/debug"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

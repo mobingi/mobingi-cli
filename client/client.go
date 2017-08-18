@@ -14,7 +14,7 @@ import (
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
-	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -305,7 +305,7 @@ func respError(r *http.Response, b []byte) string {
 		return serr
 	}
 
-	if !d.IsHttpSuccess(r.StatusCode) {
+	if !IsHttpSuccess(r.StatusCode) {
 		serr = serr + "[" + r.Status + "]"
 	}
 
@@ -338,4 +338,13 @@ func exitOn401(resp *http.Response) {
 			d.ErrorExit(fmt.Errorf(resp.Status), 1)
 		}
 	}
+}
+
+func IsHttpSuccess(code int) bool {
+	// only 2xx = OK
+	if code >= 200 && code < 300 {
+		return true
+	}
+
+	return false
 }

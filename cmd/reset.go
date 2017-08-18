@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/debug"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +15,7 @@ func ResetCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			err := cli.SetDefaultCliConfig()
 			err = errors.Wrap(err, "write default config failed")
-			debug.ErrorExit(err, 1)
+			d.ErrorExit(err, 1)
 		},
 	}
 }

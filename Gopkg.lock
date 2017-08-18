@@ -56,6 +56,12 @@
   revision = "d0303fe809921458f417bcf828397a65db30a7e4"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/mobingilabs/mobingi-sdk-go"
+  packages = ["pkg/private/debug"]
+  revision = "9e1d2a9ec95ec9bcaec506fcc1adaa4fa5073157"
+
+[[projects]]
   name = "github.com/pelletier/go-buffruneio"
   packages = ["."]
   revision = "c37440a7cf42ac63b919c752ca73a85067e05992"
@@ -136,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b86eb735d79c3340ac16e15808808c60225bd73a3d2a47ac12eebbbd5de75c4b"
+  inputs-digest = "ae334213eb897c335906eb32abcb8b68e9aab2779cd1cf8406224dd41a7e828a"
   solver-name = "gps-cdcl"
   solver-version = 1

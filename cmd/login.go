@@ -9,8 +9,9 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
-	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/dbg"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -126,7 +127,7 @@ func login(cmd *cobra.Command, args []string) {
 	cnf.Timeout = tm.(int64)
 	viper.Set(confmap.ConfigKey("timeout"), tm.(int64))
 
-	verbose := fval(cmd, "verbose", d.Verbose)
+	verbose := fval(cmd, "verbose", dbg.Verbose)
 	cnf.Verbose = verbose.(bool)
 	viper.Set(confmap.ConfigKey("verbose"), verbose.(bool))
 

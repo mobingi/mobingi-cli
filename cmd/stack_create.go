@@ -7,9 +7,9 @@ import (
 
 	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	d "github.com/mobingi/mobingi-cli/pkg/debug"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 )
 

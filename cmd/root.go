@@ -7,8 +7,9 @@ import (
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
-	d "github.com/mobingi/mobingi-cli/pkg/debug"
+	"github.com/mobingi/mobingi-cli/pkg/dbg"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -51,7 +52,7 @@ func init() {
 	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
 	rootCmd.PersistentFlags().IntVar(&pretty.Pad, "indent", 2, "indent padding when fmt is 'text' or 'json'")
 	rootCmd.PersistentFlags().Int64Var(&timeout.Timeout, "timeout", 120, "timeout in seconds")
-	rootCmd.PersistentFlags().BoolVar(&d.Verbose, "verbose", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVar(&dbg.Verbose, "verbose", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(&cli.Debug, "debug", false, "debug mode when error occurs")
 	rootCmd.SetHelpCommand(HelpCmd())
 
