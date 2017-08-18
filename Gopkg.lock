@@ -59,7 +59,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["pkg/private/cmdline","pkg/private/debug"]
-  revision = "9e1d2a9ec95ec9bcaec506fcc1adaa4fa5073157"
+  revision = "463063bd37bff8305e4bd13a3542b595f067d481"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -125,7 +125,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "9f7170bcd8e9f4d3691c06401119c46a769a1e03"
+  revision = "43e60d72a8e2bd92ee98319ba9a384a0e9837c08"
 
 [[projects]]
   branch = "master"

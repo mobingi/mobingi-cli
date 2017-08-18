@@ -27,7 +27,6 @@ func ErrorD(v ...interface{}) {
 	red := color.New(color.FgRed).SprintFunc()
 	m := fmt.Sprintln(v...)
 	log.Print(fmt.Sprintf("%s %s", red("error:"), m))
-	err := fmt.Errorf(m)
-	err = errors.WithStack(err)
+	err := errors.WithStack(fmt.Errorf(m))
 	fmt.Printf("%+v\n", err)
 }
