@@ -12,6 +12,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 )
@@ -28,8 +29,8 @@ Valid format values: min (default), json, raw, text
 
 Examples:
 
-  $ ` + cli.BinName() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk
-  $ ` + cli.BinName() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk --fmt=json`,
+  $ ` + cmdline.Args0() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk
+  $ ` + cmdline.Args0() + ` stack describe --id=58c2297d25645-Y6NSE4VjP-tk --fmt=json`,
 		Run: describe,
 	}
 

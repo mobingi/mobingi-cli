@@ -9,6 +9,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingi/mobingi-cli/pkg/registry"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,7 +28,7 @@ take some time to complete.
 
 Example:
 
-  $ ` + cli.BinName() + ` registry catalog --username=foo --password=bar`,
+  $ ` + cmdline.Args0() + ` registry catalog --username=foo --password=bar`,
 		Run: printCatalog,
 	}
 

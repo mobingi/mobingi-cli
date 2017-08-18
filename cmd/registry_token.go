@@ -5,6 +5,7 @@ import (
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/registry"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,7 +20,7 @@ it will only print the token value.
 
 Example:
 
-  $ ` + cli.BinName() + ` registry token \
+  $ ` + cmdline.Args0() + ` registry token \
       --username=foo \
       --password=bar \
       --scope="repository:foo/sample:pull"`,

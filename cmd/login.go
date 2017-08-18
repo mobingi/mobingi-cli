@@ -11,6 +11,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
 	"github.com/mobingi/mobingi-cli/pkg/dbg"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -30,13 +31,13 @@ func LoginCmd() *cobra.Command {
 		Use:   "login",
 		Short: "login to Mobingi API",
 		Long: `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to
-enter your username and password. Token will be saved in $HOME/.` + cli.BinName() + `/` + cli.ConfigFileName + `.
+enter your username and password. Token will be saved in $HOME/.` + cmdline.Args0() + `/` + cli.ConfigFileName + `.
 
 Valid 'grant-type' values: client_credentials, password
 
 Examples:
 
-  $ ` + cli.BinName() + ` login --client-id=foo --client-secret=bar`,
+  $ ` + cmdline.Args0() + ` login --client-id=foo --client-secret=bar`,
 		Run: login,
 	}
 

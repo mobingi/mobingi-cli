@@ -11,6 +11,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -26,9 +27,9 @@ Supported formats: raw, json
 
 Examples:
 
-  $ ` + cli.BinName() + ` creds list
-  $ ` + cli.BinName() + ` creds list --fmt=json
-  $ ` + cli.BinName() + ` creds list --fmt=raw`,
+  $ ` + cmdline.Args0() + ` creds list
+  $ ` + cmdline.Args0() + ` creds list --fmt=json
+  $ ` + cmdline.Args0() + ` creds list --fmt=raw`,
 		Run: credsList,
 	}
 

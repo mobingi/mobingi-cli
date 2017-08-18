@@ -10,6 +10,7 @@ import (
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -71,8 +72,8 @@ func (c *CliConfig) ConfigDir() string {
 		return p
 	}
 
-	dirname := BinName()
-	pair := strings.Split(BinName(), ".")
+	dirname := cmdline.Args0()
+	pair := strings.Split(cmdline.Args0(), ".")
 	// check for .exe (Windows)
 	if len(pair) == 2 {
 		if pair[1] == "exe" {

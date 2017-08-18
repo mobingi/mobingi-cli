@@ -9,6 +9,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +32,7 @@ func StackCreateCmd() *cobra.Command {
 
 You can get your credential id using the command:
 
-  $ ` + cli.BinName() + ` creds list
+  $ ` + cmdline.Args0() + ` creds list
 
 If credential id is empty, cli will attempt to get the list using the
 command above and use the first one in the list (if more than one).
@@ -50,7 +51,7 @@ will be a fleet of 10 spot instances and 10 on-demand instances.
 
 Example(s):
 
-  $ ` + cli.BinName() + ` stack create --nickname=sample`,
+  $ ` + cmdline.Args0() + ` stack create --nickname=sample`,
 		Run: createStack,
 	}
 

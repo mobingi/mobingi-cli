@@ -6,6 +6,7 @@ import (
 
 	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +19,7 @@ func StackDeleteCmd() *cobra.Command {
 		
 Example:
 
-  $ ` + cli.BinName() + ` stack delete --id=58c2297d25645-Y6NSE4VjP-tk`,
+  $ ` + cmdline.Args0() + ` stack delete --id=58c2297d25645-Y6NSE4VjP-tk`,
 		Run: delete,
 	}
 

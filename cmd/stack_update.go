@@ -9,6 +9,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +20,7 @@ func StackUpdateCmd() *cobra.Command {
 		Short: "update a stack",
 		Long: `Update a stack. You can get stack id from the command:
 
-  $ ` + cli.BinName() + ` stack list
+  $ ` + cmdline.Args0() + ` stack list
 
 As an example for --spot-range, if you have a total of 20 instances running
 in the autoscaling group and your spot range is set to 50 (50%), then there
@@ -27,8 +28,8 @@ will be a fleet of 10 spot instances and 10 on-demand instances.
 
 Example(s):
 
-  $ ` + cli.BinName() + ` stack update --id=mo-58c2297d25645-TEXlvYRBQ-tk --min=5 --max=20
-  $ ` + cli.BinName() + ` stack update --id=mo-58c2297d25645-TEXlvYRBQ-tk --spot-range=25`,
+  $ ` + cmdline.Args0() + ` stack update --id=mo-58c2297d25645-TEXlvYRBQ-tk --min=5 --max=20
+  $ ` + cmdline.Args0() + ` stack update --id=mo-58c2297d25645-TEXlvYRBQ-tk --spot-range=25`,
 		Run: updateStack,
 	}
 

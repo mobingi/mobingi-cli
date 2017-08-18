@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -37,18 +35,4 @@ func GetCliInt64Flag(cmd *cobra.Command, f string) int64 {
 	}
 
 	return v
-}
-
-func BinName() string {
-	name, err := os.Executable()
-	if err != nil {
-		return filepath.Base(os.Args[0])
-	}
-
-	link, err := filepath.EvalSymlinks(name)
-	if err != nil {
-		return filepath.Base(name)
-	}
-
-	return filepath.Base(link)
 }

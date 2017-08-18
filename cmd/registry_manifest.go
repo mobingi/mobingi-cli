@@ -8,6 +8,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/registry"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,7 +23,7 @@ and image name. Other values will be built based on inputs and command type. Out
 
 Example:
 
-  $ ` + cli.BinName() + ` registry manifest --username=foo --password=bar --image=hello:latest`,
+  $ ` + cmdline.Args0() + ` registry manifest --username=foo --password=bar --image=hello:latest`,
 		Run: manifest,
 	}
 

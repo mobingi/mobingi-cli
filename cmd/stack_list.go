@@ -13,6 +13,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
 	"github.com/spf13/cobra"
 )
@@ -33,10 +34,10 @@ using the '--out=[filename]' option. You need to specify either
 
 Examples:
 
-  $ ` + cli.BinName() + ` stack list
-  $ ` + cli.BinName() + ` stack list --fmt=text
-  $ ` + cli.BinName() + ` stack list --fmt=json --verbose
-  $ ` + cli.BinName() + ` stack list --fmt=raw --out=/home/foo/tmp.txt`,
+  $ ` + cmdline.Args0() + ` stack list
+  $ ` + cmdline.Args0() + ` stack list --fmt=text
+  $ ` + cmdline.Args0() + ` stack list --fmt=json --verbose
+  $ ` + cmdline.Args0() + ` stack list --fmt=raw --out=/home/foo/tmp.txt`,
 		Run: stackList,
 	}
 
