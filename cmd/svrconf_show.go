@@ -10,7 +10,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/svrconf"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )
 

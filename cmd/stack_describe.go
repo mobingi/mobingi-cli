@@ -12,8 +12,8 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
-	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )
 

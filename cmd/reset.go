@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

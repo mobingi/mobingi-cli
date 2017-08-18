@@ -5,7 +5,7 @@ import (
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )
 

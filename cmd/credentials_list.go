@@ -11,8 +11,8 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/credentials"
 	"github.com/mobingi/mobingi-cli/pkg/pretty"
-	"github.com/mobingilabs/mobingi-sdk-go/pkg/private/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/private/debug"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
