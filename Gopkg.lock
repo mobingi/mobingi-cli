@@ -58,7 +58,7 @@
 [[projects]]
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
-  packages = ["pkg/private/debug"]
+  packages = ["pkg/private/cmdline","pkg/private/debug"]
   revision = "9e1d2a9ec95ec9bcaec506fcc1adaa4fa5073157"
 
 [[projects]]
@@ -142,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ae334213eb897c335906eb32abcb8b68e9aab2779cd1cf8406224dd41a7e828a"
+  inputs-digest = "b2a9c0ac256c6e6a4c9b4538edb36f2631da1413ddac0ed8c1e47589b56f8263"
   solver-name = "gps-cdcl"
   solver-version = 1
