@@ -114,7 +114,7 @@ func login(cmd *cobra.Command, args []string) {
 		d.ErrorExit(err, 1)
 	}
 
-	apiver := fmt.Sprint(fval(cmd, "apiver", pretty.Pad))
+	apiver := fmt.Sprint(fval(cmd, "apiver", cli.ApiVersion))
 	cnf.ApiVersion = apiver
 	viper.Set(confmap.ConfigKey("apiver"), apiver)
 
