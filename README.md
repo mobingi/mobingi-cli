@@ -81,7 +81,6 @@ Examples:
 
 ```
 $ mobingi-cli stack list
-$ mobingi-cli stack list --fmt=text
 $ mobingi-cli stack list --fmt=json
 $ mobingi-cli stack list --fmt=raw --out=`echo $HOME`/out.txt
 ```
