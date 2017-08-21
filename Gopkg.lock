@@ -58,8 +58,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
-  packages = ["pkg/cmdline","pkg/debug","pkg/pretty"]
-  revision = "8f7f31df0679af7bf20058dd0a83d7c4490f0a0c"
+  packages = ["client","pkg/cmdline","pkg/debug","pkg/pretty"]
+  revision = "6a9cca6de9a3f3222362d791ffe4ef0bc614eb78"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -125,7 +125,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "43e60d72a8e2bd92ee98319ba9a384a0e9837c08"
+  revision = "07c182904dbd53199946ba614a412c61d3c548f5"
 
 [[projects]]
   branch = "master"
@@ -142,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3bf0348ab95e4d313b5759a5736bcadb57eb3339dc131610fd9b0a808f2a9019"
+  inputs-digest = "46891a70bdb450cf87aa88d55e090239d60563ac4112e71a4f1110d4d55b8f80"
   solver-name = "gps-cdcl"
   solver-version = 1

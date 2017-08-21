@@ -4,17 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"text/tabwriter"
 	"time"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func StackListCmd() *cobra.Command {
@@ -42,8 +45,13 @@ Examples:
 }
 
 func stackList(cmd *cobra.Command, args []string) {
-	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.AuthGet("/alm/stack")
+	c := client.NewSimpleHttpClient(httpClientConfig())
+	req, err := http.NewRequest(http.MethodGet, buildUrl("/alm/stack"), nil)
+	d.ErrorExit(err, 1)
+
+	token := viper.GetString(confmap.ConfigKey("token"))
+	req.Header.Add("Authorization", "Bearer "+token)
+	_, body, err := c.Do(req)
 	d.ErrorExit(err, 1)
 
 	var stacks []stack.ListStack
