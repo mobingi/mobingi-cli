@@ -43,6 +43,15 @@ func TestJSON(t *testing.T) {
 	mck.St1 = append(mck.St1, t1{S: "hello"})
 	s := JSON(mck, 2)
 	fmt.Println(s)
+	if len(s) == 0 {
+		t.Errorf("Not expecting an empty result")
+	}
+
+	switch s[0] {
+	case '{', '[':
+	default:
+		t.Errorf("Invalid json")
+	}
 
 	// test direct string
 	log.Println("string input:")
