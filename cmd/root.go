@@ -50,7 +50,7 @@ func init() {
 	rootCmd.PersistentFlags().String("apiver", "v2", "API version")
 	rootCmd.PersistentFlags().StringP("fmt", "f", "", "output format (values depends on command)")
 	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
-	rootCmd.PersistentFlags().IntVar(&pretty.Pad, "indent", 2, "indent padding when fmt is 'text' or 'json'")
+	rootCmd.PersistentFlags().IntVar(&pretty.Pad, "indent", 2, "indent padding when fmt is 'json'")
 	rootCmd.PersistentFlags().Int64Var(&timeout.Timeout, "timeout", 120, "timeout in seconds")
 	rootCmd.PersistentFlags().BoolVar(&dbg.Verbose, "verbose", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(&cli.Debug, "debug", false, "debug mode when error occurs")

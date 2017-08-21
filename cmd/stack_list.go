@@ -27,9 +27,8 @@ space(s) in it, make sure to surround it with double quotes.
 
 Valid format values: min (default), json, raw
 
-For now, the 'min' format option cannot yet write to a file
-using the '--out=[filename]' option. You need to specify either
-'text', 'json', or 'raw'.
+For now, the 'min' format option cannot yet write to a file using the '--out=[filename]'
+option. You need to specify either 'json', or 'raw'.
 
 Examples:
 

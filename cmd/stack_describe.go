@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -25,7 +24,7 @@ func StackDescribeCmd() *cobra.Command {
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
-Valid format values: min (default), json, raw, text
+Valid format values: min (default), json, raw
 
 Examples:
 
@@ -63,8 +62,6 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	// workaround: see description in struct definition
-	var ptr interface{}  // pointer to 1st element of slice
-	var sptr interface{} // pointer to the whole slice
 	var stacks1 []stack.DescribeStack1
 	var stacks2 []stack.DescribeStack2
 	valid := 0
@@ -72,42 +69,20 @@ func describe(cmd *cobra.Command, args []string) {
 	if err != nil {
 		err = json.Unmarshal(body, &stacks2)
 		d.ErrorExit(err, 1)
-
-		ptr = &stacks2[0]
-		sptr = stacks2
 		valid = 2
 	} else {
-		ptr = &stacks1[0]
-		sptr = stacks1
 		valid = 1
 	}
 
 	switch pfmt {
-	case "text":
-		indent := cli.GetCliIntFlag(cmd, "indent")
-		stack.PrintR(os.Stdout, ptr, 0, indent)
-
-		// write to file option
-		if out != "" {
-			fp, err := os.Create(out)
-			d.ErrorExit(err, 1)
-
-			defer fp.Close()
-			w := bufio.NewWriter(fp)
-			defer w.Flush()
-			stack.PrintR(w, ptr, 0, indent)
-			d.Info(fmt.Sprintf("output written to %s", out))
-		}
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
-		mi, err := json.MarshalIndent(sptr, "", pretty.Indent(indent))
-		d.ErrorExit(err, 1)
-
-		fmt.Println(string(mi))
+		js := pretty.JSON(string(body), indent)
+		fmt.Println(js)
 
 		// write to file option
 		if out != "" {
-			err = iohelper.WriteToFile(out, mi)
+			err = iohelper.WriteToFile(out, []byte(js))
 			d.ErrorExit(err, 1)
 		}
 	default:
