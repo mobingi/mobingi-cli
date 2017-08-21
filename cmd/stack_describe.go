@@ -61,18 +61,9 @@ func describe(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	// workaround: see description in struct definition
-	var stacks1 []stack.DescribeStack1
-	var stacks2 []stack.DescribeStack2
-	valid := 0
-	err = json.Unmarshal(body, &stacks1)
-	if err != nil {
-		err = json.Unmarshal(body, &stacks2)
-		d.ErrorExit(err, 1)
-		valid = 2
-	} else {
-		valid = 1
-	}
+	var stacks []stack.DescribeStack
+	err = json.Unmarshal(body, &stacks)
+	d.ErrorExit(err, 1)
 
 	switch pfmt {
 	case "json":
@@ -89,38 +80,19 @@ func describe(cmd *cobra.Command, args []string) {
 		if pfmt == "min" || pfmt == "" {
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
-			if valid == 1 {
-				for _, inst := range stacks1[0].Instances {
-					instype := "on-demand"
-					if inst.InstanceLifecycle == "spot" {
-						instype = inst.InstanceLifecycle
-					}
-
-					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-						inst.InstanceId,
-						instype,
-						inst.InstanceType,
-						inst.PublicIpAddress,
-						inst.PrivateIpAddress,
-						inst.State.Name)
+			for _, inst := range stacks[0].Instances {
+				instype := "on-demand"
+				if inst.InstanceLifecycle == "spot" {
+					instype = inst.InstanceLifecycle
 				}
-			}
 
-			if valid == 2 {
-				for _, inst := range stacks2[0].Instances {
-					instype := "on-demand"
-					if inst.InstanceLifecycle == "spot" {
-						instype = inst.InstanceLifecycle
-					}
-
-					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-						inst.InstanceId,
-						instype,
-						inst.InstanceType,
-						inst.PublicIpAddress,
-						inst.PrivateIpAddress,
-						inst.State.Name)
-				}
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+					inst.InstanceId,
+					instype,
+					inst.InstanceType,
+					inst.PublicIpAddress,
+					inst.PrivateIpAddress,
+					inst.State.Name)
 			}
 
 			w.Flush()
