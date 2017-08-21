@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,10 +10,10 @@ import (
 
 	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/pretty"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +25,7 @@ func StackListCmd() *cobra.Command {
 make sure you provide the full path of the file. If the path has
 space(s) in it, make sure to surround it with double quotes.
 
-Valid format values: min (default), text, json, raw
+Valid format values: min (default), json, raw
 
 For now, the 'min' format option cannot yet write to a file
 using the '--out=[filename]' option. You need to specify either
@@ -35,7 +34,6 @@ using the '--out=[filename]' option. You need to specify either
 Examples:
 
   $ ` + cmdline.Args0() + ` stack list
-  $ ` + cmdline.Args0() + ` stack list --fmt=text
   $ ` + cmdline.Args0() + ` stack list --fmt=json --verbose
   $ ` + cmdline.Args0() + ` stack list --fmt=raw --out=/home/foo/tmp.txt`,
 		Run: stackList,
@@ -65,33 +63,15 @@ func stackList(cmd *cobra.Command, args []string) {
 			d.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
-	case "text":
-		indent := cli.GetCliIntFlag(cmd, "indent")
-		stack.PrintR(os.Stdout, &stacks[0], 0, indent)
-
-		// write to file option
-		f := cli.GetCliStringFlag(cmd, "out")
-		if f != "" {
-			fp, err := os.Create(f)
-			d.ErrorExit(err, 1)
-
-			defer fp.Close()
-			w := bufio.NewWriter(fp)
-			defer w.Flush()
-			stack.PrintR(w, &stacks[0], 0, indent)
-			d.Info(fmt.Sprintf("Output written to %s.", f))
-		}
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
-		mi, err := json.MarshalIndent(stacks, "", pretty.Indent(indent))
-		d.ErrorExit(err, 1)
-
-		fmt.Println(string(mi))
+		js := pretty.JSON(string(body), indent)
+		fmt.Println(js)
 
 		// write to file option
 		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
-			err = ioutil.WriteFile(f, mi, 0644)
+			err = ioutil.WriteFile(f, []byte(js), 0644)
 			d.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
