@@ -31,6 +31,11 @@ type Config struct {
 	// MOBINGI_CLIENT_SECRET environment variable.
 	ClientSecret string
 
+	// AccessToken is your API access token. By default, session will get an
+	// access token based on ClientId and ClientSecret. If this is set however,
+	// session will use this token instead.
+	AccessToken string
+
 	// ApiVersion is the API version to be used in the session where this config
 	// is associated with. If zero, it will default to the latest version.
 	ApiVersion int
@@ -49,8 +54,8 @@ type Config struct {
 }
 
 type Session struct {
-	Config   *Config
-	ApiToken string
+	Config      *Config
+	AccessToken string
 }
 
 func (s *Session) ApiEndpoint() string {
@@ -99,7 +104,7 @@ func (s *Session) getAccessToken() (string, error) {
 	return token, nil
 }
 
-func NewSession(cnf ...*Config) (*Session, error) {
+func New(cnf ...*Config) (*Session, error) {
 	c := &Config{
 		ClientId:        os.Getenv("MOBINGI_CLIENT_ID"),
 		ClientSecret:    os.Getenv("MOBINGI_CLIENT_SECRET"),
@@ -118,6 +123,10 @@ func NewSession(cnf ...*Config) (*Session, error) {
 				c.ClientSecret = cnf[0].ClientSecret
 			}
 
+			if cnf[0].AccessToken != "" {
+				c.AccessToken = cnf[0].AccessToken
+			}
+
 			if cnf[0].ApiVersion > 0 {
 				c.ApiVersion = cnf[0].ApiVersion
 			}
@@ -133,11 +142,16 @@ func NewSession(cnf ...*Config) (*Session, error) {
 	}
 
 	s := &Session{Config: c}
-	token, err := s.getAccessToken()
-	if err != nil {
-		return s, errors.Wrap(err, "get access token failed")
+	if c.AccessToken != "" {
+		s.AccessToken = c.AccessToken
+	} else {
+		token, err := s.getAccessToken()
+		if err != nil {
+			return s, errors.Wrap(err, "get access token failed")
+		}
+
+		s.AccessToken = token
 	}
 
-	s.ApiToken = token
 	return s, nil
 }

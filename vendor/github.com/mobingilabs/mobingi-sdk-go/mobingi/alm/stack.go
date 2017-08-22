@@ -19,7 +19,7 @@ func (s *stack) List() (*http.Response, []byte, error) {
 		return nil, nil, errors.Wrap(err, "new request failed")
 	}
 
-	req.Header.Add("Authorization", "Bearer "+s.session.ApiToken)
+	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
 	return s.client.Do(req)
 }
 

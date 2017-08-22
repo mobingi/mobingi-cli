@@ -9,7 +9,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	sess, _ := session.NewSession(&session.Config{})
+	sess, _ := session.New(&session.Config{})
 	alm := New(sess)
 	if alm == nil {
 		t.Errorf("Expecting non-nil")
@@ -22,7 +22,7 @@ func TestList(t *testing.T) {
 	}))
 
 	defer ts.Close()
-	sess, _ := session.NewSession(&session.Config{
+	sess, _ := session.New(&session.Config{
 		BaseApiUrl: ts.URL,
 		ApiVersion: 2,
 	})

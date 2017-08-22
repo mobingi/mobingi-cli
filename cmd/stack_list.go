@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"text/tabwriter"
 	"time"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
-	"github.com/mobingi/mobingi-cli/pkg/stack"
-	"github.com/mobingilabs/mobingi-sdk-go/client"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -45,16 +44,19 @@ Examples:
 }
 
 func stackList(cmd *cobra.Command, args []string) {
-	c := client.NewSimpleHttpClient(httpClientConfig())
-	req, err := http.NewRequest(http.MethodGet, buildUrl("/alm/stack"), nil)
+	sess, err := session.New(&session.Config{
+		ApiVersion:      2,
+		AccessToken:     viper.GetString(confmap.ConfigKey("token")),
+		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
+		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+	})
+
+	d.ErrorExit(err, 1)
+	svc := alm.New(sess)
+	_, body, err := svc.List()
 	d.ErrorExit(err, 1)
 
-	token := viper.GetString(confmap.ConfigKey("token"))
-	req.Header.Add("Authorization", "Bearer "+token)
-	_, body, err := c.Do(req)
-	d.ErrorExit(err, 1)
-
-	var stacks []stack.ListStack
+	var stacks []alm.ListStack
 	err = json.Unmarshal(body, &stacks)
 	d.ErrorExit(err, 1)
 
