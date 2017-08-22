@@ -6,14 +6,16 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
-	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func StackDescribeCmd() *cobra.Command {
@@ -38,14 +40,21 @@ Examples:
 }
 
 func describe(cmd *cobra.Command, args []string) {
-	var err error
-	id := cli.GetCliStringFlag(cmd, "id")
-	if id == "" {
-		d.ErrorExit("stack id cannot be empty", 1)
+	sess, err := session.New(&session.Config{
+		ApiVersion:      2,
+		AccessToken:     viper.GetString(confmap.ConfigKey("token")),
+		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
+		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+	})
+
+	d.ErrorExit(err, 1)
+
+	svc := alm.New(sess)
+	in := &alm.StackDescribeInput{
+		StackId: cli.GetCliStringFlag(cmd, "id"),
 	}
 
-	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.AuthGet("/alm/stack/" + fmt.Sprintf("%s", id))
+	_, body, err := svc.Describe(in)
 	d.ErrorExit(err, 1)
 
 	// we process `--fmt=raw` option first
@@ -61,7 +70,7 @@ func describe(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	var stacks []stack.DescribeStack
+	var stacks []alm.DescribeStack
 	err = json.Unmarshal(body, &stacks)
 	d.ErrorExit(err, 1)
 
