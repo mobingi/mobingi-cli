@@ -2,8 +2,6 @@ package pretty
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"testing"
 )
 
@@ -39,10 +37,8 @@ func TestJSON(t *testing.T) {
 	}
 
 	// test marshal
-	log.Println("with marshal:")
 	mck.St1 = append(mck.St1, t1{S: "hello"})
 	s := JSON(mck, 2)
-	fmt.Println(s)
 	if len(s) == 0 {
 		t.Errorf("Not expecting an empty result")
 	}
@@ -54,11 +50,10 @@ func TestJSON(t *testing.T) {
 	}
 
 	// test direct string
-	log.Println("string input:")
 	b, err := json.Marshal(mck)
 	if err != nil {
 		t.Errorf("Marshal failed: %#v", err)
 	}
 
-	fmt.Println(JSON(string(b), 2))
+	_ = b
 }

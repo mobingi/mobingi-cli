@@ -1,0 +1,24 @@
+version: "{build}"
+
+platform: x64
+
+branches:
+  only:
+    - master
+
+clone_folder: c:\gopath\src\github.com\mobingilabs\mobingi-sdk-go
+
+environment:
+  GOPATH: c:\gopath
+
+install:  
+  - echo %PATH%
+  - echo %GOPATH%
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - go version
+  - go env
+
+build_script:
+  - go test -v ./mobingi/...
+  - go test -v ./client/...
+  - go test -v ./pkg/...

@@ -18,7 +18,7 @@ type Config struct {
 	Logger  *log.Logger // stdout when nil, verbose should be true
 }
 
-type httpClient interface {
+type HttpClient interface {
 	Do(*http.Request) (*http.Response, []byte, error)
 }
 
@@ -87,8 +87,8 @@ func (c *simpleHttpClient) Do(r *http.Request) (*http.Response, []byte, error) {
 	return resp, body, nil
 }
 
-func NewSimpleHttpClient(cnf *Config) *simpleHttpClient {
-	if cnf == nil {
+func NewSimpleHttpClient(cnf ...*Config) *simpleHttpClient {
+	if len(cnf) == 0 {
 		return &simpleHttpClient{
 			client: http.DefaultClient,
 			cnf: &Config{
@@ -99,6 +99,6 @@ func NewSimpleHttpClient(cnf *Config) *simpleHttpClient {
 
 	return &simpleHttpClient{
 		client: http.DefaultClient,
-		cnf:    cnf,
+		cnf:    cnf[0],
 	}
 }
