@@ -18,8 +18,12 @@ type Config struct {
 	Logger  *log.Logger // stdout when nil, verbose should be true
 }
 
+type Response struct {
+	HttpResponse *http.Response
+}
+
 type HttpClient interface {
-	Do(*http.Request) (*http.Response, []byte, error)
+	Do(*http.Request) (*Response, []byte, error)
 }
 
 type simpleHttpClient struct {
@@ -27,7 +31,7 @@ type simpleHttpClient struct {
 	cnf    *Config
 }
 
-func (c *simpleHttpClient) Do(r *http.Request) (*http.Response, []byte, error) {
+func (c *simpleHttpClient) Do(r *http.Request) (*Response, []byte, error) {
 	if c.cnf.Verbose {
 		if c.cnf.Logger == nil {
 			debug.Info("[URL]", r.URL.String())
@@ -44,6 +48,7 @@ func (c *simpleHttpClient) Do(r *http.Request) (*http.Response, []byte, error) {
 		}
 	}
 
+	response := &Response{}
 	var lctx context.Context
 	var lcancel context.CancelFunc
 	req := r
@@ -55,9 +60,11 @@ func (c *simpleHttpClient) Do(r *http.Request) (*http.Response, []byte, error) {
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return resp, nil, errors.Wrap(err, "do failed")
+		response.HttpResponse = resp
+		return response, nil, errors.Wrap(err, "do failed")
 	}
 
+	response.HttpResponse = resp
 	defer resp.Body.Close()
 	if lcancel != nil {
 		defer lcancel()
@@ -81,10 +88,10 @@ func (c *simpleHttpClient) Do(r *http.Request) (*http.Response, []byte, error) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return resp, body, errors.Wrap(err, "readall failed")
+		return response, body, errors.Wrap(err, "readall failed")
 	}
 
-	return resp, body, nil
+	return response, body, nil
 }
 
 func NewSimpleHttpClient(cnf ...*Config) *simpleHttpClient {

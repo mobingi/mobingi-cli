@@ -34,8 +34,8 @@ func TestDo(t *testing.T) {
 		t.Errorf("Do failed: %#v", err)
 	}
 
-	if resp.StatusCode != 200 {
-		t.Errorf("Expected 200, received %v", resp.StatusCode)
+	if resp.HttpResponse.StatusCode != 200 {
+		t.Errorf("Expected 200, received %v", resp.HttpResponse.StatusCode)
 	}
 
 	if string(body) != "hello" {
