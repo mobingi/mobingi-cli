@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/credentials"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )

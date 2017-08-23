@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/mobingi/mobingi-cli/client"
-	"github.com/mobingi/mobingi-cli/pkg/credentials"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/pkg/errors"
 )
 
