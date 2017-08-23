@@ -278,3 +278,52 @@ func TestUpdateDevAcct(t *testing.T) {
 		_ = body
 	}
 }
+
+func TestDelete(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(r.URL.String()))
+	}))
+
+	defer ts.Close()
+	sess, _ := session.New(&session.Config{
+		BaseApiUrl: ts.URL,
+		ApiVersion: 2,
+	})
+
+	alm := New(sess)
+	_, body, err := alm.Delete(&StackDeleteInput{
+		StackId: "id",
+	})
+
+	if string(body) != "/v2/alm/stack/id" {
+		t.Errorf("Expecting '/v2/alm/stack/id', received %v", string(body))
+	}
+
+	_ = err
+}
+
+// Local test for dev; requires the following environment variables:
+// MOBINGI_CLIENT_ID, MOBINGI_CLIENT_SECRET (dev accounts only)
+func TestDeleteDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+			ApiVersion: 2,
+		})
+
+		alm := New(sess)
+
+		in := &StackDeleteInput{
+			// this id is an actual stack id; if you want to test, use an actual id
+			StackId: "mo-58c2297d25645-4t7SRL1P-tk",
+		}
+
+		_, body, err := alm.Delete(in)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		_ = body
+	}
+}

@@ -63,6 +63,10 @@ type StackUpdateInput struct {
 	Configurations interface{} // of type StackCreateConfig
 }
 
+type StackDeleteInput struct {
+	StackId string
+}
+
 type stack struct {
 	session *session.Session
 	client  client.HttpClient
@@ -175,6 +179,25 @@ func (s *stack) Update(in *StackUpdateInput) (*client.Response, []byte, error) {
 
 	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
 	req.Header.Add("Content-Type", "application/json")
+	return s.client.Do(req)
+}
+
+func (s *stack) Delete(in *StackDeleteInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.StackId == "" {
+		return nil, nil, errors.New("stack id cannot be empty")
+	}
+
+	ep := s.session.ApiEndpoint() + "/alm/stack/" + in.StackId
+	req, err := http.NewRequest(http.MethodDelete, ep, nil)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "new request failed")
+	}
+
+	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
 	return s.client.Do(req)
 }
 

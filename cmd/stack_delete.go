@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
@@ -33,8 +33,12 @@ func delete(cmd *cobra.Command, args []string) {
 		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.AuthDel("/alm/stack/" + fmt.Sprintf("%s", id))
+	sess, err := sessionv2()
+	d.ErrorExit(err, 1)
+
+	svc := alm.New(sess)
+	in := &alm.StackDeleteInput{StackId: id}
+	_, body, err := svc.Delete(in)
 	d.ErrorExit(err, 1)
 
 	var m map[string]interface{}
