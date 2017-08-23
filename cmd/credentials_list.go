@@ -7,9 +7,8 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/credentials"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -74,12 +73,21 @@ func credsList(cmd *cobra.Command, args []string) {
 
 func getCredsList(cmd *cobra.Command) ([]credentials.VendorCredentials, []byte, error) {
 	vendor := cli.GetCliStringFlag(cmd, "vendor")
-	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.AuthGet("/credentials/" + vendor)
+	sess, err := sessionv2()
 	if err != nil {
-		return nil, body, errors.Wrap(err, "http get failed")
+		return nil, nil, errors.Wrap(err, "sessionv2 failed")
 	}
 
+	svc := credentials.New(sess)
+	resp, body, err := svc.List(&credentials.CredentialsListInput{
+		Vendor: vendor,
+	})
+
+	if err != nil {
+		return nil, body, errors.Wrap(err, "svc list failed")
+	}
+
+	exitOn401(resp)
 	var creds []credentials.VendorCredentials
 	err = json.Unmarshal(body, &creds)
 	if err != nil {
