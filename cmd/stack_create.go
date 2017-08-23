@@ -3,11 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -88,24 +87,9 @@ Example(s):
 }
 
 func createStack(cmd *cobra.Command, args []string) {
-	cred := cli.GetCliStringFlag(cmd, "cred")
-	if cred == "" {
-		creds, _, err := getCredsList(cmd)
-		d.ErrorExit(err, 1)
-
-		if len(creds) == 0 {
-			d.ErrorExit("no credentials found", 1)
-		}
-
-		cred = creds[0].Id
-	}
-
-	if cred == "" {
-		d.ErrorExit("credential id is required", 1)
-	}
-
 	vendor := cli.GetCliStringFlag(cmd, "vendor")
 	region := cli.GetCliStringFlag(cmd, "region")
+	cred := cli.GetCliStringFlag(cmd, "cred")
 	nickname := cli.GetCliStringFlag(cmd, "nickname")
 	arch := cli.GetCliStringFlag(cmd, "arch")
 	archtype := cli.GetCliStringFlag(cmd, "type")
@@ -125,7 +109,7 @@ func createStack(cmd *cobra.Command, args []string) {
 	ectype := cli.GetCliStringFlag(cmd, "elasticache-nodetype")
 	eccount := cli.GetCliStringFlag(cmd, "elasticache-nodecount")
 
-	cnf := stack.CreateStackConfig{
+	cnf := alm.StackCreateConfig{
 		Region:            region,
 		Architecture:      arch,
 		Type:              archtype,
@@ -205,18 +189,18 @@ func createStack(cmd *cobra.Command, args []string) {
 	d.Info("configurations:")
 	fmt.Println(string(mi))
 
-	// for actual payload (smaller)
-	mi, err = json.Marshal(&cnf)
+	sess, err := sessionv2()
 	d.ErrorExit(err, 1)
 
-	c := client.NewClient(client.NewApiConfig(cmd))
-	v := url.Values{}
-	v.Set("vendor", vendor)
-	v.Set("region", region)
-	v.Set("cred", cred)
-	v.Set("configurations", string(mi))
-	payload := []byte(v.Encode())
-	resp, body, err := c.AuthPostUrlEncoded("/alm/stack", nil, payload)
+	svc := alm.New(sess)
+	in := &alm.StackCreateInput{
+		Vendor:         vendor,
+		Region:         region,
+		CredId:         cred,
+		Configurations: cnf,
+	}
+
+	resp, body, err := svc.Create(in)
 	d.ErrorExit(err, 1)
 
 	var success bool
@@ -228,7 +212,7 @@ func createStack(cmd *cobra.Command, args []string) {
 	if ok {
 		_, ok = m["status"]
 		if ok {
-			d.Info(fmt.Sprintf("[%s] stack creation started:", resp.Status))
+			d.Info(fmt.Sprintf("[%s] stack creation started:", resp.HttpResponse.Status))
 			d.Info("  stack id:", fmt.Sprintf("%s", m["stack_id"]))
 			d.Info("  status:", fmt.Sprintf("%s", m["status"]))
 			success = true
