@@ -45,8 +45,9 @@ func describe(cmd *cobra.Command, args []string) {
 		StackId: cli.GetCliStringFlag(cmd, "id"),
 	}
 
-	_, body, err := svc.Describe(in)
+	resp, body, err := svc.Describe(in)
 	d.ErrorExit(err, 1)
+	exitOn401(resp)
 
 	// we process `--fmt=raw` option first
 	out := cli.GetCliStringFlag(cmd, "out")

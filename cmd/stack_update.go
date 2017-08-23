@@ -106,6 +106,7 @@ func updateStack(cmd *cobra.Command, args []string) {
 
 	resp, body, err := svc.Update(in)
 	d.ErrorExit(err, 1)
+	exitOn401(resp)
 
 	var success bool
 	var m map[string]interface{}

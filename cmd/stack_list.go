@@ -45,8 +45,9 @@ func stackList(cmd *cobra.Command, args []string) {
 	d.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
-	_, body, err := svc.List()
+	resp, body, err := svc.List()
 	d.ErrorExit(err, 1)
+	exitOn401(resp)
 
 	var stacks []alm.ListStack
 	err = json.Unmarshal(body, &stacks)
