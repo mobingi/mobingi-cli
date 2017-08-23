@@ -62,7 +62,7 @@ func TestDoWithTimeout(t *testing.T) {
 	}
 }
 
-func TestDoVerbose(t *testing.T) {
+func TestDoVerboseBuffer(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("hello"))
 	}))
@@ -87,5 +87,23 @@ func TestDoVerbose(t *testing.T) {
 	w.Flush()
 	if b.Len() == 0 {
 		t.Errorf("Buffer should not be empty")
+	}
+}
+
+func TestDoVerboseStdout(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello"))
+	}))
+
+	defer ts.Close()
+	c := NewSimpleHttpClient(&Config{Verbose: true})
+	r, err := http.NewRequest(http.MethodGet, ts.URL+"/test", nil)
+	if err != nil {
+		t.Errorf("New request failed: %#v", err)
+	}
+
+	_, _, err = c.Do(r)
+	if err != nil {
+		t.Errorf("Do failed: %#v", err)
 	}
 }

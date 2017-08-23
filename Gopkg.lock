@@ -59,7 +59,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/credentials","mobingi/session","pkg/cmdline","pkg/debug","pkg/pretty"]
-  revision = "f9e017d6df817402c2c913c149de6b470cdd3a9f"
+  revision = "071d4feabbb49dc292a0b8d14cfca3236518a971"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -95,7 +95,7 @@
   branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "4a7b7e65864c064d48dce82efbbfed2bdc0bf2aa"
+  revision = "2df9a531813370438a4d79bfc33e21f58063ed87"
 
 [[projects]]
   branch = "master"

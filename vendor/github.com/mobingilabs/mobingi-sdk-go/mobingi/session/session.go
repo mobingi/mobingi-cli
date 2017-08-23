@@ -138,6 +138,10 @@ func New(cnf ...*Config) (*Session, error) {
 			if cnf[0].BaseRegistryUrl != "" {
 				c.BaseRegistryUrl = cnf[0].BaseRegistryUrl
 			}
+
+			if cnf[0].HttpClientConfig != nil {
+				c.HttpClientConfig = cnf[0].HttpClientConfig
+			}
 		}
 	}
 
