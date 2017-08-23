@@ -16,7 +16,7 @@ type StackDescribeInput struct {
 	StackId string
 }
 
-type CreateStackDb struct {
+type StackCreateDb struct {
 	Engine       string `json:"Engine,omitempty"`
 	Type         string `json:"DBType,omitempty"`
 	Storage      string `json:"DBStorage,omitempty"`
@@ -27,7 +27,7 @@ type CreateStackDb struct {
 	ReadReplica5 bool   `json:"ReadReplica5,omitempty"`
 }
 
-type CreateStackElasticache struct {
+type StackCreateElasticache struct {
 	Engine    string `json:"ElastiCacheEngine,omitempty"`
 	NodeType  string `json:"ElastiCacheNodeType,omitempty"`
 	NodeCount string `json:"ElastiCacheNodes,omitempty"`
@@ -134,6 +134,10 @@ func (s *stack) Create(in *StackCreateInput) (*client.Response, []byte, error) {
 	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 	return s.client.Do(req)
+}
+
+func (s *stack) Update(in *StackCreateInput) (*client.Response, []byte, error) {
+	return nil, nil, nil
 }
 
 func (s *stack) getCredsList(vendor string) ([]credentials.VendorCredentials, error) {

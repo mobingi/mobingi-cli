@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/stack"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -138,8 +137,8 @@ func createStack(cmd *cobra.Command, args []string) {
 			d.ErrorExit("dbstorage is required", 1)
 		}
 
-		dbs := make([]stack.CreateStackDb, 0)
-		tmp := stack.CreateStackDb{
+		dbs := make([]alm.StackCreateDb, 0)
+		tmp := alm.StackCreateDb{
 			Engine:       dbengine,
 			Type:         dbtype,
 			Storage:      dbstore,
@@ -167,8 +166,8 @@ func createStack(cmd *cobra.Command, args []string) {
 			d.ErrorExit("elasticache-nodecount is required", 1)
 		}
 
-		caches := make([]stack.CreateStackElasticache, 0)
-		tmp := stack.CreateStackElasticache{
+		caches := make([]alm.StackCreateElasticache, 0)
+		tmp := alm.StackCreateElasticache{
 			Engine:    ecengine,
 			NodeType:  ectype,
 			NodeCount: eccount,
