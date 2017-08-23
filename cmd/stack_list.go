@@ -9,14 +9,11 @@ import (
 	"time"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
-	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func StackListCmd() *cobra.Command {
@@ -44,14 +41,9 @@ Examples:
 }
 
 func stackList(cmd *cobra.Command, args []string) {
-	sess, err := session.New(&session.Config{
-		ApiVersion:      2,
-		AccessToken:     viper.GetString(confmap.ConfigKey("token")),
-		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
-		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
-	})
-
+	sess, err := sessionv2()
 	d.ErrorExit(err, 1)
+
 	svc := alm.New(sess)
 	_, body, err := svc.List()
 	d.ErrorExit(err, 1)
