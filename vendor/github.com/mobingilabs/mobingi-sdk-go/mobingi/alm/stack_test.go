@@ -3,7 +3,6 @@ package alm
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -111,8 +110,6 @@ func TestCreate(t *testing.T) {
 					if err != nil {
 						t.Errorf("Error unmarshaling body: %v", err)
 					}
-
-					log.Println(in)
 				}
 			}
 		}
@@ -200,6 +197,84 @@ func TestCreateDevAcct(t *testing.T) {
 			t.Errorf("Expecting nil error, received %v", err)
 		}
 
-		log.Println(string(body))
+		_ = body
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("Error reading body: %v", err)
+		}
+
+		var m map[string]interface{}
+		var in StackCreateConfig
+		err = json.Unmarshal(body, &m)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		_, ok := m["configurations"]
+		if ok {
+			err = json.Unmarshal([]byte(m["configurations"].(string)), &in)
+			if err != nil {
+				t.Errorf("Expecting nil error, received %v", err)
+			}
+
+			if in.SpotRange.(float64) != 40 {
+				t.Errorf("Expecting a 40 spot range, got %v", in.SpotRange)
+			}
+		}
+
+		w.Write([]byte(r.URL.String()))
+	}))
+
+	defer ts.Close()
+	sess, _ := session.New(&session.Config{
+		BaseApiUrl: ts.URL,
+		ApiVersion: 2,
+	})
+
+	alm := New(sess)
+	_, body, err := alm.Update(&StackUpdateInput{
+		StackId: "id",
+		Configurations: StackCreateConfig{
+			SpotRange: 40,
+		},
+	})
+
+	_, _ = body, err
+}
+
+// Local test for dev; requires the following environment variables:
+// MOBINGI_CLIENT_ID, MOBINGI_CLIENT_SECRET (dev accounts only)
+func TestUpdateDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+			ApiVersion: 2,
+		})
+
+		alm := New(sess)
+
+		cnf := StackCreateConfig{
+			SpotRange: 40,
+		}
+
+		in := &StackUpdateInput{
+			// this id is an actual stack id; if you want to test, use an actual id
+			StackId:        "mo-58c2297d25645-4t7SRL1P-tk",
+			Configurations: cnf,
+		}
+
+		_, body, err := alm.Update(in)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		_ = body
 	}
 }

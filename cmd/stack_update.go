@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/stack"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -53,7 +52,7 @@ func updateStack(cmd *cobra.Command, args []string) {
 		d.ErrorExit("stack id required", 1)
 	}
 
-	cnf := stack.CreateStackConfig{}
+	cnf := alm.StackCreateConfig{}
 	if cmd.Flag("type").Changed {
 		cnf.Type = cli.GetCliStringFlag(cmd, "type")
 		modified = true
@@ -96,8 +95,16 @@ func updateStack(cmd *cobra.Command, args []string) {
 	mi, err = json.Marshal(&p)
 	d.ErrorExit(err, 1)
 
-	c := client.NewClient(client.NewApiConfig(cmd))
-	resp, body, err := c.AuthPut("/alm/stack/"+id, mi)
+	sess, err := sessionv2()
+	d.ErrorExit(err, 1)
+
+	svc := alm.New(sess)
+	in := &alm.StackUpdateInput{
+		StackId:        id,
+		Configurations: cnf,
+	}
+
+	resp, body, err := svc.Update(in)
 	d.ErrorExit(err, 1)
 
 	var success bool

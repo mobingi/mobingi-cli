@@ -55,7 +55,12 @@ type StackCreateInput struct {
 	Vendor         string
 	Region         string
 	CredId         string
-	Configurations interface{}
+	Configurations interface{} // of type StackCreateConfig
+}
+
+type StackUpdateInput struct {
+	StackId        string
+	Configurations interface{} // of type StackCreateConfig
 }
 
 type stack struct {
@@ -136,8 +141,41 @@ func (s *stack) Create(in *StackCreateInput) (*client.Response, []byte, error) {
 	return s.client.Do(req)
 }
 
-func (s *stack) Update(in *StackCreateInput) (*client.Response, []byte, error) {
-	return nil, nil, nil
+func (s *stack) Update(in *StackUpdateInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.StackId == "" {
+		return nil, nil, errors.New("stack id cannot be empty")
+	}
+
+	type updatet struct {
+		Configurations string `json:"configurations,omitempty"`
+	}
+
+	mi, err := json.Marshal(&in.Configurations)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "marshal config failed")
+	}
+
+	p := updatet{}
+	p.Configurations = string(mi)
+
+	mi, err = json.Marshal(&p)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "marshal payload failed")
+	}
+
+	ep := s.session.ApiEndpoint() + "/alm/stack/" + in.StackId
+	req, err := http.NewRequest(http.MethodPut, ep, bytes.NewBuffer(mi))
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "new request failed")
+	}
+
+	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req.Header.Add("Content-Type", "application/json")
+	return s.client.Do(req)
 }
 
 func (s *stack) getCredsList(vendor string) ([]credentials.VendorCredentials, error) {
