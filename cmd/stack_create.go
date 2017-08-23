@@ -212,7 +212,7 @@ func createStack(cmd *cobra.Command, args []string) {
 	if ok {
 		_, ok = m["status"]
 		if ok {
-			d.Info(fmt.Sprintf("[%s] stack creation started:", resp.HttpResponse.Status))
+			d.Info(fmt.Sprintf("[%s] stack creation started:", resp.Status))
 			d.Info("  stack id:", fmt.Sprintf("%s", m["stack_id"]))
 			d.Info("  status:", fmt.Sprintf("%s", m["status"]))
 			success = true

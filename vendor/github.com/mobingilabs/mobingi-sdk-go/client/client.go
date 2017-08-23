@@ -19,7 +19,7 @@ type Config struct {
 }
 
 type Response struct {
-	HttpResponse *http.Response
+	*http.Response
 }
 
 type HttpClient interface {
@@ -48,7 +48,6 @@ func (c *simpleHttpClient) Do(r *http.Request) (*Response, []byte, error) {
 		}
 	}
 
-	response := &Response{}
 	var lctx context.Context
 	var lcancel context.CancelFunc
 	req := r
@@ -60,11 +59,10 @@ func (c *simpleHttpClient) Do(r *http.Request) (*Response, []byte, error) {
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		response.HttpResponse = resp
-		return response, nil, errors.Wrap(err, "do failed")
+		return &Response{resp}, nil, errors.Wrap(err, "do failed")
 	}
 
-	response.HttpResponse = resp
+	response := &Response{resp}
 	defer resp.Body.Close()
 	if lcancel != nil {
 		defer lcancel()

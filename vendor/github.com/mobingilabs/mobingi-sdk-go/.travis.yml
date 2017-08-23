@@ -8,4 +8,8 @@ go:
   - master
 
 script:
-- go test -v $(go list ./... | grep -v /vendor/) -cover
+  - go test -v $(go list ./... | grep -v /vendor/) -cover
+
+notifications:
+  slack:
+    secure: gQzjN7fjbH17kpBrcV0uufr8UkFLVlD/+vr+QNtkn0Cv+5p2pq2vkM2KFqmGBpOivEciHkdojp0qPhHSWOk/vC0inytmJ6bYP8/Kpq+mcwJUAtX8vE4R4iPDbp6uvdHYD3Ek3ARY/hR8nse7slfZnf3K0JtO26fMxCBqtmaGlQbF0I00onl5NDsjakzudYhjNn/4XO0UmLpMVphPyNtT/SaKzXso6EulG3Ih4vMMFS3uG+DQrZ7wSVjKCYnpiRv9pUu7u5sH7zZjnxEYjqUkg+BwKWm/bLiI3D1x2lMOjWoKkKfcJd1nr1FwWIrjD+Wv1ES1KAmnJmY3TY3BGFFli3ubBWACEGd7+F8tAEOyQKybFkyvNRHMXi277f6AXX84t5CEDvqkxGfX2+0EFfQh9EDWIlZRUeSaJ4yhfuLby25W/8T3uKj71PBb7FdQ9jr8lxz5KeKG++0fKYRkAKHkSNHa+3H6OfGw6GfZriuq/T8fo2qwrHhzUKdHQTZqY2bzdVUV6mydinVQXxdBwk7yK6eEnK7r9tCkWhXe4/bDUOHskjQbWhc0wHf2FLSv2e7S9/fGb4x+dR8zru3nGk8AVpKtHW3ii4q2XZ/swQn5o6+Fmoa9JA9kTGkpEFrMU8lPczRSm/nBFx3tFOfFm5gxcL9eIM5zIjPxT3GH4QuPUmE=
