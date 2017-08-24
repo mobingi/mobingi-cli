@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/iohelper"
-	"github.com/mobingi/mobingi-cli/pkg/svrconf"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm/svrconf"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
@@ -31,15 +30,22 @@ Valid format values: json (default), raw`,
 }
 
 func show(cmd *cobra.Command, args []string) {
-	var err error
 	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
 		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	c := client.NewClient(client.NewApiConfig(cmd))
-	body, err := c.AuthGet(`/alm/serverconfig?stack_id=` + sid)
+	sess, err := sessionv2()
 	d.ErrorExit(err, 1)
+
+	svc := svrconf.New(sess)
+	in := &svrconf.ServerConfigGetInput{
+		StackId: cli.GetCliStringFlag(cmd, "id"),
+	}
+
+	resp, body, err := svc.Get(in)
+	d.ErrorExit(err, 1)
+	exitOn401(resp)
 
 	out := cli.GetCliStringFlag(cmd, "out")
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")

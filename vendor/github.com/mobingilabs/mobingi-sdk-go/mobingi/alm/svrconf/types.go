@@ -1,4 +1,4 @@
-package alm
+package svrconf
 
 type ServerConfig struct {
 	Code          string `json:"code"`
