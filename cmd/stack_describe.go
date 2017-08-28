@@ -37,7 +37,7 @@ Examples:
 }
 
 func describe(cmd *cobra.Command, args []string) {
-	sess, err := sessionv2()
+	sess, err := clisession()
 	d.ErrorExit(err, 1)
 
 	svc := alm.New(sess)

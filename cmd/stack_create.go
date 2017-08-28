@@ -188,7 +188,7 @@ func createStack(cmd *cobra.Command, args []string) {
 	d.Info("configurations:")
 	fmt.Println(string(mi))
 
-	sess, err := sessionv2()
+	sess, err := clisession()
 	d.ErrorExit(err, 1)
 
 	svc := alm.New(sess)

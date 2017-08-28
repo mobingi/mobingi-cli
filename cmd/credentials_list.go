@@ -73,9 +73,9 @@ func credsList(cmd *cobra.Command, args []string) {
 
 func getCredsList(cmd *cobra.Command) ([]credentials.VendorCredentials, []byte, error) {
 	vendor := cli.GetCliStringFlag(cmd, "vendor")
-	sess, err := sessionv2()
+	sess, err := clisession()
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "sessionv2 failed")
+		return nil, nil, errors.Wrap(err, "clisession failed")
 	}
 
 	svc := credentials.New(sess)

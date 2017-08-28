@@ -33,7 +33,7 @@ func delete(cmd *cobra.Command, args []string) {
 		d.ErrorExit("stack id cannot be empty", 1)
 	}
 
-	sess, err := sessionv2()
+	sess, err := clisession()
 	d.ErrorExit(err, 1)
 
 	svc := alm.New(sess)

@@ -95,7 +95,7 @@ func updateStack(cmd *cobra.Command, args []string) {
 	mi, err = json.Marshal(&p)
 	d.ErrorExit(err, 1)
 
-	sess, err := sessionv2()
+	sess, err := clisession()
 	d.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
