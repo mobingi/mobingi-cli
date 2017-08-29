@@ -52,21 +52,19 @@ func describe(cmd *cobra.Command, args []string) {
 	// we process `--fmt=raw` option first
 	out := cli.GetCliStringFlag(cmd, "out")
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
-	if pfmt == "raw" {
+	if sess.Config.ApiVersion == 3 {
+		if pfmt == "min" || pfmt == "" {
+			pfmt = "json"
+		}
+	}
+
+	switch pfmt {
+	case "raw":
 		fmt.Println(string(body))
 		if out != "" {
 			err = iohelper.WriteToFile(out, body)
 			d.ErrorExit(err, 1)
 		}
-
-		return
-	}
-
-	var stacks []alm.DescribeStack
-	err = json.Unmarshal(body, &stacks)
-	d.ErrorExit(err, 1)
-
-	switch pfmt {
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		js := pretty.JSON(string(body), indent)
@@ -79,6 +77,10 @@ func describe(cmd *cobra.Command, args []string) {
 		}
 	default:
 		if pfmt == "min" || pfmt == "" {
+			var stacks []alm.DescribeStack
+			err = json.Unmarshal(body, &stacks)
+			d.ErrorExit(err, 1)
+
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
 			for _, inst := range stacks[0].Instances {

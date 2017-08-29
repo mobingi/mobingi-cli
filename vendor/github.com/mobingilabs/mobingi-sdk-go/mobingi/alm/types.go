@@ -111,3 +111,10 @@ type DescribeStack struct {
 	StackStatus   string        `json:"stack_status,omitempty"`
 	UserId        string        `json:"user_id,omitempty"`
 }
+
+type AlmTemplateVersion struct {
+	VersionId    string `json:"version_id,omitempty"`
+	Latest       bool   `json:"latest,omitempty"`
+	LastModified string `json:"last_modified,omitempty"`
+	Size         string `json:"size,omitempty"`
+}

@@ -19,20 +19,21 @@ Available Commands:
   reset       reset config to defaults
   stack       manage your stack
   svrconf     manage your server config file
+  template    manage your ALM templates
   version     print the version
 
 Flags:
-      --apiver string   API version (default "v2")
-      --debug           debug mode when error occurs
-  -f, --fmt string      output format (values depends on command)
-  -h, --help            help for mobingi-cli
-      --indent int      indent padding when fmt is 'json' (default 2)
-  -o, --out string      full file path to write the output
-      --rurl string     base url for Docker Registry
-      --timeout int     timeout in seconds (default 120)
       --token string    access token
       --url string      base url for API
+      --rurl string     base url for Docker Registry
+      --apiver string   API version (default "v3")
+  -f, --fmt string      output format (values depends on command)
+  -o, --out string      full file path to write the output
+      --indent int      indent padding when fmt is 'json' (default 2)
+      --timeout int     timeout in seconds (default 120)
       --verbose         verbose output
+      --debug           debug mode when error occurs
+  -h, --help            help for mobingi-cli
 
 Use "mobingi-cli [command] --help" for more information about a command.
 ```
@@ -93,13 +94,63 @@ Examples:
 
 ```
 $ mobingi-cli stack describe --id=foo
-$ mobingi-cli stack describe --id=foo --fmt=min
+$ mobingi-cli stack describe --id=foo --fmt=json
 $ mobingi-cli stack describe --id=foo --fmt=raw --out=/home/bar/out.txt
 ```
 
 You can get the stack id from the `stack list` command.
 
 ### Create a stack
+
+#### API v3
+
+Starting in v3, we create stacks using ALM templates. Below is an example of a very simple template that creates a single EC2 instance:
+
+```
+{
+  "version": "2017-03-03",
+  "label": "template version label #1",
+  "description": "This template creates a sample stack with EC2 instance on AWS",
+  "vendor": {
+    "aws": {
+      "cred": "** Your AWS Security Key ID **",
+      "secret": "** Your AWS Security Key Secret, remove line if you have a Mobingi account **",
+      "region": "ap-northeast-1"
+    }
+  },
+  "configurations": [
+    {
+      "role": "web",
+      "flag": "Single1",
+      "provision": {
+        "instance_type": "t2.micro",
+        "instance_count": 1,
+        "keypair": false,
+        "subnet": {
+          "cidr": "10.0.1.0/24",
+          "public": true,
+          "auto_assign_public_ip": true
+        },
+        "availability_zone": "ap-northeast-1c"
+      }
+    }
+  ]
+}
+```
+
+After saving your template to a file, run the command:
+
+```
+$ mobingi-cli stack create --alm-template=<path_to_template-file>
+```
+
+Example:
+
+```
+$ mobingi-cli stack create --alm-template=/home/user/aws-single-ec2.json
+```
+
+#### API v2
 
 You can run `$ mobingi-cli stack create -h` to see the defaults.
 
@@ -118,6 +169,16 @@ $ mobingi-cli creds list
 
 ### Update stack
 
+#### API v3
+
+Similar to stack creation, you only need to update some parts of your ALM template to update your stack.
+
+```
+$ mobingi-cli stack update --id=foo --alm-template=/home/user/aws-single-ec2-updated.json
+```
+
+#### API v2
+
 Examples:
 
 ```
@@ -132,6 +193,19 @@ Example:
 ```
 $ mobingi-cli stack delete --id=foo
 ```
+
+## ALM template operations
+
+### List stack template versions
+
+Examples:
+
+```
+$ mobingi-cli template versions --id=foo
+$ mobingi-cli template versions --id=foo --fmt=json
+```
+
+You can get the stack id from the `stack list` command.
 
 ## Server config operations
 

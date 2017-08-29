@@ -7,7 +7,6 @@ import (
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
-	"github.com/mobingi/mobingi-cli/pkg/dbg"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
@@ -47,12 +46,12 @@ func init() {
 	rootCmd.PersistentFlags().String("token", "", "access token")
 	rootCmd.PersistentFlags().String("url", "", "base url for API")
 	rootCmd.PersistentFlags().String("rurl", "", "base url for Docker Registry")
-	rootCmd.PersistentFlags().String("apiver", "v2", "API version")
+	rootCmd.PersistentFlags().String("apiver", "v3", "API version")
 	rootCmd.PersistentFlags().StringP("fmt", "f", "", "output format (values depends on command)")
 	rootCmd.PersistentFlags().StringP("out", "o", "", "full file path to write the output")
 	rootCmd.PersistentFlags().IntVar(&pretty.Pad, "indent", 2, "indent padding when fmt is 'json'")
 	rootCmd.PersistentFlags().Int64Var(&timeout.Timeout, "timeout", 120, "timeout in seconds")
-	rootCmd.PersistentFlags().BoolVar(&dbg.Verbose, "verbose", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVar(&cli.Verbose, "verbose", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(&cli.Debug, "debug", false, "debug mode when error occurs")
 	rootCmd.SetHelpCommand(HelpCmd())
 
@@ -68,6 +67,7 @@ func init() {
 	rootCmd.AddCommand(
 		LoginCmd(),
 		StackCmd(),
+		TemplateCmd(),
 		ServerConfigCmd(),
 		CredentialsCmd(),
 		RegistryCmd(),

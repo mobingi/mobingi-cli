@@ -3,12 +3,15 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/filetype"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
@@ -33,6 +36,7 @@ Example(s):
 	}
 
 	cmd.Flags().SortFlags = false
+	cmd.Flags().String("alm-template", "", "`path` to alm template file")
 	cmd.Flags().String("id", "", "stack id to update")
 	cmd.Flags().String("type", "m3.medium", "server type")
 	cmd.Flags().Int("min", 2, "min auto scale group instance when arch is art_elb")
@@ -42,6 +46,12 @@ Example(s):
 }
 
 func updateStack(cmd *cobra.Command, args []string) {
+	almt := cli.GetCliStringFlag(cmd, "alm-template")
+	if almt != "" {
+		updateAlmStack(cmd)
+		return
+	}
+
 	var modified bool
 	type updatet struct {
 		Configurations string `json:"configurations,omitempty"`
@@ -122,5 +132,49 @@ func updateStack(cmd *cobra.Command, args []string) {
 	if !success {
 		d.Info(string(body))
 		return
+	}
+}
+
+func updateAlmStack(cmd *cobra.Command) {
+	id := cli.GetCliStringFlag(cmd, "id")
+	if id == "" {
+		d.ErrorExit("stack id required", 1)
+	}
+
+	tf := cli.GetCliStringFlag(cmd, "alm-template")
+	b, err := ioutil.ReadFile(tf)
+	d.ErrorExit(err, 1)
+
+	if !filetype.IsJSON(string(b)) {
+		d.ErrorExit("invalid json", 1)
+	}
+
+	sess, err := clisession()
+	d.ErrorExit(err, 1)
+
+	svc := alm.New(sess)
+	in := &alm.StackUpdateInput{
+		AlmTemplate: &alm.AlmTemplate{
+			ContentType: "json",
+			Contents:    string(b),
+		},
+		StackId: id,
+	}
+
+	resp, body, err := svc.Update(in)
+	d.ErrorExit(err, 1)
+	exitOn401(resp)
+
+	if strings.Contains(string(body), "success") {
+		res := pretty.JSON(string(body), 2)
+		d.Info(fmt.Sprintf("[%s] return payload:", resp.Status))
+		fmt.Println(res)
+		return
+	}
+
+	if (resp.StatusCode / 100) == 2 {
+		d.Info(fmt.Sprintf("[%s] %s", resp.Status, string(body)))
+	} else {
+		d.Error(fmt.Sprintf("[%s] %s", resp.Status, string(body)))
 	}
 }

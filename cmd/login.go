@@ -1,15 +1,13 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
-	"github.com/mobingi/mobingi-cli/pkg/dbg"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -128,22 +126,29 @@ func login(cmd *cobra.Command, args []string) {
 	cnf.Timeout = tm.(int64)
 	viper.Set(confmap.ConfigKey("timeout"), tm.(int64))
 
-	verbose := fval(cmd, "verbose", dbg.Verbose)
+	verbose := fval(cmd, "verbose", cli.Verbose)
 	cnf.Verbose = verbose.(bool)
 	viper.Set(confmap.ConfigKey("verbose"), verbose.(bool))
 
 	dbg := fval(cmd, "debug", cli.Debug)
 	cnf.Debug = dbg.(bool)
 	viper.Set(confmap.ConfigKey("debug"), dbg.(bool))
+	sess, err := session.New(&session.Config{
+		ClientId:        p.ClientId,
+		ClientSecret:    p.ClientSecret,
+		ApiVersion:      getApiVersionInt(),
+		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
+		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+	})
 
-	payload, err := json.Marshal(p)
 	d.ErrorExit(err, 1)
 
-	c := client.NewClient(client.NewApiConfig(cmd))
-	token, err := c.GetAccessToken(payload)
-	d.ErrorExit(err, 1)
+	if cli.Verbose {
+		d.Info("apiver:", "v"+fmt.Sprintf("%d", getApiVersionInt()))
+		d.Info("token:", sess.AccessToken)
+	}
 
-	cnf.AccessToken = token
+	cnf.AccessToken = sess.AccessToken
 	err = cnf.WriteToConfig()
 	d.ErrorExit(err, 1)
 

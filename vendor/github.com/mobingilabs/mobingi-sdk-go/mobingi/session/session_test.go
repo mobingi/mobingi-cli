@@ -1,6 +1,7 @@
 package session
 
 import (
+	"os"
 	"testing"
 )
 
@@ -25,7 +26,28 @@ func TestNewSession(t *testing.T) {
 	}
 
 	s4, _ := New(&Config{ApiVersion: 3})
-	if s4.ApiEndpoint() != "https://alm.mobingi.com/v3" {
+	if s4.ApiEndpoint() != "https://api.mobingi.com/v3" {
 		t.Errorf("Invalid api url")
+	}
+}
+
+func TestNewSessionDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		s, err := New(&Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+		})
+
+		if err != nil {
+			t.Errorf("Should succeed, got %v", err)
+		}
+
+		if s.ApiEndpoint() != "https://apidev.mobingi.com/v3" {
+			t.Errorf("Invalid api url")
+		}
+
+		if s.AccessToken == "" {
+			t.Errorf("Should have token, got empty")
+		}
 	}
 }

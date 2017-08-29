@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/hashicorp/hcl"
   packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
-  revision = "392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  revision = "8f6b1344a92ff8877cf24a5de9177bf7d0a2a187"
 
 [[projects]]
   name = "github.com/inconshreveable/mousetrap"
@@ -58,8 +58,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
-  packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/session","pkg/cmdline","pkg/debug","pkg/pretty"]
-  revision = "e40d8ba0cd3bb80eb26807554eb3646a91fc9bf5"
+  packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/pretty"]
+  revision = "0281103a10f4497c81018a3ea82354650a5a5493"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -83,7 +83,7 @@
   branch = "master"
   name = "github.com/spf13/afero"
   packages = [".","mem"]
-  revision = "9be650865eab0c12963d8753212f4f9c66cdcf12"
+  revision = "36f8810e2e3d7eeac4ac05b57f65690fbfba62a2"
 
 [[projects]]
   name = "github.com/spf13/cast"
@@ -119,19 +119,19 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "eb71ad9bd329b5ac0fd0148dd99bd62e8be8e035"
+  revision = "81e90905daefcd6fd217b62423c0908922eadb30"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "07c182904dbd53199946ba614a412c61d3c548f5"
+  revision = "2d6f6f883a06fc0d5f4b14a81e4c28705ea64c15"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "e56139fd9c5bc7244c76116c68e500765bb6db6b"
+  revision = "b58d4b456e2002be469d0a86181874e3f5179bfd"
 
 [[projects]]
   branch = "v2"
@@ -142,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5a1b561482328f9129940c92db523e2cb2492c5d6dd6581aae43e769a996b463"
+  inputs-digest = "efa0fd8d1ae0ee0ec2607c5a19283dbfca5deea438559ff8fa2390bd43bf593f"
   solver-name = "gps-cdcl"
   solver-version = 1

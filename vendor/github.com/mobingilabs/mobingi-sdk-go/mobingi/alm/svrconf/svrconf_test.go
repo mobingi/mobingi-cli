@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
@@ -73,8 +74,8 @@ func TestUpdateEnvVars(t *testing.T) {
 		_ = json.Unmarshal(body, &m)
 		_, ok := m["envvars"]
 		if ok {
-			if fmt.Sprintf("%v", m["envvars"]) != "map[KEY1:value1 KEY2:value2]" {
-				t.Errorf("Expecting 'KEY1:value1,KEY2:value2', got %v", m["envvars"])
+			if !strings.HasPrefix(fmt.Sprintf("%v", m["envvars"]), "map") {
+				t.Errorf("Should start with map, got %v", m["envvars"])
 			}
 		}
 

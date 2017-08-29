@@ -19,6 +19,6 @@ const (
 	AlmTestBaseApiUrl  = "https://almqa.mobingi.com"   // test API base url for ALM
 	WaveTestBaseApiUrl = "https://waveqamobingi.com"   // test API base url for Wave
 
-	ApiVersion       = "v2" // Mobingi API version
+	ApiVersion       = "v3" // Mobingi API version
 	DockerApiVersion = "v2" // Docker API version
 )

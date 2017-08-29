@@ -6,23 +6,31 @@ import (
 	"time"
 
 	"github.com/mobingi/mobingi-cli/client/timeout"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
-	"github.com/mobingi/mobingi-cli/pkg/dbg"
 	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
-func clisession() (*session.Session, error) {
-	v := 2
+func getApiVersionInt() int {
+	v := 3
 	vparam := viper.GetString(confmap.ConfigKey("apiver"))
 	in, err := strconv.Atoi(strings.TrimLeft(vparam, "v"))
 	if err != nil {
-		return nil, errors.Wrap(err, "cannot setup input api version")
+		return -1
 	}
 
 	v = in
+	return v
+}
+
+func clisession() (*session.Session, error) {
+	v := getApiVersionInt()
+	if v < 0 {
+		return nil, errors.New("cannot get api version")
+	}
 
 	return session.New(&session.Config{
 		ApiVersion:      v,
@@ -31,7 +39,7 @@ func clisession() (*session.Session, error) {
 		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
 		HttpClientConfig: &client.Config{
 			Timeout: time.Second * time.Duration(timeout.Timeout),
-			Verbose: dbg.Verbose,
+			Verbose: cli.Verbose,
 		},
 	})
 }

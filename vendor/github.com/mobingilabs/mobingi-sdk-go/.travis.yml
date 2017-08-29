@@ -5,10 +5,10 @@ os:
 language: go
 
 go:
-  - master
+  - 1.9
 
 script:
-  - go test -v $(go list ./... | grep -v /vendor/) -cover
+  - go test -v ./...
 
 notifications:
   slack:

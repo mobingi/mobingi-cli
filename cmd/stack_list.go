@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -81,7 +83,7 @@ func stackList(cmd *cobra.Command, args []string) {
 		if pfmt == "min" || pfmt == "" {
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 			fmt.Fprintf(w, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
-			for _, s := range stacks {
+			for i, s := range stacks {
 				timestr := s.CreateTime
 				t, err := time.Parse(time.RFC3339, s.CreateTime)
 				if err == nil {
@@ -93,12 +95,49 @@ func stackList(cmd *cobra.Command, args []string) {
 					platform = "AWS"
 				}
 
+				type cnf_t struct {
+					Configuration json.RawMessage `json:"configuration"`
+				}
+
+				// if still invalid, find via regexp
+				if platform == "?" {
+					var cnfs []cnf_t
+					err = json.Unmarshal(body, &cnfs)
+					if err == nil {
+						re := regexp.MustCompile(`"vendor":\{"aws":`)
+						pltfm := re.FindString(string(cnfs[i].Configuration))
+						if pltfm != "" {
+							platform = "AWS"
+						}
+					}
+				}
+
+				region := s.Configuration.Region
+
+				// if empty, extract the `"region:"xxxxxx"` part via regexp
+				if region == "" {
+					var cnfs []cnf_t
+					err = json.Unmarshal(body, &cnfs)
+					if err == nil {
+						re := regexp.MustCompile(`"region":\s*".+"`)
+						mi := pretty.JSON(cnfs[i].Configuration, 2)
+						if mi != "" {
+							rgn := re.FindString(mi)
+							rgnkv := strings.Split(rgn, ":")
+							if len(rgnkv) == 2 {
+								r1 := strings.TrimSpace(rgnkv[1])
+								region = strings.TrimRight(strings.TrimPrefix(r1, "\""), "\"")
+							}
+						}
+					}
+				}
+
 				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
 					s.StackId,
 					s.Nickname,
 					platform,
 					s.StackStatus,
-					s.Configuration.Region,
+					region,
 					timestr)
 			}
 
