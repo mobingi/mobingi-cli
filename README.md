@@ -5,7 +5,11 @@
 
 # mobingi-cli
 
-mobingi-cli is the official command line interface for Mobingi API and services. Documentation can be found [here](https://learn.mobingi.com/enterprise/cli).
+mobingi-cli is the official command line interface for Mobingi API and services. 
+
+See the documentation on https://learn.mobingi.com/enterprise/cli.
+
+Documentation is written in markdown and can be located [here](https://github.com/mobingi/mobingi/blob/docs/docs/markdown/enterprise/doc-cli.md).
 
 # Getting started
 
