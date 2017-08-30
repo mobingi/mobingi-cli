@@ -338,8 +338,8 @@ Examples:
 
 ```
 $ mobingi-cli creds list
-$ mobingi-cli creds list --fmt=json
-$ mobingi-cli creds list --fmt=raw
+VENDOR     ID                       ACCOUNT     LAST MODIFIED
+aws        xxxxxxxxxxxxxxxxxxxx     user        Wed, 05 Jul 2017 07:52:14 UTC
 ```
 
 ## Mobingi Docker registry
