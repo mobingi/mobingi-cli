@@ -93,9 +93,33 @@ mo-58c2297d25645-PxviFSJQV-tk     chronic leaflet flourish     AWS          CREA
 Examples:
 
 ```
-$ mobingi-cli stack describe --id=foo
-$ mobingi-cli stack describe --id=foo --fmt=json
-$ mobingi-cli stack describe --id=foo --fmt=raw --out=/home/bar/out.txt
+$ mobingi-cli stack describe --id mo-58c2297d25645-PxviFSJQV-tk
+{
+  "auth_token": "...",
+  "update_time": "2017-08-30T11:32:42+09:00",
+  "user_id": "...",
+  "configuration": {
+    "description": "This template creates a sample stack with EC2 instance on AWS",
+    "label": "template version label #1",
+    "version": "2017-03-03",
+    "vendor": {
+      ...
+    },
+    "configurations": [
+      {
+        ...
+      }
+    ],
+    "AWS_ACCOUNT_NAME": "..."
+  },
+  "nickname": "chronic leaflet flourish",
+  "create_time": "2017-08-29T18:47:49+09:00",
+  "stack_outputs": [],
+  "stack_id": "mo-58c2297d25645-PxviFSJQV-tk",
+  "stack_status": "CREATE_COMPLETE",
+  "version_id": "jbyW_PxMAauQmOS31dUhij4KIqHAtqW2",
+  "instances": []
+}   
 ```
 
 You can get the stack id from the `stack list` command.
