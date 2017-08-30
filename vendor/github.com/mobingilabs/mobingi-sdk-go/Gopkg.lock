@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/danieljoos/wincred"
+  packages = ["."]
+  revision = "412b574fb496839b312a75fba146bd32a89001cf"
+  version = "v1.0.1"
+
+[[projects]]
+  name = "github.com/docker/docker-credential-helpers"
+  packages = ["credentials","osxkeychain","secretservice","wincred"]
+  revision = "f00de1b72fc8274c009c019a34d6bfade31c715c"
+  version = "v0.6.0"
+
+[[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
   revision = "570b54cabe6b8eb0bc2dfce68d964677d63b5260"
@@ -46,6 +58,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b9779ddabbbaf845d21c37bed9f4b66c33e4217b0ac3489c2c2f20008873e20a"
+  inputs-digest = "df9ab68939d712052c79864a5118a5ca37d6a42023bf4c143a95849f623a3ade"
   solver-name = "gps-cdcl"
   solver-version = 1

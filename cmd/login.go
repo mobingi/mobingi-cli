@@ -55,7 +55,7 @@ func login(cmd *cobra.Command, args []string) {
 		Secret: cli.GetCliStringFlag(cmd, "client-secret"),
 	}
 
-	err := idsec.EnsureInput(false)
+	err = idsec.EnsureInput(false)
 	if err != nil {
 		d.ErrorExit(err, 1)
 	}
