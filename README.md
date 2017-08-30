@@ -207,6 +207,51 @@ $ mobingi-cli template versions --id=foo --fmt=json
 
 You can get the stack id from the `stack list` command.
 
+### Compare template versions
+
+You can compare template versions from the same stack, versions from different stacks, or a local template file to a specific template version.
+
+Example:
+
+```
+$ mobingi-cli stack list
+STACK ID                          STACK NAME                   PLATFORM     STATUS              ...
+mo-58c2297d25645-q38pTmeey-tk     small lunch behave           AWS          CREATE_COMPLETE     ...
+mo-58c2297d25645-PxviFSJQV-tk     chronic leaflet flourish     AWS          CREATE_COMPLETE     ...
+
+$ mobingi-cli template versions --id mo-58c2297d25645-PxviFSJQV-tk
+VERSION ID                           LATEST     LAST MODIFIED                     SIZE
+jbyW_PxMAauQmOS31dUhij4KIqHAtqW2     true       Wed, 30 Aug 2017 02:32:43 UTC     472
+1xoPd.cg3juHK94vC8IdUh1bexx7sQ1T     false      Tue, 29 Aug 2017 09:47:50 UTC     453
+
+$ mobingi-cli template compare --src-sid mo-58c2297d25645-PxviFSJQV-tk \
+      --src-vid jbyW_PxMAauQmOS31dUhij4KIqHAtqW2 \
+      --tgt-vid 1xoPd.cg3juHK94vC8IdUh1bexx7sQ1T
+[mobingi-cli]: info: diff:
+{
+  "new": [],
+  "removed": [],
+  "edited": {
+    "label": {
+      "oldvalue": "template version label #1",
+      "newvalue": "template version label #1 (update)"
+    },
+    "description": {
+      "oldvalue": "This template creates a sample stack with EC2 instance on AWS",
+      "newvalue": "This template creates a sample stack with EC2 instance on AWS (update)"
+    },
+    "configurations\/provision\/instance_type": {
+      "oldvalue": "t2.micro",
+      "newvalue": "m3.medium"
+    },
+    "configurations\/provision\/instance_count": {
+      "oldvalue": 1,
+      "newvalue": 2
+    }
+  }
+}
+```
+
 ## Server config operations
 
 ### Show server config
