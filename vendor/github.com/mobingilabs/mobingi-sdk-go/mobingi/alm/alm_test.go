@@ -425,3 +425,66 @@ func TestGetTemplateVersionsDevAcct(t *testing.T) {
 		_, _ = resp, body
 	}
 }
+
+func TestCompareTemplateDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" && os.Getenv("AWS_ACCESS_KEY_ID") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+		})
+
+		alm := New(sess)
+		in := &CompareTemplateInput{
+			SourceStackId:   "mo-58c2297d25645-PxviFSJQV-tk",
+			SourceVersionId: "jbyW_PxMAauQmOS31dUhij4KIqHAtqW2",
+			TargetVersionId: "1xoPd.cg3juHK94vC8IdUh1bexx7sQ1T",
+		}
+
+		resp, body, err := alm.CompareTemplate(in)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		var testbody string = `{
+  "version": "2017-03-03",
+  "label": "template layer #1",
+  "description": "Wayland Test. This template creates a sample stack with EC2 instance on AWS",
+  "vendor": {
+	"aws": {
+	  "cred": "` + os.Getenv("AWS_ACCESS_KEY_ID") + `",
+	  "region": "ap-northeast-1"
+    }
+  },
+  "configurations": [
+    {
+	  "role": "web",
+	  "flag": "Layer1",
+	  "provision": {
+	    "instance_type": "t2.micro",
+		"instance_count": 1,
+		"keypair": false,
+		"subnet": {
+		  "cidr": "10.0.1.0/24",
+		  "public": true,
+		  "auto_assign_public_ip": true
+	    },
+		"availability_zone": "ap-northeast-1c"
+	  }
+    }
+  ]
+}`
+
+		in = &CompareTemplateInput{
+			SourceStackId:   "mo-58c2297d25645-PxviFSJQV-tk",
+			SourceVersionId: "jbyW_PxMAauQmOS31dUhij4KIqHAtqW2",
+			TargetBody:      testbody,
+		}
+
+		resp, body, err = alm.CompareTemplate(in)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		_, _ = resp, body
+	}
+}

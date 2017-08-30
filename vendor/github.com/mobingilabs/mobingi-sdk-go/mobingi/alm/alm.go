@@ -207,6 +207,75 @@ func (s *stack) DescribeTemplate(in *DescribeTemplateInput) (*client.Response, [
 	return s.client.Do(req)
 }
 
+type CompareTemplateInput struct {
+	SourceStackId   string // required
+	SourceVersionId string // required
+	TargetStackId   string // optional, if empty, use SourceStackId
+	TargetVersionId string // optional, can be this or TargetBody
+	TargetBody      string // optional, can be this or TargetVersionId
+}
+
+func (s *stack) CompareTemplate(in *CompareTemplateInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.SourceStackId == "" {
+		return nil, nil, errors.New("source stack id cannot be empty")
+	}
+
+	if in.SourceVersionId == "" {
+		return nil, nil, errors.New("source version id cannot be empty")
+	}
+
+	if in.TargetStackId == "" {
+		in.TargetStackId = in.SourceStackId
+	}
+
+	if in.TargetVersionId == "" && in.TargetBody == "" {
+		return nil, nil, errors.New("should provide either version id or body as target")
+	}
+
+	type payload_t struct {
+		Id   []json.RawMessage `json:"id,omitempty"`
+		Body []string          `json:"body,omitempty"`
+	}
+
+	var set bool
+	var payload payload_t
+
+	payload.Id = make([]json.RawMessage, 0)
+	srcid := json.RawMessage(`{"` + in.SourceStackId + `":{"version":"` + in.SourceVersionId + `"}}`)
+	payload.Id = append(payload.Id, srcid)
+	if in.TargetVersionId != "" {
+		tgtid := json.RawMessage(`{"` + in.TargetStackId + `":{"version":"` + in.TargetVersionId + `"}}`)
+		payload.Id = append(payload.Id, tgtid)
+		set = true
+	}
+
+	if !set {
+		if in.TargetBody != "" {
+			payload.Body = make([]string, 0)
+			payload.Body = append(payload.Body, in.TargetBody)
+		}
+	}
+
+	p, err := json.Marshal(payload)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "marshal failed")
+	}
+
+	ep := s.session.ApiEndpoint() + "/alm/template/compare"
+	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer(p))
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "new request failed")
+	}
+
+	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req.Header.Add("Content-Type", "application/json")
+	return s.client.Do(req)
+}
+
 func (s *stack) getCredsList(vendor string) ([]credentials.VendorCredentials, error) {
 	creds := credentials.New(s.session)
 	_, body, err := creds.List(&credentials.CredentialsListInput{
