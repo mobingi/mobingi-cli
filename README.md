@@ -90,7 +90,7 @@ mo-58c2297d25645-PxviFSJQV-tk     chronic leaflet flourish     AWS          CREA
 
 ### Describe a stack
 
-Examples:
+Example:
 
 ```
 $ mobingi-cli stack describe --id mo-58c2297d25645-PxviFSJQV-tk
@@ -121,8 +121,6 @@ $ mobingi-cli stack describe --id mo-58c2297d25645-PxviFSJQV-tk
   "instances": []
 }   
 ```
-
-You can get the stack id from the `stack list` command.
 
 ### Create a stack
 
