@@ -197,7 +197,8 @@ $ mobingi-cli creds list
 Similar to stack creation, you only need to update some parts of your ALM template to update your stack.
 
 ```
-$ mobingi-cli stack update --id mo-58c2297d25645-q38pTmeey-tk --alm-template /home/user/aws-single_ec2_update.json
+$ mobingi-cli stack update --id mo-58c2297d25645-q38pTmeey-tk \
+      --alm-template /home/user/aws-single_ec2_update.json
 [mobingi-cli]: info: [202 Accepted] return payload:
 {
   "status": "success",
