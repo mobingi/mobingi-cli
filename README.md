@@ -222,7 +222,11 @@ $ mobingi-cli stack update --id=foo --spot-range=25
 Example:
 
 ```
-$ mobingi-cli stack delete --id=foo
+$ mobingi-cli stack delete --id mo-58c2297d25645-GbdINZdY-tk
+[mobingi-cli]: info: [200 OK] return payload:
+{
+  "status": "DELETE_IN_PROGRESS"
+}
 ```
 
 ## ALM template operations
