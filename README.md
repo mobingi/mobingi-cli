@@ -370,7 +370,8 @@ subuser1/foo           latest
 Example:
 
 ```
-$ mobingi-cli registry manifest --username subuser1 --password xxxxxx --image foo:latest --apiver v2
+$ mobingi-cli registry manifest --username subuser1 --password xxxxxx \
+      --image foo:latest --apiver v2
 {
    "schemaVersion": 1,
    "name": "subuser1/foo",
@@ -410,7 +411,8 @@ You can also write the output to a file via the `--fmt=full_path_to_file` option
 Example:
 
 ```
-$ mobingi-cli registry delete --username=subuser1 --password=xxxxxx --image=foo:latest
+$ mobingi-cli registry delete --username=subuser1 --password=xxxxxx \
+      --image=foo:latest --apiver v2
 ```
 
 ### Get token for Docker Registry API
