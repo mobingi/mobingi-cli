@@ -344,40 +344,73 @@ aws        xxxxxxxxxxxxxxxxxxxx     user        Wed, 05 Jul 2017 07:52:14 UTC
 
 ## Mobingi Docker registry
 
-### List image tags
-
-To list image tags, run
-
-```
-$ mobingi-cli registry tags [--username=foo] [--password=bar] --image=image_name
-```
-
 ### List registry catalog
 
-To print the catalog, run
+Example:
 
 ```
-$ mobingi-cli registry catalog [--username=foo] [--password=bar]
+$ mobingi-cli registry catalog --username=subuser1 --password=xxxxxx --apiver v2
+subuser1/foo
 ```
 
 Note that this command is inherently slow.
 
-### Print tag manifest
+### List image tags
 
-To print a tag manifest, run
+Example:
 
 ```
-$ mobingi-cli registry manifest [--username=foo] [--password=bar] --image=hello:latest
+$ mobingi-cli registry tags --username=subuser1 --password=xxxxxx --image foo --apiver v2
+IMAGE                  TAG
+subuser1/foo           latest
+```
+
+### Print tag manifest
+
+Example:
+
+```
+$ mobingi-cli registry manifest --username subuser1 --password xxxxxx --image foo:latest --apiver v2
+{
+   "schemaVersion": 1,
+   "name": "subuser1/foo",
+   "tag": "latest",
+   "architecture": "amd64",
+   "fsLayers": [
+      {
+         "blobSum": "sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4"
+      },
+      ...
+   ],
+   "history": [
+      {
+         "v1Compatibility": "..."
+      },
+      ...
+   ],
+   "signatures": [
+      {
+         "header": {
+            "jwk": {
+               ...
+            },
+            "alg": "ES256"
+         },
+         "signature": "...",
+         "protected": "..."
+      }
+   ]
+}
 ```
 
 You can also write the output to a file via the `--fmt=full_path_to_file` option.
 
 ### Delete a tag
 
-To delete a tag, run
+Example:
 
 ```
-$ mobingi-cli registry delete [--username=foo] [--password=bar] --image=hello:latest
+$ mobingi-cli registry delete --username=subuser1 --password=xxxxxx --image=foo:latest
 ```
 
 ### Get token for Docker Registry API
