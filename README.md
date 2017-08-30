@@ -252,6 +252,12 @@ $ mobingi-cli template compare --src-sid mo-58c2297d25645-PxviFSJQV-tk \
 }
 ```
 
+To view help information, run the command:
+
+```
+$ mobingi-cli template compare -h
+```
+
 ## Server config operations
 
 ### Show server config
