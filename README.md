@@ -70,6 +70,7 @@ This is the first command you need to run to use the other commands. To login, r
 
 ```
 $ mobingi-cli login --client-id=foo --client-secret=bar
+[mobingi-cli]: info: Login successful.
 ```
 
 This will create a file `config.yml` under `$HOME/.mobingi-cli/` folder that will contain the access token to be used for your subsequent commands, alongside other configuration values.
@@ -82,11 +83,10 @@ Examples:
 
 ```
 $ mobingi-cli stack list
-$ mobingi-cli stack list --fmt=json
-$ mobingi-cli stack list --fmt=raw --out=`echo $HOME`/out.txt
+STACK ID                          STACK NAME                   PLATFORM     STATUS              ...
+mo-58c2297d25645-q38pTmeey-tk     small lunch behave           AWS          CREATE_COMPLETE     ...
+mo-58c2297d25645-PxviFSJQV-tk     chronic leaflet flourish     AWS          CREATE_COMPLETE     ...
 ```
-
-Enclose with double quotes if absolute file path has whitespace(s) in it.
 
 ### Describe a stack
 
