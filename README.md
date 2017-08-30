@@ -260,7 +260,7 @@ $ mobingi-cli template compare -h
 
 ## Server config operations
 
-Server config options are replaced by ALM templates starting from v3. The following commands are still valid for v2.
+_Server config options are replaced by ALM templates starting from v3. The following commands are still valid for v2._
 
 ### Show server config
 
