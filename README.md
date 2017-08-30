@@ -344,36 +344,6 @@ aws        xxxxxxxxxxxxxxxxxxxx     user        Wed, 05 Jul 2017 07:52:14 UTC
 
 ## Mobingi Docker registry
 
-### Get token for Docker Registry API
-
-To get token for Docker Registry API access, run
-
-```
-$ mobingi-cli registry token \
-      --username=foo \
-      --password=bar \
-      --service="Mobingi Docker Registry" \
-      --scope="repository:foo/container:*"
-```
-
-where `username` is a subuser under your Mobingi account. You can also remove `--service`, `--username` and/or `--password`.
-
-```
-$ mobingi-cli registry token --scope="repository:foo/container:*"
-Username:
-Password:
-```
-
-By default, it will only print the token value. To print the raw JSON output, append the `--fmt=raw` option.
- 
-This is useful when you want to access the registry directly using other tools. For example, you can use the token when using Docker Registry API via `curl`.
-
-```
-$ curl -H "Authorization: Bearer token" \
-      -H "Accept application/vnd.docker.distribution.manifest.v2+json" \
-      https://registry.mobingi.com/v2/foo/container/manifests/latest
-```
-
 ### List image tags
 
 To list image tags, run
@@ -408,6 +378,36 @@ To delete a tag, run
 
 ```
 $ mobingi-cli registry delete [--username=foo] [--password=bar] --image=hello:latest
+```
+
+### Get token for Docker Registry API
+
+To get token for Docker Registry API access, run
+
+```
+$ mobingi-cli registry token \
+      --username=foo \
+      --password=bar \
+      --service="Mobingi Docker Registry" \
+      --scope="repository:foo/container:*"
+```
+
+where `username` is a subuser under your Mobingi account. You can also remove `--service`, `--username` and/or `--password`.
+
+```
+$ mobingi-cli registry token --scope="repository:foo/container:*"
+Username:
+Password:
+```
+
+By default, it will only print the token value. To print the raw JSON output, append the `--fmt=raw` option.
+ 
+This is useful when you want to access the registry directly using other tools. For example, you can use the token when using Docker Registry API via `curl`.
+
+```
+$ curl -H "Authorization: Bearer token" \
+      -H "Accept application/vnd.docker.distribution.manifest.v2+json" \
+      https://registry.mobingi.com/v2/foo/container/manifests/latest
 ```
 
 ## Verbose output
