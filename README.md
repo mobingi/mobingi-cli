@@ -1,4 +1,4 @@
-[![logo](./logos/mobinginewlogo.png)](https://mobingi.co.jp/)
+[![logo](./logos/mobingi-205x119.png)](https://mobingi.co.jp/)
 
 [![Build Status](https://travis-ci.org/mobingi/mobingi-cli.svg?branch=master)](https://travis-ci.org/mobingi/mobingi-cli)
 [![Build status](https://ci.appveyor.com/api/projects/status/k7tmyr3l4dws4usd/branch/master?svg=true)](https://ci.appveyor.com/project/flowerinthenight/mobingi-cli/branch/master)
