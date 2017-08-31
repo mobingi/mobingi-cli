@@ -12,11 +12,10 @@ script:
 - go build -v
 
 after_success:
-    # - export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-$(uname -m).tar.gz
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-darwin-amd64.tar.gz;
     else
-      export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-$(uname -m).tar.gz;
+      export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-amd64.tar.gz;
     fi
   - tar cvzf ${FILE_TO_UPLOAD} mobingi-cli
   - ls -laF
