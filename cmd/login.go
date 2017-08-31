@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
+	sdkclient "github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
@@ -89,7 +91,7 @@ func login(cmd *cobra.Command, args []string) {
 	}
 
 	// prefer to store credentials to native store (keychain, wincred)
-	err = nativestore.Set(cli.CliLabel, cli.CliLabel, p.ClientId, p.ClientSecret)
+	err = nativestore.Set(cli.CliLabel, cli.CliUrl, p.ClientId, p.ClientSecret)
 	if err != nil {
 		d.Info("Error in accessing native store, will use config file.")
 	}
@@ -146,6 +148,10 @@ func login(cmd *cobra.Command, args []string) {
 		ApiVersion:      getApiVersionInt(),
 		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
 		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+		HttpClientConfig: &sdkclient.Config{
+			Timeout: time.Second * time.Duration(timeout.Timeout),
+			Verbose: cli.Verbose,
+		},
 	})
 
 	d.ErrorExit(err, 1)
