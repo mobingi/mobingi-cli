@@ -7,6 +7,14 @@ language: go
 go:
   - master
 
+addons:
+  apt:
+    packages:
+      - libsecret-1-dev
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -q && sudo apt-get install pkg-config -y; fi
+
 script:
 - go test -v $(go list ./... | grep -v /vendor/) -cover
 - go build -v

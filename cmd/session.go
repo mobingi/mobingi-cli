@@ -10,6 +10,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/nativestore"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -30,6 +31,24 @@ func clisession() (*session.Session, error) {
 	v := getApiVersionInt()
 	if v < 0 {
 		return nil, errors.New("cannot get api version")
+	}
+
+	// check if we have credentials in nativestore
+	user, secret, err := nativestore.Get(cli.CliUrl)
+	if err == nil {
+		if user != "" && secret != "" {
+			return session.New(&session.Config{
+				ClientId:        user,
+				ClientSecret:    secret,
+				ApiVersion:      v,
+				BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
+				BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+				HttpClientConfig: &client.Config{
+					Timeout: time.Second * time.Duration(timeout.Timeout),
+					Verbose: cli.Verbose,
+				},
+			})
+		}
 	}
 
 	return session.New(&session.Config{

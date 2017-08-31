@@ -6,7 +6,7 @@ import (
 	dcred "github.com/docker/docker-credential-helpers/credentials"
 )
 
-func Set(url, user, secret string) error {
+func Set(lbl, url, user, secret string) error {
 	pmyns := nativeStore()
 	if pmyns == nil {
 		return errors.New("native store not supported yet")
@@ -19,6 +19,7 @@ func Set(url, user, secret string) error {
 	}
 
 	myns := *pmyns
+	dcred.SetCredsLabel(lbl)
 	myns.Add(cr)
 	return nil
 }

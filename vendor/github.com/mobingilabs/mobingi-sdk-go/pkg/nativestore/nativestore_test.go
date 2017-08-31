@@ -5,7 +5,7 @@ import (
 )
 
 func TestSetGet(t *testing.T) {
-	Set("localhost", "user", "password")
+	Set("mobingi-sdk-go", "mobingi-sdk-go", "user", "password")
 	user, secret, err := Get("localhost")
 	if err == nil {
 		if user != "user" {

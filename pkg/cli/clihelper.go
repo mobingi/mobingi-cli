@@ -6,6 +6,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	CliUrl   = "mobingi-cli"
+	CliLabel = "mobingi-cli"
+)
+
 func flag(cmd *cobra.Command, f string) string {
 	s := cmd.Flag(f).DefValue
 	if cmd.Flag(f).Changed {
