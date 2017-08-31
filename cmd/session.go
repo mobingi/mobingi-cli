@@ -57,10 +57,7 @@ func clisession() (*session.Session, error) {
 	}
 
 	if cli.Verbose {
-		if cli.Debug {
-			d.Error(err)
-		}
-
+		d.ErrorD(err)
 		d.Info("cannot access native store, use config file token")
 	}
 
