@@ -10,6 +10,7 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/nativestore"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -37,6 +38,10 @@ func clisession() (*session.Session, error) {
 	user, secret, err := nativestore.Get(cli.CliUrl)
 	if err == nil {
 		if user != "" && secret != "" {
+			if cli.Verbose {
+				d.Info("use credentials from native store")
+			}
+
 			return session.New(&session.Config{
 				ClientId:        user,
 				ClientSecret:    secret,
@@ -49,6 +54,10 @@ func clisession() (*session.Session, error) {
 				},
 			})
 		}
+	}
+
+	if cli.Verbose {
+		d.Info("cannot access native store, use config file token")
 	}
 
 	return session.New(&session.Config{
