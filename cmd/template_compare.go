@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -80,7 +79,7 @@ func tmplCompare(cmd *cobra.Command, args []string) {
 	case "raw":
 		fmt.Println(string(body))
 		if out != "" {
-			err = iohelper.WriteToFile(out, body)
+			err = ioutil.WriteFile(out, body, 0644)
 			d.ErrorExit(err, 1)
 		}
 	default:
@@ -108,7 +107,7 @@ func tmplCompare(cmd *cobra.Command, args []string) {
 			// write to file option
 			if out != "" {
 				if tofile != "" {
-					err = iohelper.WriteToFile(out, []byte(tofile))
+					err = ioutil.WriteFile(out, []byte(tofile), 0644)
 					d.ErrorExit(err, 1)
 				} else {
 					d.Info("nothing to write to file")

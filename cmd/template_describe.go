@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -53,7 +53,7 @@ func tmplDescribe(cmd *cobra.Command, args []string) {
 	case "raw":
 		fmt.Println(string(body))
 		if out != "" {
-			err = iohelper.WriteToFile(out, body)
+			err = ioutil.WriteFile(out, body, 0644)
 			d.ErrorExit(err, 1)
 		}
 	default:
@@ -64,7 +64,7 @@ func tmplDescribe(cmd *cobra.Command, args []string) {
 
 			// write to file option
 			if out != "" {
-				err = iohelper.WriteToFile(out, []byte(js))
+				err = ioutil.WriteFile(out, []byte(js), 0644)
 				d.ErrorExit(err, 1)
 			}
 		}

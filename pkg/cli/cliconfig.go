@@ -8,7 +8,6 @@ import (
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/mobingi/mobingi-cli/client/timeout"
-	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -40,7 +39,7 @@ func (c *CliConfig) WriteToConfig() error {
 		_ = os.Mkdir(c.ConfigDir(), os.ModePerm)
 	}
 
-	return iohelper.WriteToFile(c.ConfigFile(), contents)
+	return ioutil.WriteFile(c.ConfigFile(), contents, 0644)
 }
 
 func (c *CliConfig) Reload() error {

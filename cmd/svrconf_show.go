@@ -3,10 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm/svrconf"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
@@ -52,7 +52,7 @@ func show(cmd *cobra.Command, args []string) {
 	if pfmt == "raw" {
 		fmt.Println(string(body))
 		if out != "" {
-			err = iohelper.WriteToFile(out, body)
+			err = ioutil.WriteFile(out, body, 0644)
 			d.ErrorExit(err, 1)
 		}
 
@@ -73,7 +73,7 @@ func show(cmd *cobra.Command, args []string) {
 		// write to file option
 		out := cli.GetCliStringFlag(cmd, "out")
 		if out != "" {
-			err = iohelper.WriteToFile(out, mi)
+			err = ioutil.WriteFile(out, mi, 0644)
 			d.ErrorExit(err, 1)
 		}
 

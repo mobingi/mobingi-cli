@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/iohelper"
 	"github.com/mobingi/mobingi-cli/pkg/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -86,7 +86,7 @@ func manifest(cmd *cobra.Command, args []string) {
 
 	out := cli.GetCliStringFlag(cmd, "out")
 	if out != "" {
-		err = iohelper.WriteToFile(out, body)
+		err = ioutil.WriteFile(out, body, 0644)
 		d.ErrorExit(err, 1)
 	}
 }

@@ -95,7 +95,7 @@
   branch = "master"
   name = "github.com/spf13/afero"
   packages = [".","mem"]
-  revision = "36f8810e2e3d7eeac4ac05b57f65690fbfba62a2"
+  revision = "ee1bd8ee15a1306d1f9201acc41ef39cd9f99a1b"
 
 [[projects]]
   name = "github.com/spf13/cast"
@@ -143,7 +143,7 @@
   branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "e113a52b01bdd1744681b6ce70c2e3d26b58d389"
+  revision = "79ab41e967c76b94c55d37134c51fc306609cffc"
 
 [[projects]]
   branch = "v2"
