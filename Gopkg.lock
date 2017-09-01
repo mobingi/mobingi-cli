@@ -9,7 +9,7 @@
 
 [[projects]]
   name = "github.com/docker/docker-credential-helpers"
-  packages = ["credentials","osxkeychain","secretservice","wincred"]
+  packages = ["credentials","osxkeychain","wincred"]
   revision = "d68f9aeca33f5fd3f08eeae5e9d175edf4e731d1"
   version = "v0.6.0"
 
@@ -71,7 +71,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "96b1f5efa4cc95066f34dc3bdad57e3e104e6583"
+  revision = "0224cdf90a598b20ee1da50e0caf69b68702fe7e"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
