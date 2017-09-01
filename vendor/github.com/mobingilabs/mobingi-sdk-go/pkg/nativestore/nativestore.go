@@ -1,14 +1,14 @@
 package nativestore
 
 import (
-	"errors"
+	"fmt"
 
 	dcred "github.com/docker/docker-credential-helpers/credentials"
+	"github.com/pkg/errors"
 )
 
 func Set(lbl, url, user, secret string) error {
-	pmyns := nativeStore()
-	if pmyns == nil {
+	if fmt.Sprintf("%T") != "struct" {
 		return errors.New("native store not supported yet")
 	}
 
@@ -18,18 +18,10 @@ func Set(lbl, url, user, secret string) error {
 		Secret:    secret,
 	}
 
-	myns := *pmyns
 	dcred.SetCredsLabel(lbl)
-	myns.Add(cr)
-	return nil
+	return ns.Add(cr)
 }
 
 func Get(url string) (string, string, error) {
-	pmyns := nativeStore()
-	if pmyns == nil {
-		return "", "", errors.New("native store not supported yet")
-	}
-
-	myns := *pmyns
-	return myns.Get(url)
+	return ns.Get(url)
 }

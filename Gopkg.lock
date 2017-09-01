@@ -71,7 +71,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "8ddcc30fa68e3b98ed8ba707961c008c9d2cb76a"
+  revision = "96b1f5efa4cc95066f34dc3bdad57e3e104e6583"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -137,13 +137,13 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "bb24a47a89eac6c1227fbcb2ae37a8b9ed323366"
+  revision = "a07a691ac871746ae690ccf3ab217363b2144531"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "18c65dde6afd36dbc39197ca72008895b8dfbfb6"
+  revision = "e113a52b01bdd1744681b6ce70c2e3d26b58d389"
 
 [[projects]]
   branch = "v2"
