@@ -90,15 +90,6 @@ func login(cmd *cobra.Command, args []string) {
 		d.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
-	// prefer to store credentials to native store (keychain, wincred)
-	err = nativestore.Set(cli.CliLabel, cli.CliUrl, p.ClientId, p.ClientSecret)
-	if err != nil {
-		d.Error("Error in accessing native store, will use config file.")
-		if cli.Verbose {
-			d.ErrorD(err)
-		}
-	}
-
 	cnf := cli.ReadCliConfig()
 	if cnf == nil {
 		d.ErrorExit("read config failed", 1)
@@ -160,6 +151,18 @@ func login(cmd *cobra.Command, args []string) {
 	})
 
 	d.ErrorExit(err, 1)
+
+	// prefer to store credentials to native store (keychain, wincred)
+	err = nativestore.Set(cli.CliLabel, cli.CliUrl, p.ClientId, p.ClientSecret)
+	if err != nil {
+		if cnf.Verbose {
+			d.Error("Error in accessing native store, will use config file.")
+		}
+
+		if cnf.Debug {
+			d.ErrorD(err)
+		}
+	}
 
 	if cnf.Verbose {
 		d.Info("apiver:", "v"+fmt.Sprintf("%d", getApiVersionInt()))
