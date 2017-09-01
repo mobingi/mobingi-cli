@@ -1,3 +1,5 @@
 package nativestore
 
-var ns = interface{}
+import "github.com/docker/docker-credential-helpers/secretservice"
+
+var ns = secretservice.Secretservice{}

@@ -35,7 +35,7 @@ func clisession() (*session.Session, error) {
 	}
 
 	// check if we have credentials in nativestore
-	user, secret, err := nativestore.Get(cli.CliUrl)
+	user, secret, err := nativestore.Get(cli.CliLabel, cli.CliUrl)
 	if err == nil {
 		if user != "" && secret != "" {
 			if cli.Verbose {
@@ -57,11 +57,10 @@ func clisession() (*session.Session, error) {
 	}
 
 	if cli.Verbose {
+		d.Info("cannot access native store, use config file token")
 		if cli.Debug {
 			d.ErrorD(err)
 		}
-
-		d.Info("cannot access native store, use config file token")
 	}
 
 	return session.New(&session.Config{
