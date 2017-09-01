@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingilabs/mobingi-sdk-go/client"
@@ -29,6 +28,8 @@ func getApiVersionInt() int {
 }
 
 func clisession() (*session.Session, error) {
+	verbose := viper.GetBool(confmap.ConfigKey("verbose"))
+	dbg := viper.GetBool(confmap.ConfigKey("debug"))
 	v := getApiVersionInt()
 	if v < 0 {
 		return nil, errors.New("cannot get api version")
@@ -38,7 +39,7 @@ func clisession() (*session.Session, error) {
 	user, secret, err := nativestore.Get(cli.CliLabel, cli.CliUrl)
 	if err == nil {
 		if user != "" && secret != "" {
-			if cli.Verbose {
+			if verbose {
 				d.Info("use credentials from native store")
 			}
 
@@ -49,16 +50,16 @@ func clisession() (*session.Session, error) {
 				BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
 				BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
 				HttpClientConfig: &client.Config{
-					Timeout: time.Second * time.Duration(timeout.Timeout),
-					Verbose: cli.Verbose,
+					Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
+					Verbose: verbose,
 				},
 			})
 		}
 	}
 
-	if cli.Verbose {
+	if verbose {
 		d.Info("cannot access native store, use config file token")
-		if cli.Debug {
+		if dbg {
 			d.ErrorD(err)
 		}
 	}
@@ -69,8 +70,8 @@ func clisession() (*session.Session, error) {
 		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
 		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
 		HttpClientConfig: &client.Config{
-			Timeout: time.Second * time.Duration(timeout.Timeout),
-			Verbose: cli.Verbose,
+			Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
+			Verbose: verbose,
 		},
 	})
 }

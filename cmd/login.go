@@ -145,6 +145,8 @@ func login(cmd *cobra.Command, args []string) {
 	dbg := fval(cmd, "debug", cli.Debug)
 	cnf.Debug = dbg.(bool)
 	viper.Set(confmap.ConfigKey("debug"), dbg.(bool))
+
+	// create our own config
 	sess, err := session.New(&session.Config{
 		ClientId:        p.ClientId,
 		ClientSecret:    p.ClientSecret,
@@ -152,14 +154,14 @@ func login(cmd *cobra.Command, args []string) {
 		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
 		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
 		HttpClientConfig: &sdkclient.Config{
-			Timeout: time.Second * time.Duration(timeout.Timeout),
-			Verbose: cli.Verbose,
+			Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
+			Verbose: cnf.Verbose,
 		},
 	})
 
 	d.ErrorExit(err, 1)
 
-	if cli.Verbose {
+	if cnf.Verbose {
 		d.Info("apiver:", "v"+fmt.Sprintf("%d", getApiVersionInt()))
 		d.Info("token:", sess.AccessToken)
 	}
