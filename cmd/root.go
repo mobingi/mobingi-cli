@@ -34,9 +34,8 @@ var (
 )
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		d.ErrorExit(err, 1)
-	}
+	err := rootCmd.Execute()
+	d.ErrorExit(err, 1)
 }
 
 func init() {
