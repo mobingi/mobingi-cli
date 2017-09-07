@@ -19,3 +19,17 @@ func Args0() string {
 
 	return filepath.Base(link)
 }
+
+func Dir() string {
+	name, err := os.Executable()
+	if err != nil {
+		return filepath.Dir(os.Args[0])
+	}
+
+	link, err := filepath.EvalSymlinks(name)
+	if err != nil {
+		return filepath.Dir(name)
+	}
+
+	return filepath.Dir(link)
+}
