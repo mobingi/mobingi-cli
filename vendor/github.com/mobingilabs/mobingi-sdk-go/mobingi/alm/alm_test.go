@@ -488,3 +488,22 @@ func TestCompareTemplateDevAcct(t *testing.T) {
 		_, _ = resp, body
 	}
 }
+
+func TestGetPemDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+			ApiVersion: 2,
+		})
+
+		alm := New(sess)
+		in := &GetPemInput{StackId: "mo-58c2297d25645-Sd2aHRDq0-tk"}
+		resp, body, err := alm.GetPem(in)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		_, _ = resp, body
+	}
+}
