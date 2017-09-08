@@ -3,6 +3,7 @@ package alm
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -280,23 +281,52 @@ type GetPemInput struct {
 	StackId string
 }
 
-func (s *stack) GetPem(in *GetPemInput) (*client.Response, []byte, error) {
+// GetPem gets the pem file associated with the input stack. The first byte array in the return values
+// is the actual return body while the next []byte is the downloaded pem file contents, if any.
+func (s *stack) GetPem(in *GetPemInput) (*client.Response, []byte, []byte, error) {
 	if in == nil {
-		return nil, nil, errors.New("input cannot be nil")
+		return nil, nil, nil, errors.New("input cannot be nil")
 	}
 
 	if in.StackId == "" {
-		return nil, nil, errors.New("stack id cannot be empty")
+		return nil, nil, nil, errors.New("stack id cannot be empty")
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/pem?stack_id=" + in.StackId
 	req, err := http.NewRequest(http.MethodGet, ep, nil)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
+		return nil, nil, nil, errors.Wrap(err, "new request failed")
 	}
 
 	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
-	return s.client.Do(req)
+	resp, body, err := s.client.Do(req)
+	if err != nil {
+		return resp, body, nil, errors.Wrap(err, "client do failed")
+	}
+
+	var m map[string]string
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		return resp, body, nil, errors.Wrap(err, "unmarshal failed")
+	}
+
+	link, ok := m["data"]
+	if !ok {
+		return resp, body, nil, errors.New("cannot find link")
+	}
+
+	r, err := http.Get(link)
+	defer r.Body.Close()
+	pem, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return resp, body, pem, errors.Wrap(err, "read failed")
+	}
+
+	if r.StatusCode/100 != 2 {
+		return resp, body, pem, errors.New(r.Status)
+	}
+
+	return resp, body, pem, nil
 }
 
 func (s *stack) getCredsList(vendor string) ([]credentials.VendorCredentials, error) {

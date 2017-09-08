@@ -10,7 +10,7 @@
 [[projects]]
   name = "github.com/docker/docker-credential-helpers"
   packages = ["credentials","osxkeychain","secretservice","wincred"]
-  revision = "f00de1b72fc8274c009c019a34d6bfade31c715c"
+  revision = "d68f9aeca33f5fd3f08eeae5e9d175edf4e731d1"
   version = "v0.6.0"
 
 [[projects]]
@@ -47,7 +47,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "ab9e364efd8b52800ff7ee48a9ffba4e0ed78dfb"
+  revision = "a45f55524b7ec57890cfa6c6bc06b47f877be0d1"
 
 [[projects]]
   branch = "v2"

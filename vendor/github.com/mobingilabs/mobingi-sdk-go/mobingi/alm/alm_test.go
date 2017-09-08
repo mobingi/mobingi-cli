@@ -499,11 +499,11 @@ func TestGetPemDevAcct(t *testing.T) {
 
 		alm := New(sess)
 		in := &GetPemInput{StackId: "mo-58c2297d25645-Sd2aHRDq0-tk"}
-		resp, body, err := alm.GetPem(in)
+		resp, body, pem, err := alm.GetPem(in)
 		if err != nil {
 			t.Errorf("Expecting nil error, received %v", err)
 		}
 
-		_, _ = resp, body
+		_, _, _ = resp, body, pem
 	}
 }
