@@ -20,10 +20,10 @@ func RbacCreateCmd() *cobra.Command {
 		Short: "define a role or create a user role",
 		Long: `Define a role or create a user role.
 
-Examples:
+Example:
 
-  $ ` + cmdline.Args0() + ` rbac describe
-  $ ` + cmdline.Args0() + ` rbac describe --user foo`,
+  $ ` + cmdline.Args0() + ` rbac create --name testrole \
+      --scope /home/user/role.json`,
 		Run: rbacCreate,
 	}
 

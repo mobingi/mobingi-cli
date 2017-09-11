@@ -17,10 +17,9 @@ func RbacDeleteCmd() *cobra.Command {
 		Short: "delete a specific role",
 		Long: `Delete a specific role.
 
-Examples:
+Example:
 
-  $ ` + cmdline.Args0() + ` rbac describe
-  $ ` + cmdline.Args0() + ` rbac describe --user foo`,
+  $ ` + cmdline.Args0() + ` rbac delete --role-id foo`,
 		Run: rbacDelete,
 	}
 
