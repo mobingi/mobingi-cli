@@ -70,8 +70,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
-  packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "7d9f9511a063554da3d8f342ec4926b33be500e8"
+  packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/rbac","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
+  revision = "9985ee7fe69cf0c06b74306a57c6f9fc041f4fb3"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -131,13 +131,13 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "81e90905daefcd6fd217b62423c0908922eadb30"
+  revision = "9ba3862cf6a5452ae579de98f9364dd2e544844c"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "a45f55524b7ec57890cfa6c6bc06b47f877be0d1"
+  revision = "a5054c7c1385fd50d9394475365355a87a7873ec"
 
 [[projects]]
   branch = "master"
@@ -154,6 +154,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3db201892846e3e229f6c0788c462304dceaae763373aadcbf306b1d4057b6e3"
+  inputs-digest = "52cf0c1bbba90925984db21cee1a90fb5cb553a480c5ce97ab360c139d46619a"
   solver-name = "gps-cdcl"
   solver-version = 1

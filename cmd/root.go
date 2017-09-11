@@ -67,6 +67,7 @@ func init() {
 		LoginCmd(),
 		StackCmd(),
 		TemplateCmd(),
+		RbacCmd(),
 		ServerConfigCmd(),
 		CredentialsCmd(),
 		RegistryCmd(),
