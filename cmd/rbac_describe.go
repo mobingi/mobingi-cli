@@ -122,6 +122,9 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 				if ok {
 					scope = string(_scope)
 					scope = strings.Trim(scope, "\"")
+					if len(scope) >= 23 {
+						scope = scope[:23] + "..."
+					}
 				}
 
 				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
@@ -130,7 +133,7 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 					name,
 					ct,
 					ut,
-					scope[:23]+"...")
+					scope)
 			}
 
 			w.Flush()
