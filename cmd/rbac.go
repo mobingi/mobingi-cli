@@ -14,6 +14,7 @@ func RbacCmd() *cobra.Command {
 
 	cmd.AddCommand(
 		RbacDescribeCmd(),
+		RbacCreateCmd(),
 	)
 
 	return cmd
