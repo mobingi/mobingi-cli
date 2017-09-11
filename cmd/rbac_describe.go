@@ -1,8 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"strings"
+	"text/tabwriter"
+	"time"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/rbac"
@@ -55,11 +60,81 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 	case "raw":
 		fmt.Println(string(body))
 		outb = body
-	default:
+	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		js := pretty.JSON(string(body), indent)
 		fmt.Println(js)
 		outb = []byte(js)
+	default:
+		if pfmt == "min" || pfmt == "" {
+			var rj []json.RawMessage
+			err = json.Unmarshal(body, &rj)
+			d.ErrorExit(err, 1)
+
+			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+			fmt.Fprintf(w, "ROLE ID\tUSER ID\tNAME\tCREATE TIME\tUPDATE TIME\tSCOPE\n")
+			var roleid, userid, name, ct, ut, scope string
+			for _, item := range rj {
+				// var m map[string]interface{}
+				var m map[string]json.RawMessage
+				err = json.Unmarshal(item, &m)
+				d.ErrorExit(err, 1)
+
+				_roleid, ok := m["role_id"]
+				if ok {
+					roleid = fmt.Sprintf("%s", _roleid)
+					roleid = strings.Trim(roleid, "\"")
+				}
+
+				_userid, ok := m["user_id"]
+				if ok {
+					userid = fmt.Sprintf("%s", _userid)
+					userid = strings.Trim(userid, "\"")
+				}
+
+				_name, ok := m["name"]
+				if ok {
+					name = fmt.Sprintf("%s", _name)
+					name = strings.Trim(name, "\"")
+				}
+
+				ct = "-"
+				_ct, ok := m["create_time"]
+				if ok {
+					_cts := strings.Trim(string(_ct), "\"")
+					t, err := time.Parse(time.RFC3339, _cts)
+					if err == nil {
+						ct = t.Format(time.RFC1123)
+					}
+				}
+
+				ut = "-"
+				_ut, ok := m["create_time"]
+				if ok {
+					_uts := strings.Trim(string(_ut), "\"")
+					t, err := time.Parse(time.RFC3339, _uts)
+					if err == nil {
+						ut = t.Format(time.RFC1123)
+					}
+				}
+
+				_scope, ok := m["scope"]
+				if ok {
+					scope = string(_scope)
+					scope = strings.Trim(scope, "\"")
+				}
+
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+					roleid,
+					userid,
+					name,
+					ct,
+					ut,
+					scope[:23]+"...")
+			}
+
+			w.Flush()
+		}
 	}
 
 	if out != "" {
