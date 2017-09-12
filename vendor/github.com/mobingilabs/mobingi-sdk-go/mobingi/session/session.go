@@ -110,7 +110,15 @@ func (s *Session) getAccessToken() (string, error) {
 	}
 
 	r.Header.Add("Content-Type", "application/json")
-	c := client.NewSimpleHttpClient()
+
+	var c client.HttpClient
+
+	if s.Config.HttpClientConfig != nil {
+		c = client.NewSimpleHttpClient(s.Config.HttpClientConfig)
+	} else {
+		c = client.NewSimpleHttpClient()
+	}
+
 	resp, body, err := c.Do(r)
 	if err != nil {
 		return token, errors.Wrap(err, "do failed")
