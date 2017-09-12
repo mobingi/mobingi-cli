@@ -17,3 +17,8 @@ func Get(lbl, url string) (string, string, error) {
 	dcred.SetCredsLabel(lbl)
 	return ns.Get(url)
 }
+
+func Del(lbl, url string) error {
+	dcred.SetCredsLabel(lbl)
+	return ns.Delete(url)
+}
