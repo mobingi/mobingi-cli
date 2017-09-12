@@ -78,6 +78,39 @@ func (r *rbac) CreateRole(in *CreateRoleInput) (*client.Response, []byte, error)
 	return r.client.Do(req)
 }
 
+type AttachRoleToUserInput struct {
+	Username string
+	RoleId   string
+}
+
+func (r *rbac) AttachRoleToUser(in *AttachRoleToUserInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.Username == "" {
+		return nil, nil, errors.New("username cannot be empty")
+	}
+
+	if in.RoleId == "" {
+		return nil, nil, errors.New("role id cannot be empty")
+	}
+
+	v := url.Values{}
+	v.Set("username", in.Username)
+	v.Set("role_id", in.RoleId)
+	payload := []byte(v.Encode())
+	ep := r.session.ApiEndpoint() + "/user/role"
+	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "new request failed")
+	}
+
+	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+	return r.client.Do(req)
+}
+
 type DeleteRoleInput struct {
 	RoleId string
 }

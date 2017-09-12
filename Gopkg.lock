@@ -71,7 +71,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/rbac","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "be2c3d754522211225db5c9e3127ef4410640758"
+  revision = "0bfed3bc30cc5276358dec8d917713b2ccfa3d8d"
 
 [[projects]]
   name = "github.com/pelletier/go-buffruneio"
@@ -131,7 +131,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "9ba3862cf6a5452ae579de98f9364dd2e544844c"
+  revision = "74b34b9dd60829a9fcaf56a59e81c3877a8ecd2c"
 
 [[projects]]
   branch = "master"

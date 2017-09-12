@@ -54,3 +54,25 @@ func TestDescribeRolesDevAcct(t *testing.T) {
 		_, _ = resp, body
 	}
 }
+
+func TestAttachRoleToUserDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+		})
+
+		rbac := New(sess)
+		in := AttachRoleToUserInput{
+			Username: "chewsubuser1",
+			RoleId:   "morole-58c2297d25645-BtXGMSRsI",
+		}
+
+		resp, body, err := rbac.AttachRoleToUser(&in)
+		if err != nil {
+			t.Errorf("Expecting nil error, received %v", err)
+		}
+
+		_, _ = resp, body
+	}
+}
