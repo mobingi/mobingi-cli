@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/rbac"
@@ -19,8 +18,8 @@ var roleAllowAll bool
 func RbacCreateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
-		Short: "define a role or create a user role",
-		Long: `Define a role or create a user role.
+		Short: "define a role",
+		Long: `Define a role.
 
 Example:
 
@@ -30,10 +29,9 @@ Example:
 	}
 
 	cmd.Flags().SortFlags = false
-	cmd.Flags().String("type", "role", "create type: role, user")
-	cmd.Flags().String("name", "", "role name (when type is role)")
-	cmd.Flags().String("scope", "", "path to role file (when type is role)")
-	cmd.Flags().BoolVar(&roleAllowAll, "allow-all", false, "true if you allow all access")
+	cmd.Flags().String("name", "", "role name")
+	cmd.Flags().String("scope", "", "path to role file")
+	cmd.Flags().BoolVar(&roleAllowAll, "allow-all", false, "allow all access if true")
 	return cmd
 }
 
@@ -43,35 +41,25 @@ func rbacCreate(cmd *cobra.Command, args []string) {
 
 	var in rbac.CreateRoleInput
 
-	typ := cli.GetCliStringFlag(cmd, "type")
 	name := cli.GetCliStringFlag(cmd, "name")
 	scope := cli.GetCliStringFlag(cmd, "scope")
-
-	switch typ {
-	case "role":
-		if roleAllowAll {
-			in = rbac.CreateRoleInput{
-				Name:  name,
-				Scope: *(rbac.NewRoleAll("Allow")),
-			}
-		} else {
-			b, err := ioutil.ReadFile(scope)
-			d.ErrorExit(err, 1)
-
-			var rr rbac.Role
-			err = json.Unmarshal(b, &rr)
-			d.ErrorExit(err, 1)
-
-			in = rbac.CreateRoleInput{
-				Name:  name,
-				Scope: rr,
-			}
+	if roleAllowAll {
+		in = rbac.CreateRoleInput{
+			Name:  name,
+			Scope: *(rbac.NewRoleAll("Allow")),
 		}
-	case "user":
-		d.Info("not yet supported")
-		os.Exit(0)
-	default:
-		d.ErrorExit("unknown type", 1)
+	} else {
+		b, err := ioutil.ReadFile(scope)
+		d.ErrorExit(err, 1)
+
+		var rr rbac.Role
+		err = json.Unmarshal(b, &rr)
+		d.ErrorExit(err, 1)
+
+		in = rbac.CreateRoleInput{
+			Name:  name,
+			Scope: rr,
+		}
 	}
 
 	svc := rbac.New(sess)
