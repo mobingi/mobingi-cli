@@ -51,6 +51,12 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 	d.ErrorExit(err, 1)
 	exitOn401(resp)
 
+	if resp.StatusCode/100 != 2 {
+		d.Error(resp.Status)
+	} else {
+		d.Info(resp.Status)
+	}
+
 	out := cli.GetCliStringFlag(cmd, "out")
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 
@@ -67,6 +73,11 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 		outb = []byte(js)
 	default:
 		if pfmt == "min" || pfmt == "" {
+			if resp.StatusCode/100 != 2 {
+				// error already printed
+				os.Exit(1)
+			}
+
 			var rj []json.RawMessage
 			err = json.Unmarshal(body, &rj)
 			d.ErrorExit(err, 1)
