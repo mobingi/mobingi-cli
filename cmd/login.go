@@ -32,9 +32,10 @@ func LoginCmd() *cobra.Command {
 		Use:   "login",
 		Short: "login to Mobingi API",
 		Long: `Login to Mobingi API server. If 'grant_type' is set to 'password', you will be prompted to
-enter your username and password. Token will be saved in $HOME/.` + cmdline.Args0() + `/` + cli.ConfigFileName + `.
+enter your username and password. Cli will attempt to store your credentials to the native
+store, if supported. Otherwise, token will be saved in $HOME/.` + cmdline.Args0() + `/` + cli.ConfigFileName + `.
 
-Valid 'grant-type' values: client_credentials, password
+Valid 'grant-type' values: password, client_credentials
 
 Examples:
 
@@ -45,7 +46,7 @@ Examples:
 	cmd.Flags().SortFlags = false
 	cmd.Flags().StringP("client-id", "i", "", "client id (required)")
 	cmd.Flags().StringP("client-secret", "s", "", "client secret (required)")
-	cmd.Flags().StringP("grant-type", "g", "client_credentials", "grant type")
+	cmd.Flags().StringP("grant-type", "g", "password", "grant type")
 	cmd.Flags().StringP("username", "u", "", "user name")
 	cmd.Flags().StringP("password", "p", "", "password")
 	cmd.Flags().String("endpoints", "prod", "set endpoints (dev, qa, prod)")
@@ -138,22 +139,48 @@ func login(cmd *cobra.Command, args []string) {
 	viper.Set(confmap.ConfigKey("debug"), dbg.(bool))
 
 	// create our own config
-	sess, err := session.New(&session.Config{
-		ClientId:        p.ClientId,
-		ClientSecret:    p.ClientSecret,
-		ApiVersion:      getApiVersionInt(),
-		BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
-		BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
-		HttpClientConfig: &sdkclient.Config{
-			Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
-			Verbose: cnf.Verbose,
-		},
-	})
+	var sess *session.Session
+	if grant == "password" {
+		sess, err = session.New(&session.Config{
+			ClientId:        p.ClientId,
+			ClientSecret:    p.ClientSecret,
+			Username:        p.Username,
+			Password:        p.Password,
+			ApiVersion:      getApiVersionInt(),
+			BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
+			BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+			HttpClientConfig: &sdkclient.Config{
+				Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
+				Verbose: cnf.Verbose,
+			},
+		})
 
-	d.ErrorExit(err, 1)
+		d.ErrorExit(err, 1)
+	} else {
+		sess, err = session.New(&session.Config{
+			ClientId:        p.ClientId,
+			ClientSecret:    p.ClientSecret,
+			ApiVersion:      getApiVersionInt(),
+			BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
+			BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+			HttpClientConfig: &sdkclient.Config{
+				Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
+				Verbose: cnf.Verbose,
+			},
+		})
+
+		d.ErrorExit(err, 1)
+	}
 
 	// prefer to store credentials to native store (keychain, wincred)
-	err = nativestore.Set(cli.CliLabel, cli.CliUrl, p.ClientId, p.ClientSecret)
+	nid := p.ClientId
+	nsec := p.ClientSecret
+	if grant == "password" {
+		nid += "|" + p.Username
+		nsec += "|" + p.Password
+	}
+
+	err = nativestore.Set(cli.CliLabel, cli.CliUrl, nid, nsec)
 	if err != nil {
 		if cnf.Verbose {
 			d.Error("Error in accessing native store, will use config file.")

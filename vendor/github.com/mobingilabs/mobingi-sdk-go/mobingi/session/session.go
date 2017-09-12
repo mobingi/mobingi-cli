@@ -17,9 +17,11 @@ const (
 )
 
 type authPayload struct {
-	ClientId     string `json:"client_id,omitempty"`
-	ClientSecret string `json:"client_secret,omitempty"`
-	GrantType    string `json:"grant_type,omitempty"`
+	ClientId     string      `json:"client_id,omitempty"`
+	ClientSecret string      `json:"client_secret,omitempty"`
+	GrantType    string      `json:"grant_type,omitempty"`
+	Username     interface{} `json:"username,omitempty"`
+	Password     interface{} `json:"password,omitempty"`
 }
 
 type Config struct {
@@ -30,6 +32,14 @@ type Config struct {
 	// ClientSecret is your Mobingi client secret. If empty, it will look for
 	// MOBINGI_CLIENT_SECRET environment variable.
 	ClientSecret string
+
+	// Username is your Mobingi subuser name. If empty, it means the login grant
+	// type is 'client_credentials'.
+	Username string
+
+	// Password is your Mobingi subuser password. Cannot be empty when Username
+	// is not empty.
+	Password string
 
 	// AccessToken is your API access token. By default, session will get an
 	// access token based on ClientId and ClientSecret. If this is set however,
@@ -68,10 +78,26 @@ func (s *Session) RegistryEndpoint() string {
 
 func (s *Session) getAccessToken() (string, error) {
 	var token string
-	p := authPayload{
-		ClientId:     s.Config.ClientId,
-		ClientSecret: s.Config.ClientSecret,
-		GrantType:    "client_credentials",
+	var p authPayload
+
+	if s.Config.Username != "" {
+		if s.Config.Password == "" {
+			return token, errors.New("password cannot be empty")
+		}
+
+		p = authPayload{
+			ClientId:     s.Config.ClientId,
+			ClientSecret: s.Config.ClientSecret,
+			GrantType:    "password",
+			Username:     s.Config.Username,
+			Password:     s.Config.Password,
+		}
+	} else {
+		p = authPayload{
+			ClientId:     s.Config.ClientId,
+			ClientSecret: s.Config.ClientSecret,
+			GrantType:    "client_credentials",
+		}
 	}
 
 	payload, err := json.Marshal(p)

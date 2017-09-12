@@ -38,14 +38,31 @@ func clisession() (*session.Session, error) {
 	// check if we have credentials in nativestore
 	user, secret, err := nativestore.Get(cli.CliLabel, cli.CliUrl)
 	if err == nil {
-		if user != "" && secret != "" {
+		cred1 := strings.Split(user, "|")
+		cred2 := strings.Split(secret, "|")
+
+		var id, sec, u, p string
+
+		id = cred1[0]
+		sec = cred2[0]
+		if len(cred1) == 2 {
+			u = cred1[1]
+		}
+
+		if len(cred2) == 2 {
+			p = cred2[1]
+		}
+
+		if cred1[0] != "" && cred2[0] != "" {
 			if verbose {
 				d.Info("use credentials from native store")
 			}
 
 			return session.New(&session.Config{
-				ClientId:        user,
-				ClientSecret:    secret,
+				ClientId:        id,
+				ClientSecret:    sec,
+				Username:        u,
+				Password:        p,
 				ApiVersion:      v,
 				BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
 				BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
