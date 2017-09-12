@@ -138,6 +138,8 @@ func New(cnf ...*Config) (*Session, error) {
 	c := &Config{
 		ClientId:        os.Getenv("MOBINGI_CLIENT_ID"),
 		ClientSecret:    os.Getenv("MOBINGI_CLIENT_SECRET"),
+		Username:        os.Getenv("MOBINGI_USERNAME"),
+		Password:        os.Getenv("MOBINGI_PASSWORD"),
 		ApiVersion:      3,
 		BaseApiUrl:      BASE_API_URL,
 		BaseRegistryUrl: BASE_REGISTRY_URL,
@@ -155,6 +157,14 @@ func New(cnf ...*Config) (*Session, error) {
 
 			if cnf[0].AccessToken != "" {
 				c.AccessToken = cnf[0].AccessToken
+			}
+
+			if cnf[0].Username != "" {
+				c.Username = cnf[0].Username
+			}
+
+			if cnf[0].Password != "" {
+				c.Password = cnf[0].Password
 			}
 
 			if cnf[0].ApiVersion > 0 {
