@@ -19,11 +19,9 @@ func StackGetPemCmd() *cobra.Command {
 		Short: "print stack pem file",
 		Long: `Print your stack's pem file, if available.
 
-Examples:
+Example:
 
-  $ ` + cmdline.Args0() + ` stack list
-  $ ` + cmdline.Args0() + ` stack list --fmt=json --verbose
-  $ ` + cmdline.Args0() + ` stack list --fmt=raw --out=/home/foo/tmp.txt`,
+  $ ` + cmdline.Args0() + ` stack pem --id foo`,
 		Run: getpem,
 	}
 
