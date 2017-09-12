@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/rbac"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
 
@@ -77,5 +79,13 @@ func rbacCreate(cmd *cobra.Command, args []string) {
 	d.ErrorExit(err, 1)
 	exitOn401(resp)
 
-	d.Info(resp.Status, string(body))
+	indent := cli.GetCliIntFlag(cmd, "indent")
+	js := pretty.JSON(string(body), indent)
+	if resp.StatusCode/100 != 2 {
+		d.Error(resp.Status)
+	} else {
+		d.Info(resp.Status)
+	}
+
+	fmt.Println(js)
 }
