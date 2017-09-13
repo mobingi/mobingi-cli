@@ -9,6 +9,7 @@ import (
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
+	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )
 
@@ -70,6 +71,7 @@ func stackSsh(cmd *cobra.Command, args []string) {
 	default:
 		if linkOnly {
 			d.Info("open link with a browser:", u)
+			_ = open.Run(u)
 			return
 		}
 

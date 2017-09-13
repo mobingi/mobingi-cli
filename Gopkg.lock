@@ -117,6 +117,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/skratchdot/open-golang"
+  packages = ["open"]
+  revision = "75fb7ed4208cf72d323d7d02fd1a5964a7a9073c"
+
+[[projects]]
+  branch = "master"
   name = "github.com/spf13/afero"
   packages = [".","mem"]
   revision = "ee1bd8ee15a1306d1f9201acc41ef39cd9f99a1b"
@@ -178,6 +184,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "189edfaff77ac8810221f5c0afe7f45af6866628384bc495a98389e39cc5481a"
+  inputs-digest = "4d9cbe7ccf045f6fafd5c21b8c01f86937f326a22187e013985098e868d79042"
   solver-name = "gps-cdcl"
   solver-version = 1
