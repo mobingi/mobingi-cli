@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var linkOnly bool
+var browser bool
 
 func StackSshCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -27,10 +27,11 @@ Examples:
 		Run: stackSsh,
 	}
 
+	cmd.Flags().SortFlags = false
 	cmd.Flags().String("id", "", "stack id")
 	cmd.Flags().String("ip", "", "instance ip address")
 	cmd.Flags().String("user", "ec2-user", "ssh username")
-	cmd.Flags().BoolVar(&linkOnly, "url-only", false, "true if you want the url only")
+	cmd.Flags().BoolVar(&browser, "browser", false, "true if you want to use browser")
 	return cmd
 }
 
@@ -69,8 +70,8 @@ func stackSsh(cmd *cobra.Command, args []string) {
 			d.ErrorExit(err, 1)
 		}
 	default:
-		if linkOnly {
-			d.Info("open link with a browser:", u)
+		if browser {
+			d.Info("open link with a browser (if not opened automatically):", u)
 			_ = open.Run(u)
 			return
 		}
