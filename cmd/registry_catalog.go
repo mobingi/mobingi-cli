@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -28,6 +29,8 @@ Example:
 	}
 
 	cmd.Flags().SortFlags = false
+	cmd.Flags().String("username", "", "username (account subuser)")
+	cmd.Flags().String("password", "", "password (account subuser)")
 	cmd.Flags().String("service", "Mobingi Docker Registry", "service for authentication")
 	cmd.Flags().String("scope", "", "scope for authentication")
 	return cmd
@@ -42,6 +45,13 @@ func printCatalog(cmd *cobra.Command, args []string) {
 
 	sess, err := clisession()
 	d.ErrorExit(err, 1)
+
+	var userpass *credentials.UserPass
+	if sess.Config.Username == "" {
+		userpass = userPass(cmd)
+		sess.Config.Username = userpass.Username
+		sess.Config.Password = userpass.Password
+	}
 
 	svc := registry.New(sess)
 	in := &registry.GetUserCatalogInput{
