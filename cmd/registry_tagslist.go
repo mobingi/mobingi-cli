@@ -10,6 +10,7 @@ import (
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
 
@@ -64,6 +65,10 @@ func tagsList(cmd *cobra.Command, args []string) {
 	switch pfmt {
 	case "raw":
 		fmt.Println(string(body))
+	case "json":
+		indent := cli.GetCliIntFlag(cmd, "indent")
+		js := pretty.JSON(string(body), indent)
+		fmt.Println(js)
 	default:
 		var t tags
 		err = json.Unmarshal(body, &t)
