@@ -31,9 +31,13 @@ func (r *registry) GetUserCatalog(in *GetUserCatalogInput) (*client.Response, []
 		in.Service = "Mobingi Docker Registry"
 	}
 
+	if in.Scope == "" {
+		in.Scope = "registry:catalog:*"
+	}
+
 	tokenIn := &GetRegistryTokenInput{
 		Service: in.Service,
-		Scope:   "registry:catalog:*",
+		Scope:   in.Scope,
 	}
 
 	resp, body, token, err := r.GetRegistryToken(tokenIn)
