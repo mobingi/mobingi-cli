@@ -7,7 +7,6 @@ import (
 	"text/tabwriter"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -29,7 +28,7 @@ and image name. Other values will be built based on inputs and command type.
 
 Example:
 
-  $ ` + cmdline.Args0() + ` registry tags --username=foo --password=bar --image=hello`,
+  $ ` + cmdline.Args0() + ` registry tags --image=hello`,
 		Run: tagsList,
 	}
 
@@ -53,13 +52,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
 	d.ErrorExit(err, 1)
 
-	var userpass *credentials.UserPass
-	if sess.Config.Username == "" {
-		userpass = userPass(cmd)
-		sess.Config.Username = userpass.Username
-		sess.Config.Password = userpass.Password
-	}
-
+	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
 	in := &registry.GetTagsListInput{
 		Service: service,

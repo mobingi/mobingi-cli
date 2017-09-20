@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -51,13 +50,7 @@ func manifest(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
 	d.ErrorExit(err, 1)
 
-	var userpass *credentials.UserPass
-	if sess.Config.Username == "" {
-		userpass = userPass(cmd)
-		sess.Config.Username = userpass.Username
-		sess.Config.Password = userpass.Password
-	}
-
+	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
 	in := &registry.GetTagManifestInput{
 		Service: service,
