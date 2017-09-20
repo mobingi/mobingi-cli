@@ -5,13 +5,12 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/mobingi/mobingi-cli/client"
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/registry"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func RegistryManifest() *cobra.Command {
@@ -23,7 +22,7 @@ and image name. Other values will be built based on inputs and command type. Out
 
 Example:
 
-  $ ` + cmdline.Args0() + ` registry manifest --username=foo --password=bar --image=hello:latest`,
+  $ ` + cmdline.Args0() + ` registry manifest --image=hello:latest`,
 		Run: manifest,
 	}
 
@@ -37,10 +36,7 @@ Example:
 }
 
 func manifest(cmd *cobra.Command, args []string) {
-	userpass := userPass(cmd)
-	base := viper.GetString("api_url")
-	apiver := cli.GetCliStringFlag(cmd, "apiver")
-	svc := cli.GetCliStringFlag(cmd, "service")
+	service := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
 	if image == "" {
@@ -52,31 +48,27 @@ func manifest(cmd *cobra.Command, args []string) {
 		d.ErrorExit("--image format is `image:tag`", 1)
 	}
 
-	if scope == "" {
-		scope = fmt.Sprintf("repository:%s/%s:pull", userpass.Username, pair[0])
+	sess, err := clisession()
+	d.ErrorExit(err, 1)
+
+	var userpass *credentials.UserPass
+	if sess.Config.Username == "" {
+		userpass = userPass(cmd)
+		sess.Config.Username = userpass.Username
+		sess.Config.Password = userpass.Password
 	}
 
-	body, token, err := registry.GetRegistryToken(&registry.TokenParams{
-		Base:       base,
-		ApiVersion: apiver,
-		TokenCreds: &registry.TokenCredentials{
-			UserPass: userpass,
-			Service:  svc,
-			Scope:    scope,
-		},
-	})
+	svc := registry.New(sess)
+	in := &registry.GetTagManifestInput{
+		Service: service,
+		Scope:   scope,
+		Image:   pair[0],
+		Tag:     pair[1],
+	}
 
+	resp, body, err := svc.GetTagManifest(in)
 	d.ErrorExit(err, 1)
-
-	c := client.NewClient(&client.Config{
-		RootUrl:     viper.GetString("registry_url"),
-		ApiVersion:  cli.DockerApiVersion,
-		AccessToken: token,
-	})
-
-	path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
-	body, err = c.AuthGet(path)
-	d.ErrorExit(err, 1)
+	exitOn401(resp)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {

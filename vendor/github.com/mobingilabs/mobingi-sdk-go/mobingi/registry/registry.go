@@ -161,27 +161,46 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 	return resp, body, nil
 }
 
-type GetTagDigestInput struct {
+type GetTagManifestInput struct {
 	Service string
 	Scope   string
 	Image   string
 	Tag     string
 }
 
-func (r *registry) GetTagDigest(in *GetTagDigestInput) (*client.Response, []byte, string, error) {
-	var digest string
+func (r *registry) GetTagManifest(in *GetTagManifestInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
 
-	/*
-		if in == nil {
-			return nil, nil, digest, errors.New("input cannot be nil")
-		}
+	if in.Service == "" {
+		in.Service = "Mobingi Docker Registry"
+	}
 
-		ep := r.session.RegistryEndpoint() + "/alm/pem?stack_id=" + in.StackId
-		path := fmt.Sprintf("/%s/%s/manifests/%s", userpass.Username, pair[0], pair[1])
-		req, err := http.NewRequest(http.MethodGet, ep, nil)
-	*/
+	if in.Scope == "" {
+		in.Scope = fmt.Sprintf("repository:%s/%s:pull", r.session.Config.Username, in.Image)
+	}
 
-	return nil, nil, digest, nil
+	tokenIn := &GetRegistryTokenInput{
+		Service: in.Service,
+		Scope:   in.Scope,
+	}
+
+	resp, body, token, err := r.GetRegistryToken(tokenIn)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "get token failed")
+	}
+
+	r.session.AccessToken = token
+	ep := r.session.RegistryEndpoint() + "/" + r.session.Config.Username + "/" + in.Image + "/manifests/" + in.Tag
+	req, err := http.NewRequest(http.MethodGet, ep, nil)
+	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	resp, body, err = r.client.Do(req)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "client do failed")
+	}
+
+	return resp, body, nil
 }
 
 func New(s *session.Session) *registry {
