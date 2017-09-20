@@ -62,7 +62,7 @@ func TestGetTagsListDevAcct(t *testing.T) {
 
 		reg := New(sess)
 		in := &GetTagsListInput{
-			ImageName: "hello",
+			Image: "hello",
 		}
 
 		resp, body, err := reg.GetTagsList(in)

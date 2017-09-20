@@ -121,9 +121,9 @@ func (r *registry) GetUserCatalog(in *GetUserCatalogInput) (*client.Response, []
 }
 
 type GetTagsListInput struct {
-	Service   string
-	Scope     string
-	ImageName string
+	Service string
+	Scope   string
+	Image   string
 }
 
 func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, error) {
@@ -136,7 +136,7 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 	}
 
 	if in.Scope == "" {
-		in.Scope = fmt.Sprintf("repository:%s/%s:pull", r.session.Config.Username, in.ImageName)
+		in.Scope = fmt.Sprintf("repository:%s/%s:pull", r.session.Config.Username, in.Image)
 	}
 
 	tokenIn := &GetRegistryTokenInput{
@@ -150,7 +150,7 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 	}
 
 	r.session.AccessToken = token
-	ep := r.session.RegistryEndpoint() + "/" + r.session.Config.Username + "/" + in.ImageName + "/tags/list"
+	ep := r.session.RegistryEndpoint() + "/" + r.session.Config.Username + "/" + in.Image + "/tags/list"
 	req, err := http.NewRequest(http.MethodGet, ep, nil)
 	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 	resp, body, err = r.client.Do(req)
@@ -162,8 +162,10 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 }
 
 type GetTagDigestInput struct {
-	ImageName string
-	TagName   string
+	Service string
+	Scope   string
+	Image   string
+	Tag     string
 }
 
 func (r *registry) GetTagDigest(in *GetTagDigestInput) (*client.Response, []byte, string, error) {

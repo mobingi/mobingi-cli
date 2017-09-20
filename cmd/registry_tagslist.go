@@ -62,9 +62,9 @@ func tagsList(cmd *cobra.Command, args []string) {
 
 	svc := registry.New(sess)
 	in := &registry.GetTagsListInput{
-		Service:   service,
-		Scope:     scope,
-		ImageName: image,
+		Service: service,
+		Scope:   scope,
+		Image:   image,
 	}
 
 	resp, body, err := svc.GetTagsList(in)
