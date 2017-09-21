@@ -21,7 +21,7 @@
 
 [[projects]]
   name = "github.com/docker/docker-credential-helpers"
-  packages = ["credentials","osxkeychain","secretservice","wincred"]
+  packages = ["credentials","osxkeychain","pass","wincred"]
   revision = "d68f9aeca33f5fd3f08eeae5e9d175edf4e731d1"
   version = "v0.6.0"
 
@@ -89,7 +89,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/rbac","mobingi/registry","mobingi/sesha3","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "b79983409fd6d411b28f8436bc4653961ce57073"
+  revision = "5d10ac75a95bcf255fbae71de979c9ff0ecb6ddd"
 
 [[projects]]
   name = "github.com/moul/gotty-client"

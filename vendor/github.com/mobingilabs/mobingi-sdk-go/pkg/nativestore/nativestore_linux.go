@@ -1,5 +1,9 @@
 package nativestore
 
-import "github.com/docker/docker-credential-helpers/secretservice"
+import "github.com/docker/docker-credential-helpers/pass"
 
-var ns = secretservice.Secretservice{}
+//passphrase of gpg2 is empty
+//pass setting (below commands)
+//$ gpg2 --gen-key 
+//$ pass init [gpgID]
+var ns = pass.Pass{}

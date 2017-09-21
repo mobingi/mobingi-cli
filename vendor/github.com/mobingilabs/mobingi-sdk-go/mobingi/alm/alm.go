@@ -341,7 +341,6 @@ func (s *stack) getCredsList(vendor string) ([]credentials.VendorCredentials, er
 		return nil, errors.Wrap(err, "unmarshal failed")
 	}
 
-	_ = err
 	return list, nil
 }
 
