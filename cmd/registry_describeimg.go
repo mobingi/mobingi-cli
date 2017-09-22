@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"text/tabwriter"
+	"time"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
@@ -70,70 +74,121 @@ func describeImage(cmd *cobra.Command, args []string) {
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:
+		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+		fmt.Fprintf(w, "REPO\tSIZE\tCREATED\tVISIBILITY\tTAGS\n")
+		var repos []json.RawMessage
+		err = json.Unmarshal(body, &repos)
+		d.ErrorExit(err, 1)
+
+		for _, item := range repos {
+			var m map[string]interface{}
+			err = json.Unmarshal(item, &m)
+			d.ErrorExit(err, 1)
+
+			var repo, size, created, vis, tags string
+			if _, ok := m["repository"]; ok {
+				repo = fmt.Sprintf("%s", m["repository"])
+			}
+
+			if _, ok := m["size"]; ok {
+				size = fmt.Sprintf("%v", m["size"])
+			}
+
+			if _, ok := m["created_at"]; ok {
+				created = fmt.Sprintf("%v", m["created_at"])
+				t, err := time.Parse(time.RFC3339, created)
+				if err == nil {
+					created = t.Format(time.RFC1123)
+				}
+			}
+
+			if _, ok := m["visibility"]; ok {
+				vis = fmt.Sprintf("%v", m["visibility"])
+			}
+
+			// count tags
+			if _, ok := m["tags"]; ok {
+				var t1 map[string]json.RawMessage
+				err = json.Unmarshal(item, &t1)
+				if err == nil {
+					if t2, ok := t1["tags"]; ok {
+						var cnt map[string]interface{}
+						err = json.Unmarshal(t2, &cnt)
+						if err == nil {
+							tags = fmt.Sprintf("%v", len(cnt))
+						}
+					}
+				}
+			}
+
+			fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
+				repo,
+				size,
+				created,
+				vis,
+				tags)
+		}
+
 		/*
-			if pfmt == "min" || pfmt == "" {
-				w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
-				fmt.Fprintf(w, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
-				for i, s := range stacks {
-					timestr := s.CreateTime
-					t, err := time.Parse(time.RFC3339, s.CreateTime)
-					if err == nil {
-						timestr = t.Format(time.RFC1123)
-					}
-
-					platform := "?"
-					if s.Configuration.AWS != "" {
-						platform = "AWS"
-					}
-
-					type cnf_t struct {
-						Configuration json.RawMessage `json:"configuration"`
-					}
-
-					// if still invalid, find via regexp
-					if platform == "?" {
-						var cnfs []cnf_t
-						err = json.Unmarshal(body, &cnfs)
-						if err == nil {
-							re := regexp.MustCompile(`"vendor":\{"aws":`)
-							pltfm := re.FindString(string(cnfs[i].Configuration))
-							if pltfm != "" {
-								platform = "AWS"
-							}
-						}
-					}
-
-					region := s.Configuration.Region
-
-					// if empty, extract the `"region:"xxxxxx"` part via regexp
-					if region == "" {
-						var cnfs []cnf_t
-						err = json.Unmarshal(body, &cnfs)
-						if err == nil {
-							re := regexp.MustCompile(`"region":\s*".+"`)
-							mi := pretty.JSON(cnfs[i].Configuration, 2)
-							if mi != "" {
-								rgn := re.FindString(mi)
-								rgnkv := strings.Split(rgn, ":")
-								if len(rgnkv) == 2 {
-									r1 := strings.TrimSpace(rgnkv[1])
-									region = strings.TrimRight(strings.TrimPrefix(r1, "\""), "\"")
-								}
-							}
-						}
-					}
-
-					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-						s.StackId,
-						s.Nickname,
-						platform,
-						s.StackStatus,
-						region,
-						timestr)
+			for i, s := range stacks {
+				timestr := s.CreateTime
+				t, err := time.Parse(time.RFC3339, s.CreateTime)
+				if err == nil {
+					timestr = t.Format(time.RFC1123)
 				}
 
-				w.Flush()
+				platform := "?"
+				if s.Configuration.AWS != "" {
+					platform = "AWS"
+				}
+
+				type cnf_t struct {
+					Configuration json.RawMessage `json:"configuration"`
+				}
+
+				// if still invalid, find via regexp
+				if platform == "?" {
+					var cnfs []cnf_t
+					err = json.Unmarshal(body, &cnfs)
+					if err == nil {
+						re := regexp.MustCompile(`"vendor":\{"aws":`)
+						pltfm := re.FindString(string(cnfs[i].Configuration))
+						if pltfm != "" {
+							platform = "AWS"
+						}
+					}
+				}
+
+				region := s.Configuration.Region
+
+				// if empty, extract the `"region:"xxxxxx"` part via regexp
+				if region == "" {
+					var cnfs []cnf_t
+					err = json.Unmarshal(body, &cnfs)
+					if err == nil {
+						re := regexp.MustCompile(`"region":\s*".+"`)
+						mi := pretty.JSON(cnfs[i].Configuration, 2)
+						if mi != "" {
+							rgn := re.FindString(mi)
+							rgnkv := strings.Split(rgn, ":")
+							if len(rgnkv) == 2 {
+								r1 := strings.TrimSpace(rgnkv[1])
+								region = strings.TrimRight(strings.TrimPrefix(r1, "\""), "\"")
+							}
+						}
+					}
+				}
+
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+					s.StackId,
+					s.Nickname,
+					platform,
+					s.StackStatus,
+					region,
+					timestr)
 			}
 		*/
+
+		w.Flush()
 	}
 }
