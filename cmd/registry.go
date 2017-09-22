@@ -16,6 +16,7 @@ func RegistryCmd() *cobra.Command {
 		RegistryToken(),
 		RegistryTagsList(),
 		RegistryCatalog(),
+		DescribeImageCmd(),
 		RegistryManifest(),
 		RegistryDeleteTag(),
 	)
