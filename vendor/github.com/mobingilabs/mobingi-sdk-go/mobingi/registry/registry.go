@@ -203,6 +203,33 @@ func (r *registry) GetTagManifest(in *GetTagManifestInput) (*client.Response, []
 	return resp, body, nil
 }
 
+type DeleteImageInput struct {
+	Image string
+}
+
+func (r *registry) DeleteImage(in *DeleteImageInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.Image == "" {
+		return nil, nil, errors.New("image cannot be empty")
+	}
+
+	values := url.Values{}
+	values.Add("image_id", r.session.Config.Username+"/"+in.Image)
+	ep := r.session.ApiEndpoint() + `/alm/registry/image`
+	req, err := http.NewRequest(http.MethodDelete, ep, nil)
+	req.URL.RawQuery = values.Encode()
+	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	resp, body, err := r.client.Do(req)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "client do failed")
+	}
+
+	return resp, body, nil
+}
+
 func New(s *session.Session) *registry {
 	if s == nil {
 		return nil
