@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 )
 
@@ -32,6 +33,9 @@ func TestGetSessionUrlDevAcct(t *testing.T) {
 		sess, _ := session.New(&session.Config{
 			BaseApiUrl: "https://apidev.mobingi.com",
 			ApiVersion: 2,
+			HttpClientConfig: &client.Config{
+				Verbose: true,
+			},
 		})
 
 		svc := New(sess)
@@ -46,6 +50,7 @@ func TestGetSessionUrlDevAcct(t *testing.T) {
 			t.Errorf("expecting nil error, received %v", err)
 		}
 
+		// log.Println(resp, string(body), u)
 		_, _, _ = resp, body, u
 	}
 }
