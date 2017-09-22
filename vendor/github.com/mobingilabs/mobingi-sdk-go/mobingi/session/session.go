@@ -14,6 +14,7 @@ import (
 const (
 	BASE_API_URL      = "https://api.mobingi.com"
 	BASE_REGISTRY_URL = "https://registry.mobingi.com"
+	SESHA3_URL        = "https://sesha3.labs.mobingi.com"
 )
 
 type authPayload struct {
@@ -58,6 +59,9 @@ type Config struct {
 	// latest production endpoint.
 	BaseRegistryUrl string
 
+	// Sesha3Url is the base URL for sesha3. Default is the latest production endpoint.
+	Sesha3Url string
+
 	// HttpClientConfig will set the config for the session's http client. Do not
 	// set if you want to use http client defaults.
 	HttpClientConfig *client.Config
@@ -74,6 +78,10 @@ func (s *Session) ApiEndpoint() string {
 
 func (s *Session) RegistryEndpoint() string {
 	return fmt.Sprintf("%s/v2", s.Config.BaseRegistryUrl)
+}
+
+func (s *Session) Sesha3Endpoint() string {
+	return s.Config.Sesha3Url
 }
 
 func (s *Session) getAccessToken() (string, error) {
@@ -151,6 +159,7 @@ func New(cnf ...*Config) (*Session, error) {
 		ApiVersion:      3,
 		BaseApiUrl:      BASE_API_URL,
 		BaseRegistryUrl: BASE_REGISTRY_URL,
+		Sesha3Url:       SESHA3_URL,
 	}
 
 	if len(cnf) > 0 {
@@ -185,6 +194,10 @@ func New(cnf ...*Config) (*Session, error) {
 
 			if cnf[0].BaseRegistryUrl != "" {
 				c.BaseRegistryUrl = cnf[0].BaseRegistryUrl
+			}
+
+			if cnf[0].Sesha3Url != "" {
+				c.Sesha3Url = cnf[0].Sesha3Url
 			}
 
 			if cnf[0].HttpClientConfig != nil {

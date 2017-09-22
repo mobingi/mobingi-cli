@@ -120,7 +120,7 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 		return resp, body, u, errors.Wrap(err, "payload token marshal failed")
 	}
 
-	ep := "https://sesha3.labs.mobingi.com/token"
+	ep := s.session.Sesha3Endpoint() + "/token"
 	req, err := http.NewRequest(http.MethodGet, ep, bytes.NewBuffer(b))
 	req.Header.Add("Content-Type", "application/json")
 	resp, body, err = s.client.Do(req)
@@ -160,7 +160,7 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 		return resp, body, u, errors.Wrap(err, "payload marshal failed")
 	}
 
-	ep = "https://sesha3.labs.mobingi.com/ttyurl"
+	ep = s.session.Sesha3Endpoint() + "/ttyurl"
 	req, err = http.NewRequest(http.MethodGet, ep, bytes.NewBuffer(b))
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer "+token)

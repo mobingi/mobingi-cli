@@ -120,6 +120,34 @@ func (r *registry) GetUserCatalog(in *GetUserCatalogInput) (*client.Response, []
 	return resp, nil, ret, nil
 }
 
+type DescribeImageInput struct {
+	Image string
+}
+
+func (r *registry) DescribeImage(in *DescribeImageInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.Image == "" {
+		return nil, nil, errors.New("image name cannot be empty")
+	}
+
+	values := url.Values{}
+	values.Add("targetKey", "repository")
+	values.Add("targetValue", r.session.Config.Username+"/"+in.Image)
+	ep := r.session.ApiEndpoint() + "/alm/registry"
+	req, err := http.NewRequest(http.MethodGet, ep, nil)
+	req.URL.RawQuery = values.Encode()
+	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	resp, body, err := r.client.Do(req)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "client do failed")
+	}
+
+	return resp, body, nil
+}
+
 type GetTagsListInput struct {
 	Service string
 	Scope   string
