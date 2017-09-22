@@ -107,12 +107,12 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 
 	//get sesha3 token
 	type payload_token_t struct {
-		username string
-		passwd   string
+		Username string `json:"username"`
+		Passwd   string `json:"passwd"`
 	}
 	payloadToken := payload_token_t{
-		username: s.session.Config.Username,
-		passwd:   s.session.Config.Password,
+		Username: s.session.Config.Username,
+		Passwd:   s.session.Config.Password,
 	}
 
 	b, err := json.Marshal(payloadToken)
