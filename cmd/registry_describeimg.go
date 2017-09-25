@@ -77,7 +77,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 		t := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 		fmt.Fprintf(w, "REPO\tSIZE\tCREATED\tVISIBILITY\tTAGS\tDESCRIPTION\n")
-		fmt.Fprintf(t, "TAG\tSIZE\tDIGEST\tMEDIA TYPE\n")
+		fmt.Fprintf(t, "TAG\tSIZE\tDIGEST\n")
 		var repos []json.RawMessage
 		err = json.Unmarshal(body, &repos)
 		d.ErrorExit(err, 1)
@@ -121,7 +121,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 
 							// tag details
 							for k, v := range tmap {
-								var tagname, tagsize, digest, tagtype string
+								var tagname, tagsize, digest string
 								tagname = k
 								td := v.(map[string]interface{})
 								if _, ok = td["size"]; ok {
@@ -132,15 +132,10 @@ func describeImage(cmd *cobra.Command, args []string) {
 									digest = fmt.Sprintf("%v", td["digest"])
 								}
 
-								if _, ok = td["mediaType"]; ok {
-									tagtype = fmt.Sprintf("%v", td["mediaType"])
-								}
-
-								fmt.Fprintf(t, "%s\t%s\t%s\t%s\n",
+								fmt.Fprintf(t, "%s\t%s\t%s\n",
 									tagname,
 									tagsize,
-									digest,
-									tagtype)
+									digest)
 							}
 						}
 					}
