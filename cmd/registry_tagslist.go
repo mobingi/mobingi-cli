@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
@@ -73,8 +74,12 @@ func tagsList(cmd *cobra.Command, args []string) {
 		js := pretty.JSON(string(body), indent)
 		fmt.Println(js)
 	default:
+		nbody := strings.Trim(string(body), "\"")
+		nbody = strings.Replace(nbody, "\\n", "", -1)
+		nbody = strings.Replace(nbody, "\\", "", -1)
+
 		var t tags
-		err = json.Unmarshal(body, &t)
+		err = json.Unmarshal([]byte(nbody), &t)
 		d.ErrorExit(err, 1)
 
 		// write table
