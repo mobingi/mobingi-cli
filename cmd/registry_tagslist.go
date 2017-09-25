@@ -65,21 +65,26 @@ func tagsList(cmd *cobra.Command, args []string) {
 	d.ErrorExit(err, 1)
 	exitOn401(resp)
 
+	fnCleanup := func(old string) string {
+		nb := strings.Trim(old, "\"")
+		nb = strings.Replace(nb, "\\n", "", -1)
+		nb = strings.Replace(nb, "\\", "", -1)
+		return nb
+	}
+
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
 	case "raw":
 		fmt.Println(string(body))
 	case "json":
+		nb := fnCleanup(string(body))
 		indent := cli.GetCliIntFlag(cmd, "indent")
-		js := pretty.JSON(string(body), indent)
+		js := pretty.JSON(nb, indent)
 		fmt.Println(js)
 	default:
-		nbody := strings.Trim(string(body), "\"")
-		nbody = strings.Replace(nbody, "\\n", "", -1)
-		nbody = strings.Replace(nbody, "\\", "", -1)
-
 		var t tags
-		err = json.Unmarshal([]byte(nbody), &t)
+		nb := fnCleanup(string(body))
+		err = json.Unmarshal([]byte(nb), &t)
 		d.ErrorExit(err, 1)
 
 		// write table
