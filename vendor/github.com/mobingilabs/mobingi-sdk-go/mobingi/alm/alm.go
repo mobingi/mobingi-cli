@@ -279,6 +279,7 @@ func (s *stack) CompareTemplate(in *CompareTemplateInput) (*client.Response, []b
 
 type GetPemInput struct {
 	StackId string
+	Flag    string
 }
 
 // GetPem gets the pem file associated with the input stack. The first byte array in the return values
