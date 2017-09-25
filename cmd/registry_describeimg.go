@@ -119,6 +119,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 							// count tags
 							tags = fmt.Sprintf("%v", len(tmap))
 
+							// tag details
 							for k, v := range tmap {
 								var tagname, tagsize, digest, tagtype string
 								tagname = k
