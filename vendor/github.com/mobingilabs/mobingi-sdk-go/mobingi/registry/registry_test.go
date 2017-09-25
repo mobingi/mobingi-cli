@@ -99,6 +99,31 @@ func TestGetTagsListDevAcct(t *testing.T) {
 	}
 }
 
+func TestUpdateDescriptionDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" &&
+		os.Getenv("MOBINGI_USERNAME") != "" && os.Getenv("MOBINGI_PASSWORD") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl:      "https://apidev.mobingi.com",
+			BaseRegistryUrl: "https://dockereg2.labs.mobingi.com",
+		})
+
+		reg := New(sess)
+		in := &UpdateDescriptionInput{
+			Image:       "hello",
+			Description: "update1",
+		}
+
+		resp, body, err := reg.UpdateDescription(in)
+		if err != nil {
+			t.Errorf("expecting nil error, received %v", err)
+		}
+
+		// log.Println(resp, string(body))
+		_, _ = resp, body
+	}
+}
+
 func TestGetTagDigestDevAcct(t *testing.T) {
 	return
 	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" &&
@@ -115,6 +140,33 @@ func TestGetTagDigestDevAcct(t *testing.T) {
 		}
 
 		resp, body, err := reg.GetTagManifest(in)
+		if err != nil {
+			t.Errorf("expecting nil error, received %v", err)
+		}
+
+		// log.Println(resp, string(body))
+		_, _ = resp, body
+	}
+}
+
+func TestUpdateVisibilityDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" &&
+		os.Getenv("MOBINGI_USERNAME") != "" && os.Getenv("MOBINGI_PASSWORD") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+			HttpClientConfig: &client.Config{
+				Verbose: true,
+			},
+		})
+
+		reg := New(sess)
+		in := &UpdateVisibilityInput{
+			Image:      "hello",
+			Visibility: "private",
+		}
+
+		resp, body, err := reg.UpdateVisibility(in)
 		if err != nil {
 			t.Errorf("expecting nil error, received %v", err)
 		}

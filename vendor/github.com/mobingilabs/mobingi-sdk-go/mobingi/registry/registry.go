@@ -149,7 +149,7 @@ func (r *registry) DescribeImage(in *DescribeImageInput) (*client.Response, []by
 }
 
 type GetTagsListInput struct {
-	ManualOp bool // do not use api endpoint
+	ManualOp bool // do not use api endpoint, other than login for token
 	Service  string
 	Scope    string
 	Image    string
@@ -210,6 +210,35 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 	return resp, body, nil
 }
 
+type UpdateDescriptionInput struct {
+	Image       string
+	Description string
+}
+
+func (r *registry) UpdateDescription(in *UpdateDescriptionInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.Image == "" {
+		return nil, nil, errors.New("image cannot be empty")
+	}
+
+	values := url.Values{}
+	values.Add("image_id", r.session.Config.Username+"/"+in.Image)
+	values.Add("description", in.Description)
+	ep := r.session.ApiEndpoint() + `/alm/registry/description`
+	req, err := http.NewRequest(http.MethodPut, ep, nil)
+	req.URL.RawQuery = values.Encode()
+	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	resp, body, err := r.client.Do(req)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "client do failed")
+	}
+
+	return resp, body, nil
+}
+
 type GetTagManifestInput struct {
 	Service string
 	Scope   string
@@ -245,6 +274,39 @@ func (r *registry) GetTagManifest(in *GetTagManifestInput) (*client.Response, []
 	req, err := http.NewRequest(http.MethodGet, ep, nil)
 	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 	resp, body, err = r.client.Do(req)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "client do failed")
+	}
+
+	return resp, body, nil
+}
+
+type UpdateVisibilityInput struct {
+	Image      string
+	Visibility string // public or private
+}
+
+func (r *registry) UpdateVisibility(in *UpdateVisibilityInput) (*client.Response, []byte, error) {
+	if in == nil {
+		return nil, nil, errors.New("input cannot be nil")
+	}
+
+	if in.Image == "" {
+		return nil, nil, errors.New("image cannot be empty")
+	}
+
+	if in.Visibility == "" {
+		return nil, nil, errors.New("visibility should be private or public")
+	}
+
+	values := url.Values{}
+	values.Add("image_id", r.session.Config.Username+"/"+in.Image)
+	values.Add("visibility", in.Visibility)
+	ep := r.session.ApiEndpoint() + `/alm/registry/visibility`
+	req, err := http.NewRequest(http.MethodPut, ep, nil)
+	req.URL.RawQuery = values.Encode()
+	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	resp, body, err := r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")
 	}
