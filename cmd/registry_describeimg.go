@@ -75,7 +75,9 @@ func describeImage(cmd *cobra.Command, args []string) {
 		}
 	default:
 		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
-		fmt.Fprintf(w, "REPO\tSIZE\tCREATED\tVISIBILITY\tTAGS\n")
+		t := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+		fmt.Fprintf(w, "REPO\tSIZE\tCREATED\tVISIBILITY\tTAGS\tDESCRIPTION\n")
+		fmt.Fprintf(t, "TAG\tSIZE\tDIGEST\tMEDIA TYPE\n")
 		var repos []json.RawMessage
 		err = json.Unmarshal(body, &repos)
 		d.ErrorExit(err, 1)
@@ -85,7 +87,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 			err = json.Unmarshal(item, &m)
 			d.ErrorExit(err, 1)
 
-			var repo, size, created, vis, tags string
+			var repo, size, created, vis, tags, desc string
 			if _, ok := m["repository"]; ok {
 				repo = fmt.Sprintf("%s", m["repository"])
 			}
@@ -106,29 +108,59 @@ func describeImage(cmd *cobra.Command, args []string) {
 				vis = fmt.Sprintf("%v", m["visibility"])
 			}
 
-			// count tags
 			if _, ok := m["tags"]; ok {
 				var t1 map[string]json.RawMessage
 				err = json.Unmarshal(item, &t1)
 				if err == nil {
 					if t2, ok := t1["tags"]; ok {
-						var cnt map[string]interface{}
-						err = json.Unmarshal(t2, &cnt)
+						var tmap map[string]interface{}
+						err = json.Unmarshal(t2, &tmap)
 						if err == nil {
-							tags = fmt.Sprintf("%v", len(cnt))
+							// count tags
+							tags = fmt.Sprintf("%v", len(tmap))
+
+							for k, v := range tmap {
+								var tagname, tagsize, digest, tagtype string
+								tagname = k
+								td := v.(map[string]interface{})
+								if _, ok = td["size"]; ok {
+									tagsize = fmt.Sprintf("%v", td["size"])
+								}
+
+								if _, ok = td["digest"]; ok {
+									digest = fmt.Sprintf("%v", td["digest"])
+								}
+
+								if _, ok = td["mediaType"]; ok {
+									tagtype = fmt.Sprintf("%v", td["mediaType"])
+								}
+
+								fmt.Fprintf(t, "%s\t%s\t%s\t%s\n",
+									tagname,
+									tagsize,
+									digest,
+									tagtype)
+							}
 						}
 					}
 				}
 			}
 
-			fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
+			if _, ok := m["description"]; ok {
+				desc = fmt.Sprintf("%v", m["description"])
+			}
+
+			fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
 				repo,
 				size,
 				created,
 				vis,
-				tags)
+				tags,
+				desc)
 		}
 
 		w.Flush()
+		fmt.Println()
+		t.Flush()
 	}
 }
