@@ -21,7 +21,7 @@
 
 [[projects]]
   name = "github.com/docker/docker-credential-helpers"
-  packages = ["credentials","osxkeychain","secretservice","wincred"]
+  packages = ["credentials","osxkeychain","pass","wincred"]
   revision = "d68f9aeca33f5fd3f08eeae5e9d175edf4e731d1"
   version = "v0.6.0"
 
@@ -82,6 +82,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "48b3c985665dd92d7b6b64c82f469b674bf547f05b5b05f5e231853dcf5c85d9"
+  inputs-digest = "60800f8e8646320de9d0d1c6f6e22993475bc6dad11601a3e0f6daf3cb2ce033"
   solver-name = "gps-cdcl"
   solver-version = 1
