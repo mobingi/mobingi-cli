@@ -28,12 +28,7 @@ func (c *creds) List(in *CredentialsListInput) (*client.Response, []byte, error)
 	}
 
 	ep := c.session.ApiEndpoint() + "/credentials/" + in.Vendor
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+c.session.AccessToken)
+	req := c.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	return c.client.Do(req)
 }
 

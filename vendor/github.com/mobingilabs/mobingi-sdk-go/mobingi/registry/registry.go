@@ -90,8 +90,7 @@ func (r *registry) GetUserCatalog(in *GetUserCatalogInput) (*client.Response, []
 
 	r.session.AccessToken = token
 	ep := r.session.RegistryEndpoint() + "/_catalog"
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req := r.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	resp, body, err = r.client.Do(req)
 	if err != nil {
 		return resp, body, nil, errors.Wrap(err, "client do failed")
@@ -137,9 +136,8 @@ func (r *registry) DescribeImage(in *DescribeImageInput) (*client.Response, []by
 	values.Add("targetKey", "repository")
 	values.Add("targetValue", r.session.Config.Username+"/"+in.Image)
 	ep := r.session.ApiEndpoint() + "/alm/registry"
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
+	req := r.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	req.URL.RawQuery = values.Encode()
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 	resp, body, err := r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")
@@ -169,9 +167,8 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 		values.Add("account_id", r.session.Config.Username)
 		values.Add("image_id", r.session.Config.Username+"/"+in.Image)
 		ep := r.session.ApiEndpoint() + `/alm/registry/imagetags`
-		req, err := http.NewRequest(http.MethodGet, ep, nil)
+		req := r.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 		req.URL.RawQuery = values.Encode()
-		req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 		resp, body, err := r.client.Do(req)
 		if err != nil {
 			return resp, body, errors.Wrap(err, "client do failed")
@@ -200,8 +197,7 @@ func (r *registry) GetTagsList(in *GetTagsListInput) (*client.Response, []byte, 
 
 	r.session.AccessToken = token
 	ep := r.session.RegistryEndpoint() + "/" + r.session.Config.Username + "/" + in.Image + "/tags/list"
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req := r.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	resp, body, err = r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")
@@ -228,9 +224,8 @@ func (r *registry) UpdateDescription(in *UpdateDescriptionInput) (*client.Respon
 	values.Add("image_id", r.session.Config.Username+"/"+in.Image)
 	values.Add("description", in.Description)
 	ep := r.session.ApiEndpoint() + `/alm/registry/description`
-	req, err := http.NewRequest(http.MethodPut, ep, nil)
+	req := r.session.SimpleAuthRequest(http.MethodPut, ep, nil)
 	req.URL.RawQuery = values.Encode()
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 	resp, body, err := r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")
@@ -271,8 +266,7 @@ func (r *registry) GetTagManifest(in *GetTagManifestInput) (*client.Response, []
 
 	r.session.AccessToken = token
 	ep := r.session.RegistryEndpoint() + "/" + r.session.Config.Username + "/" + in.Image + "/manifests/" + in.Tag
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req := r.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	resp, body, err = r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")
@@ -303,9 +297,8 @@ func (r *registry) UpdateVisibility(in *UpdateVisibilityInput) (*client.Response
 	values.Add("image_id", r.session.Config.Username+"/"+in.Image)
 	values.Add("visibility", in.Visibility)
 	ep := r.session.ApiEndpoint() + `/alm/registry/visibility`
-	req, err := http.NewRequest(http.MethodPut, ep, nil)
+	req := r.session.SimpleAuthRequest(http.MethodPut, ep, nil)
 	req.URL.RawQuery = values.Encode()
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 	resp, body, err := r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")
@@ -330,9 +323,8 @@ func (r *registry) DeleteImage(in *DeleteImageInput) (*client.Response, []byte, 
 	values := url.Values{}
 	values.Add("image_id", r.session.Config.Username+"/"+in.Image)
 	ep := r.session.ApiEndpoint() + `/alm/registry/image`
-	req, err := http.NewRequest(http.MethodDelete, ep, nil)
+	req := r.session.SimpleAuthRequest(http.MethodDelete, ep, nil)
 	req.URL.RawQuery = values.Encode()
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
 	resp, body, err := r.client.Do(req)
 	if err != nil {
 		return resp, body, errors.Wrap(err, "client do failed")

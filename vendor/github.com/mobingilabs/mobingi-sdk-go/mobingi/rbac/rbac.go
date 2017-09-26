@@ -31,12 +31,7 @@ func (r *rbac) DescribeRoles(in *DescribeRolesInput) (*client.Response, []byte, 
 		}
 	}
 
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req := r.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	return r.client.Do(req)
 }
 
@@ -63,17 +58,12 @@ func (r *rbac) CreateRole(in *CreateRoleInput) (*client.Response, []byte, error)
 	v.Set("name", in.Name)
 	v.Set("scope", string(rb))
 	payload := []byte(v.Encode())
-	ep := r.session.ApiEndpoint() + "/role"
-	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
 	if r.session.Config.HttpClientConfig.Verbose {
 		debug.Info("[BODY]", string(payload))
 	}
 
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	ep := r.session.ApiEndpoint() + "/role"
+	req := r.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 	return r.client.Do(req)
 }
@@ -101,12 +91,7 @@ func (r *rbac) AttachRoleToUser(in *AttachRoleToUserInput) (*client.Response, []
 	v.Set("role_id", in.RoleId)
 	payload := []byte(v.Encode())
 	ep := r.session.ApiEndpoint() + "/user/role"
-	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req := r.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 	return r.client.Do(req)
 }
@@ -125,12 +110,7 @@ func (r *rbac) DeleteRole(in *DeleteRoleInput) (*client.Response, []byte, error)
 	}
 
 	ep := r.session.ApiEndpoint() + "/role/" + in.RoleId
-	req, err := http.NewRequest(http.MethodDelete, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+r.session.AccessToken)
+	req := r.session.SimpleAuthRequest(http.MethodDelete, ep, nil)
 	return r.client.Do(req)
 }
 

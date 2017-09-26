@@ -59,12 +59,8 @@ type stack struct {
 }
 
 func (s *stack) List() (*client.Response, []byte, error) {
-	req, err := http.NewRequest(http.MethodGet, s.session.ApiEndpoint()+"/alm/stack", nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	ep := s.session.ApiEndpoint() + "/alm/stack"
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	return s.client.Do(req)
 }
 
@@ -82,12 +78,7 @@ func (s *stack) Describe(in *StackDescribeInput) (*client.Response, []byte, erro
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/stack/" + in.StackId
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	return s.client.Do(req)
 }
 
@@ -143,12 +134,7 @@ func (s *stack) Delete(in *StackDeleteInput) (*client.Response, []byte, error) {
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/stack/" + in.StackId
-	req, err := http.NewRequest(http.MethodDelete, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodDelete, ep, nil)
 	return s.client.Do(req)
 }
 
@@ -166,12 +152,7 @@ func (s *stack) GetTemplateVersions(in *GetTemplateVersionsInput) (*client.Respo
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/template?stack_id=" + in.StackId
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	return s.client.Do(req)
 }
 
@@ -199,12 +180,7 @@ func (s *stack) DescribeTemplate(in *DescribeTemplateInput) (*client.Response, [
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/template/" + in.StackId + param
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	return s.client.Do(req)
 }
 
@@ -267,12 +243,7 @@ func (s *stack) CompareTemplate(in *CompareTemplateInput) (*client.Response, []b
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/template/compare"
-	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer(p))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(p))
 	req.Header.Add("Content-Type", "application/json")
 	return s.client.Do(req)
 }
@@ -294,12 +265,7 @@ func (s *stack) GetPem(in *GetPemInput) (*client.Response, []byte, []byte, error
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/pem?stack_id=" + in.StackId
-	req, err := http.NewRequest(http.MethodGet, ep, nil)
-	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	resp, body, err := s.client.Do(req)
 	if err != nil {
 		return resp, body, nil, errors.Wrap(err, "client do failed")
@@ -372,15 +338,8 @@ func (s *stack) createStackV2(in *StackCreateInput) (*client.Response, []byte, e
 	v.Set("cred", in.CredId)
 	v.Set("configurations", string(mi))
 	payload := []byte(v.Encode())
-	req, err := http.NewRequest(
-		http.MethodPost,
-		s.session.ApiEndpoint()+"/alm/stack",
-		bytes.NewBuffer(payload))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	ep := s.session.ApiEndpoint() + "/alm/stack"
+	req := s.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 	return s.client.Do(req)
 }
@@ -408,12 +367,7 @@ func (s *stack) updateStackV2(in *StackUpdateInput) (*client.Response, []byte, e
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/stack/" + in.StackId
-	req, err := http.NewRequest(http.MethodPut, ep, bytes.NewBuffer(mi))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodPut, ep, bytes.NewBuffer(mi))
 	req.Header.Add("Content-Type", "application/json")
 	return s.client.Do(req)
 }
@@ -434,12 +388,7 @@ func (s *stack) createAlmStack(in *StackCreateInput) (*client.Response, []byte, 
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/template"
-	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer([]byte(in.AlmTemplate.Contents)))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer([]byte(in.AlmTemplate.Contents)))
 	req.Header.Add("Content-Type", ct)
 	return s.client.Do(req)
 }
@@ -464,12 +413,7 @@ func (s *stack) updateAlmStack(in *StackUpdateInput) (*client.Response, []byte, 
 	}
 
 	ep := s.session.ApiEndpoint() + "/alm/template/" + in.StackId
-	req, err := http.NewRequest(http.MethodPut, ep, bytes.NewBuffer([]byte(in.AlmTemplate.Contents)))
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "new request failed")
-	}
-
-	req.Header.Add("Authorization", "Bearer "+s.session.AccessToken)
+	req := s.session.SimpleAuthRequest(http.MethodPut, ep, bytes.NewBuffer([]byte(in.AlmTemplate.Contents)))
 	req.Header.Add("Content-Type", ct)
 	return s.client.Do(req)
 }
