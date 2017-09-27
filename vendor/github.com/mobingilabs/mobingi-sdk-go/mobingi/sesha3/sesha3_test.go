@@ -32,7 +32,7 @@ func TestGetSessionUrlDevAcct(t *testing.T) {
 	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
 		sess, _ := session.New(&session.Config{
 			BaseApiUrl: "https://apidev.mobingi.com",
-			ApiVersion: 2,
+			// ApiVersion: 2,
 			HttpClientConfig: &client.Config{
 				Verbose: true,
 			},
@@ -40,8 +40,11 @@ func TestGetSessionUrlDevAcct(t *testing.T) {
 
 		svc := New(sess)
 		in := &GetSessionUrlInput{
+			// StackId:  "mo-58c2297d25645-Sd2aHRDq0-tk",
+			// IpAddr:   "54.238.234.202",
 			StackId:  "mo-58c2297d25645-Sd2aHRDq0-tk",
 			IpAddr:   "54.238.234.202",
+			Flag:     "fweb",
 			InstUser: "ec2-user",
 		}
 

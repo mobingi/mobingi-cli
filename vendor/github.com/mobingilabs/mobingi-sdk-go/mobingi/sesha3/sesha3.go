@@ -55,6 +55,7 @@ type sesha3 struct {
 type GetSessionUrlInput struct {
 	StackId  string
 	IpAddr   string
+	Flag     string
 	InstUser string
 	Timeout  int64
 }
@@ -74,6 +75,12 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 		return nil, nil, u, errors.New("ip address cannot be empty")
 	}
 
+	if s.session.Config.ApiVersion >= 3 {
+		if in.Flag == "" {
+			return nil, nil, u, errors.New("flag cannot be empty")
+		}
+	}
+
 	if in.InstUser == "" {
 		return nil, nil, u, errors.New("instance username cannot be empty")
 	}
@@ -84,10 +91,15 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 
 	// get pem url from stack id
 	almsvc := alm.New(s.session)
-	resp, body, _, err := almsvc.GetPem(&alm.GetPemInput{
+	inpem := alm.GetPemInput{
 		StackId: in.StackId,
-	})
+	}
 
+	if s.session.Config.ApiVersion >= 3 {
+		inpem.Flag = in.Flag
+	}
+
+	resp, body, _, err := almsvc.GetPem(&inpem)
 	if err != nil {
 		return resp, body, u, errors.Wrap(err, "get pem failed")
 	}
