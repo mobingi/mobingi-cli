@@ -55,7 +55,11 @@ func clisession() (*session.Session, error) {
 
 		if cred1[0] != "" && cred2[0] != "" {
 			if verbose {
-				d.Info("use credentials from native store")
+				str := "use credentials from native store: " + id
+				if u != "" {
+					str += "|" + u
+				}
+				d.Info(str)
 			}
 
 			return session.New(&session.Config{
