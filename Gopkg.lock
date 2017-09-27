@@ -89,7 +89,7 @@
   branch = "master"
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/rbac","mobingi/registry","mobingi/sesha3","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "7854ff0800de91635d70a72f3a2d9e1ecca0bc43"
+  revision = "2b8e03cdb06af2d9db140287799614dfae6728aa"
 
 [[projects]]
   name = "github.com/moul/gotty-client"

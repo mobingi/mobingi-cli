@@ -30,6 +30,7 @@ Examples:
 	cmd.Flags().SortFlags = false
 	cmd.Flags().String("id", "", "stack id")
 	cmd.Flags().String("ip", "", "instance ip address")
+	cmd.Flags().String("flag", "", "configuration flag")
 	cmd.Flags().String("user", "ec2-user", "ssh username")
 	cmd.Flags().BoolVar(&browser, "browser", false, "true if you want to use browser")
 	return cmd
@@ -43,6 +44,7 @@ func stackSsh(cmd *cobra.Command, args []string) {
 	in := &sesha3.GetSessionUrlInput{
 		StackId:  cli.GetCliStringFlag(cmd, "id"),
 		IpAddr:   cli.GetCliStringFlag(cmd, "ip"),
+		Flag:     cli.GetCliStringFlag(cmd, "flag"),
 		InstUser: cli.GetCliStringFlag(cmd, "user"),
 	}
 

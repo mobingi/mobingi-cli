@@ -42,8 +42,8 @@ func TestGetSessionUrlDevAcct(t *testing.T) {
 		in := &GetSessionUrlInput{
 			// StackId:  "mo-58c2297d25645-Sd2aHRDq0-tk",
 			// IpAddr:   "54.238.234.202",
-			StackId:  "mo-58c2297d25645-Sd2aHRDq0-tk",
-			IpAddr:   "54.238.234.202",
+			StackId:  "mo-58c2297d25645-thHNtg0YS-tk",
+			IpAddr:   "13.114.34.121",
 			Flag:     "fweb",
 			InstUser: "ec2-user",
 		}
