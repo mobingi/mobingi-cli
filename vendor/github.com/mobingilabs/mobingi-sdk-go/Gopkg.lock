@@ -20,6 +20,12 @@
   version = "v1.0.1"
 
 [[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "d2709f9f1f31ebcda9651b03077758c1f3a0018c"
+  version = "v3.0.0"
+
+[[projects]]
   name = "github.com/docker/docker-credential-helpers"
   packages = ["credentials","osxkeychain","pass","wincred"]
   revision = "d68f9aeca33f5fd3f08eeae5e9d175edf4e731d1"
@@ -82,6 +88,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "60800f8e8646320de9d0d1c6f6e22993475bc6dad11601a3e0f6daf3cb2ce033"
+  inputs-digest = "784776832aa6e8ccc99431484754cb85dc57943875c40f963d27eff046233a11"
   solver-name = "gps-cdcl"
   solver-version = 1

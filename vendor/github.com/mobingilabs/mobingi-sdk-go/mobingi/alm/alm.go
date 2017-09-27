@@ -264,7 +264,17 @@ func (s *stack) GetPem(in *GetPemInput) (*client.Response, []byte, []byte, error
 		return nil, nil, nil, errors.New("stack id cannot be empty")
 	}
 
+	if s.session.Config.ApiVersion >= 3 {
+		if in.Flag == "" {
+			return nil, nil, nil, errors.New("flag cannot be empty")
+		}
+	}
+
 	ep := s.session.ApiEndpoint() + "/alm/pem?stack_id=" + in.StackId
+	if s.session.Config.ApiVersion >= 3 {
+		ep += `&flag=` + in.Flag
+	}
+
 	req := s.session.SimpleAuthRequest(http.MethodGet, ep, nil)
 	resp, body, err := s.client.Do(req)
 	if err != nil {

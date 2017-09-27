@@ -511,7 +511,11 @@ func TestGetPemDevAcct(t *testing.T) {
 		})
 
 		alm := New(sess)
-		in := &GetPemInput{StackId: "mo-58c2297d25645-yUzPK2j8R-tk"}
+		in := &GetPemInput{
+			StackId: "mo-58c2297d25645-HVhUlcmM-tk",
+			Flag:    "fweb",
+		}
+
 		resp, body, pem, err := alm.GetPem(in)
 		if err != nil {
 			t.Errorf("Expecting nil error, received %v", err)

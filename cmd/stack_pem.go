@@ -26,6 +26,7 @@ Example:
 	}
 
 	cmd.Flags().StringP("id", "i", "", "stack id")
+	cmd.Flags().String("flag", "", "flag")
 	return cmd
 }
 
@@ -37,6 +38,7 @@ func getpem(cmd *cobra.Command, args []string) {
 	svc := alm.New(sess)
 	in := &alm.GetPemInput{
 		StackId: cli.GetCliStringFlag(cmd, "id"),
+		Flag:    cli.GetCliStringFlag(cmd, "flag"),
 	}
 
 	resp, body, pem, err := svc.GetPem(in)
