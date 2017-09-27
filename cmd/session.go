@@ -59,6 +59,7 @@ func clisession() (*session.Session, error) {
 				if u != "" {
 					str += "|" + u
 				}
+
 				d.Info(str)
 			}
 
