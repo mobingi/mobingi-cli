@@ -5,10 +5,12 @@ import (
 	"log"
 
 	"github.com/mobingi/mobingi-cli/cmd"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 )
 
 func main() {
-	log.SetPrefix("[mobingi-cli]: ")
+	pfx := "[" + cmdline.Args0() + "]: "
+	log.SetPrefix(pfx)
 	log.SetFlags(0)
 	cmd.Execute()
 }
