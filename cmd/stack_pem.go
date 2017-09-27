@@ -25,7 +25,8 @@ Example:
 		Run: getpem,
 	}
 
-	cmd.Flags().StringP("id", "i", "", "stack id")
+	cmd.Flags().SortFlags = false
+	cmd.Flags().String("id", "", "stack id")
 	cmd.Flags().String("flag", "", "flag")
 	return cmd
 }
