@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
+	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
@@ -51,14 +53,6 @@ func describe(cmd *cobra.Command, args []string) {
 	// we process `--fmt=raw` option first
 	out := cli.GetCliStringFlag(cmd, "out")
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
-	/*
-		if sess.Config.ApiVersion == 3 {
-			if pfmt == "min" || pfmt == "" {
-				pfmt = "json"
-			}
-		}
-	*/
-
 	switch pfmt {
 	case "raw":
 		fmt.Println(string(body))
@@ -99,16 +93,63 @@ func describe(cmd *cobra.Command, args []string) {
 					instype = inst.InstanceLifecycle
 				}
 
+				pubip := string(inst.PublicIpAddress)
+				pubip = strings.TrimLeft(pubip, "\"")
+				pubip = strings.TrimRight(pubip, "\"")
+
+				// try if ip is json (alicloud)
+				type pubip_t struct {
+					IpAddress []string
+				}
+
+				var ips pubip_t
+				err = json.Unmarshal(inst.PublicIpAddress, &ips)
+				if err == nil {
+					pubip = strings.Join(ips.IpAddress, ",")
+				}
+
+				state := inst.State.Name
+				if state == "" {
+					state = fmt.Sprintf("%s", inst.Status)
+				}
+
 				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
 					instype,
 					inst.InstanceType,
-					inst.PublicIpAddress,
+					pubip,
 					inst.PrivateIpAddress,
-					inst.State.Name)
+					strings.ToLower(state))
 			}
 
+			d.Info("[instances]")
 			w.Flush()
+			fmt.Println()
+
+			// separate table for configurations, if any
+			if stack.Configuration.Configurations != nil {
+				w = tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
+				fmt.Fprintf(w, "ROLE\tFLAG\tCONTAINER\n")
+
+				var (
+					cnfs   []alm.Configurations
+					contnr bool
+				)
+
+				err = json.Unmarshal(stack.Configuration.Configurations, &cnfs)
+				cli.ErrorExit(err, 1)
+
+				for _, inst := range cnfs {
+					if inst.Container != nil {
+						contnr = true
+					}
+
+					fmt.Fprintf(w, "%s\t%s\t%v\n", inst.Role, inst.Flag, contnr)
+				}
+
+				d.Info("[configurations]")
+				w.Flush()
+			}
 		}
 	}
 }

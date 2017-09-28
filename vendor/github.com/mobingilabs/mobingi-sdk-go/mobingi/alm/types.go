@@ -2,16 +2,24 @@ package alm
 
 import "encoding/json"
 
+type Configurations struct {
+	Role      string      `json:"role,omitempty"`
+	Flag      string      `json:"flag,omitempty"`
+	Provision interface{} `json:"provision,omitempty"`
+	Container interface{} `json:"container,omitempty"`
+}
+
 // Changes:
 //
 // 2017-07-18:
 //   - Max, MaxOrigin, Min, MinOrigin - changed to int (we still need to support old string)
 type Configuration struct {
 	// v3
-	Description string          `json:"description,omitempty"`
-	Label       string          `json:"label,omitempty"`
-	Version     string          `json:"version,omitempty"`
-	Vendor      json.RawMessage `json:"vendor,omitempty"`
+	Description    string          `json:"description,omitempty"`
+	Label          string          `json:"label,omitempty"`
+	Version        string          `json:"version,omitempty"`
+	Vendor         json.RawMessage `json:"vendor,omitempty"`
+	Configurations json.RawMessage `json:"configurations,omitempty"`
 	// v2
 	AWS                 string      `json:"AWS,omitempty"`
 	AWSAccountName      string      `json:"AWS_ACCOUNT_NAME,omitempty"`
@@ -73,39 +81,42 @@ type State struct {
 }
 
 type Instance struct {
-	AmiLaunchIndex        string      `json:"AmiLaunchIndex,omitempty"`
-	Architecture          string      `json:"Architecture,omitempty"`
-	BlockDeviceMappings   interface{} `json:"BlockDeviceMappings,omitempty"`
-	ClientToken           string      `json:"ClientToken,omitempty"`
-	EbsOptimized          bool        `json:"EbsOptimized,omitempty"`
-	Hypervisor            string      `json:"Hypervisor,omitempty"`
-	ImageId               string      `json:"ImageId,omitempty"`
-	InstanceId            string      `json:"InstanceId,omitempty"`
-	InstanceType          string      `json:"InstanceType,omitempty"`
-	InstanceLifecycle     string      `json:"InstanceLifecycle,omitempty"`
-	SpotInstanceRequestId string      `json:"SpotInstanceRequestId,omitempty"`
-	KeyName               string      `json:"KeyName,omitempty"`
-	LaunchTime            string      `json:"LaunchTime,omitempty"`
-	Monitoring            interface{} `json:"Monitoring,omitempty"`
-	NetworkInterfaces     interface{} `json:"NetworkInterfaces,omitempty"`
-	Placement             interface{} `json:"Placement,omitempty"`
-	PrivateDnsName        string      `json:"PrivateDnsName,omitempty"`
-	PrivateIpAddress      string      `json:"PrivateIpAddress,omitempty"`
-	ProductCodes          []string    `json:"ProductCodes,omitempty"`
-	PublicDnsName         string      `json:"PublicDnsName,omitempty"`
-	PublicIpAddress       string      `json:"PublicIpAddress,omitempty"`
-	Reservation           interface{} `json:"Reservation,omitempty"`
-	RootDeviceName        string      `json:"RootDeviceName,omitempty"`
-	RootDeviceType        string      `json:"RootDeviceType,omitempty"`
-	SecurityGroups        interface{} `json:"SecurityGroups,omitempty"`
-	SourceDestCheck       bool        `json:"SourceDestCheck,omitempty"`
-	State                 State       `json:"State,omitempty"`
-	StateTransitionReason string      `json:"StateTransitionReason,omitempty"`
-	SubnetId              string      `json:"SubnetId,omitempty"`
-	Tags                  interface{} `json:"Tags,omitempty"`
-	VirtualizationType    string      `json:"VirtualizationType,omitempty"`
-	VpcId                 string      `json:"VpcId,omitempty"`
-	EnaSupport            string      `json:"enaSupport,omitempty"`
+	// v3
+	Status interface{} `json:"Status,omitempty"`
+	// v2
+	AmiLaunchIndex        string          `json:"AmiLaunchIndex,omitempty"`
+	Architecture          string          `json:"Architecture,omitempty"`
+	BlockDeviceMappings   interface{}     `json:"BlockDeviceMappings,omitempty"`
+	ClientToken           string          `json:"ClientToken,omitempty"`
+	EbsOptimized          bool            `json:"EbsOptimized,omitempty"`
+	Hypervisor            string          `json:"Hypervisor,omitempty"`
+	ImageId               string          `json:"ImageId,omitempty"`
+	InstanceId            string          `json:"InstanceId,omitempty"`
+	InstanceType          string          `json:"InstanceType,omitempty"`
+	InstanceLifecycle     string          `json:"InstanceLifecycle,omitempty"`
+	SpotInstanceRequestId string          `json:"SpotInstanceRequestId,omitempty"`
+	KeyName               string          `json:"KeyName,omitempty"`
+	LaunchTime            string          `json:"LaunchTime,omitempty"`
+	Monitoring            interface{}     `json:"Monitoring,omitempty"`
+	NetworkInterfaces     interface{}     `json:"NetworkInterfaces,omitempty"`
+	Placement             interface{}     `json:"Placement,omitempty"`
+	PrivateDnsName        string          `json:"PrivateDnsName,omitempty"`
+	PrivateIpAddress      string          `json:"PrivateIpAddress,omitempty"`
+	ProductCodes          []string        `json:"ProductCodes,omitempty"`
+	PublicDnsName         string          `json:"PublicDnsName,omitempty"`
+	PublicIpAddress       json.RawMessage `json:"PublicIpAddress,omitempty"`
+	Reservation           interface{}     `json:"Reservation,omitempty"`
+	RootDeviceName        string          `json:"RootDeviceName,omitempty"`
+	RootDeviceType        string          `json:"RootDeviceType,omitempty"`
+	SecurityGroups        interface{}     `json:"SecurityGroups,omitempty"`
+	SourceDestCheck       bool            `json:"SourceDestCheck,omitempty"`
+	State                 State           `json:"State,omitempty"`
+	StateTransitionReason string          `json:"StateTransitionReason,omitempty"`
+	SubnetId              string          `json:"SubnetId,omitempty"`
+	Tags                  interface{}     `json:"Tags,omitempty"`
+	VirtualizationType    string          `json:"VirtualizationType,omitempty"`
+	VpcId                 string          `json:"VpcId,omitempty"`
+	EnaSupport            string          `json:"enaSupport,omitempty"`
 }
 
 type DescribeStack struct {
