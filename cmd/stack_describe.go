@@ -112,7 +112,3 @@ func describe(cmd *cobra.Command, args []string) {
 		}
 	}
 }
-
-func v3DescribeStack(cmd *cobra.Command, body []byte) error {
-	return nil
-}
