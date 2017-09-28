@@ -22,7 +22,7 @@ test_script:
   - for /f "" %%G in ('go list github.com/mobingilabs/mobingi-sdk-go/... ^| find /i /v "/vendor/"') do (go test -v %%G -cover & IF ERRORLEVEL == 1 EXIT 1)
 
 deploy:
-  description: "Today we're announcing mobingi-sdk-go $(appveyor_repo_tag_name)."
+  description: "Today we're announcing $(appveyor_repo_tag_name) of mobingi-sdk-go."
   provider: GitHub
   auth_token:
     secure: FI6YNxZmMUbbp8bZ96s5c9ayKq//yBalxavwX7RlmCVRS5yyi8Qrkr3CoSCt3wg3
