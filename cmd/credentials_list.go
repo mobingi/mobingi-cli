@@ -31,6 +31,7 @@ Examples:
 		Run: credsList,
 	}
 
+	cmd.Flags().SortFlags = false
 	cmd.Flags().String("vendor", "aws", "credentials vendor")
 	return cmd
 }
