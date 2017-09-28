@@ -6,7 +6,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +17,7 @@ func userPass(cmd *cobra.Command) *credentials.UserPass {
 
 	in, err := userpass.EnsureInput(false)
 	if err != nil {
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 
 	if in[1] {

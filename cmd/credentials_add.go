@@ -8,7 +8,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )
 
@@ -46,12 +45,12 @@ func credsAdd(cmd *cobra.Command, args []string) {
 		},
 	})
 
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	fmt.Println(string(payload))
 
 	c := client.NewClient(client.NewApiConfig(cmd))
 	body, err := c.AuthPost("/credentials/"+vendor, payload)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	fmt.Println(string(body))
 }

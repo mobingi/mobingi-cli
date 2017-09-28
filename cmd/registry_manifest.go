@@ -8,7 +8,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
 )
 
@@ -39,16 +38,16 @@ func manifest(cmd *cobra.Command, args []string) {
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
 	if image == "" {
-		d.ErrorExit("image name cannot be empty", 1)
+		cli.ErrorExit("image name cannot be empty", 1)
 	}
 
 	pair := strings.Split(image, ":")
 	if len(pair) != 2 {
-		d.ErrorExit("--image format is `image:tag`", 1)
+		cli.ErrorExit("--image format is `image:tag`", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
@@ -60,7 +59,7 @@ func manifest(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.GetTagManifest(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -72,6 +71,6 @@ func manifest(cmd *cobra.Command, args []string) {
 	out := cli.GetCliStringFlag(cmd, "out")
 	if out != "" {
 		err = ioutil.WriteFile(out, body, 0644)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 }

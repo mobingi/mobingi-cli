@@ -10,7 +10,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
@@ -47,11 +46,11 @@ func tagsList(cmd *cobra.Command, args []string) {
 	scope := cli.GetCliStringFlag(cmd, "scope")
 	image := cli.GetCliStringFlag(cmd, "image")
 	if image == "" {
-		d.ErrorExit("image name cannot be empty", 1)
+		cli.ErrorExit("image name cannot be empty", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
@@ -62,7 +61,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.GetTagsList(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	fnCleanup := func(old string) string {
@@ -85,7 +84,7 @@ func tagsList(cmd *cobra.Command, args []string) {
 		var t tags
 		nb := fnCleanup(string(body))
 		err = json.Unmarshal([]byte(nb), &t)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		// write table
 		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)

@@ -37,7 +37,7 @@ Example:
 
 func describeImage(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
@@ -46,7 +46,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.DescribeImage(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
@@ -58,7 +58,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
@@ -70,7 +70,7 @@ func describeImage(cmd *cobra.Command, args []string) {
 		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, []byte(js), 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:
@@ -80,12 +80,12 @@ func describeImage(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(t, "TAG\tSIZE\tDIGEST\n")
 		var repos []json.RawMessage
 		err = json.Unmarshal(body, &repos)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		for _, item := range repos {
 			var m map[string]interface{}
 			err = json.Unmarshal(item, &m)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 
 			var repo, size, created, vis, tags, desc string
 			if _, ok := m["repository"]; ok {

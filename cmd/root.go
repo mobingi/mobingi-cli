@@ -35,7 +35,7 @@ var (
 
 func Execute() {
 	err := rootCmd.Execute()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 }
 
 func init() {
@@ -86,11 +86,11 @@ func initConfig() {
 	if err != nil {
 		d.Info("No config file found. Creating default.")
 		err = cli.SetDefaultCliConfig()
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		viper.SetConfigFile(f)
 	}
 
 	err = viper.ReadInConfig()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 }

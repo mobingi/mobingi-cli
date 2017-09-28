@@ -43,7 +43,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
@@ -53,7 +53,7 @@ func printCatalog(cmd *cobra.Command, args []string) {
 	}
 
 	resp, _, list, err := svc.GetUserCatalog(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if len(list) > 0 {

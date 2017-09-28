@@ -147,15 +147,15 @@ func createStack(cmd *cobra.Command, args []string) {
 
 	if usedb {
 		if dbengine == "" {
-			d.ErrorExit("dbengine is required", 1)
+			cli.ErrorExit("dbengine is required", 1)
 		}
 
 		if dbtype == "" {
-			d.ErrorExit("dbtype is required", 1)
+			cli.ErrorExit("dbtype is required", 1)
 		}
 
 		if dbstore == "" {
-			d.ErrorExit("dbstorage is required", 1)
+			cli.ErrorExit("dbstorage is required", 1)
 		}
 
 		dbs := make([]alm.StackCreateDb, 0)
@@ -176,15 +176,15 @@ func createStack(cmd *cobra.Command, args []string) {
 
 	if usecache {
 		if ecengine == "" {
-			d.ErrorExit("elasticache-engine is required", 1)
+			cli.ErrorExit("elasticache-engine is required", 1)
 		}
 
 		if ectype == "" {
-			d.ErrorExit("elasticache-nodetype is required", 1)
+			cli.ErrorExit("elasticache-nodetype is required", 1)
 		}
 
 		if eccount == "" {
-			d.ErrorExit("elasticache-nodecount is required", 1)
+			cli.ErrorExit("elasticache-nodecount is required", 1)
 		}
 
 		caches := make([]alm.StackCreateElasticache, 0)
@@ -200,7 +200,7 @@ func createStack(cmd *cobra.Command, args []string) {
 
 	// for pretty print
 	mi, err := json.MarshalIndent(&cnf, "", pretty.Indent(2))
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	d.Info("[create stack payload]")
 	d.Info("vendor:", vendor)
@@ -210,7 +210,7 @@ func createStack(cmd *cobra.Command, args []string) {
 	fmt.Println(string(mi))
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.StackCreateInput{
@@ -221,13 +221,13 @@ func createStack(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.Create(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	var success bool
 	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	_, ok := m["stack_id"]
 	if ok {
@@ -249,14 +249,14 @@ func createStack(cmd *cobra.Command, args []string) {
 func createAlmStack(cmd *cobra.Command) {
 	tf := cli.GetCliStringFlag(cmd, "alm-template")
 	b, err := ioutil.ReadFile(tf)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	if !filetype.IsJSON(string(b)) {
-		d.ErrorExit("invalid json", 1)
+		cli.ErrorExit("invalid json", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.StackCreateInput{AlmTemplate: &alm.AlmTemplate{
@@ -265,7 +265,7 @@ func createAlmStack(cmd *cobra.Command) {
 	}}
 
 	resp, body, err := svc.Create(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if strings.Contains(string(body), "success") {

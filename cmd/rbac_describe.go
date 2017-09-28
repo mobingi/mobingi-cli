@@ -37,7 +37,7 @@ Examples:
 
 func rbacDescribe(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := rbac.New(sess)
 
@@ -48,7 +48,7 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.DescribeRoles(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if resp.StatusCode/100 != 2 {
@@ -80,7 +80,7 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 
 			var rj []json.RawMessage
 			err = json.Unmarshal(body, &rj)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 			fmt.Fprintf(w, "ROLE ID\tUSER ID\tNAME\tCREATE TIME\tUPDATE TIME\tSCOPE\n")
@@ -89,7 +89,7 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 				// var m map[string]interface{}
 				var m map[string]json.RawMessage
 				err = json.Unmarshal(item, &m)
-				d.ErrorExit(err, 1)
+				cli.ErrorExit(err, 1)
 
 				_roleid, ok := m["role_id"]
 				if ok {
@@ -153,6 +153,6 @@ func rbacDescribe(cmd *cobra.Command, args []string) {
 
 	if out != "" {
 		err = ioutil.WriteFile(out, outb, 0644)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 }

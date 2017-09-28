@@ -7,7 +7,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
@@ -35,7 +34,7 @@ Example:
 
 func tmplDescribe(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.DescribeTemplateInput{
@@ -44,7 +43,7 @@ func tmplDescribe(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.DescribeTemplate(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	out := cli.GetCliStringFlag(cmd, "out")
@@ -54,7 +53,7 @@ func tmplDescribe(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = ioutil.WriteFile(out, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 	default:
 		if pfmt == "json" || pfmt == "" {
@@ -65,7 +64,7 @@ func tmplDescribe(cmd *cobra.Command, args []string) {
 			// write to file option
 			if out != "" {
 				err = ioutil.WriteFile(out, []byte(js), 0644)
-				d.ErrorExit(err, 1)
+				cli.ErrorExit(err, 1)
 			}
 		}
 	}

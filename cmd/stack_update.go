@@ -59,7 +59,7 @@ func updateStack(cmd *cobra.Command, args []string) {
 
 	id := cli.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		d.ErrorExit("stack id required", 1)
+		cli.ErrorExit("stack id required", 1)
 	}
 
 	cnf := alm.StackCreateConfig{}
@@ -89,24 +89,24 @@ func updateStack(cmd *cobra.Command, args []string) {
 	}
 
 	mi, err := json.Marshal(&cnf)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	p := updatet{}
 	p.Configurations = string(mi)
 
 	// for pretty print
 	mi, err = json.MarshalIndent(&p, "", pretty.Indent(2))
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	d.Info("[update stack payload]")
 	fmt.Println(string(mi))
 
 	// for actual payload (smaller)
 	mi, err = json.Marshal(&p)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.StackUpdateInput{
@@ -115,13 +115,13 @@ func updateStack(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.Update(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	var success bool
 	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	_, ok := m["status"]
 	if ok {
@@ -138,19 +138,19 @@ func updateStack(cmd *cobra.Command, args []string) {
 func updateAlmStack(cmd *cobra.Command) {
 	id := cli.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		d.ErrorExit("stack id required", 1)
+		cli.ErrorExit("stack id required", 1)
 	}
 
 	tf := cli.GetCliStringFlag(cmd, "alm-template")
 	b, err := ioutil.ReadFile(tf)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	if !filetype.IsJSON(string(b)) {
-		d.ErrorExit("invalid json", 1)
+		cli.ErrorExit("invalid json", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.StackUpdateInput{
@@ -162,7 +162,7 @@ func updateAlmStack(cmd *cobra.Command) {
 	}
 
 	resp, body, err := svc.Update(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if strings.Contains(string(body), "success") {

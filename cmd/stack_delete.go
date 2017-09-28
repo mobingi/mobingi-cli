@@ -31,16 +31,16 @@ Example:
 func delete(cmd *cobra.Command, args []string) {
 	id := cli.GetCliStringFlag(cmd, "id")
 	if id == "" {
-		d.ErrorExit("stack id cannot be empty", 1)
+		cli.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.StackDeleteInput{StackId: id}
 	resp, body, err := svc.Delete(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if sess.Config.ApiVersion >= 3 {
@@ -57,11 +57,11 @@ func delete(cmd *cobra.Command, args []string) {
 
 	var m map[string]interface{}
 	err = json.Unmarshal(body, &m)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	status, found := m["status"]
 	if !found {
-		d.ErrorExit("cannot read status", 1)
+		cli.ErrorExit("cannot read status", 1)
 	}
 
 	d.Info(fmt.Sprintf("%s", status))

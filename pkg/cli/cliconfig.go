@@ -9,7 +9,6 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/mobingi/mobingi-cli/client/timeout"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -100,7 +99,7 @@ func SetDefaultCliConfig() error {
 
 	err := defcnf.WriteToConfig()
 	err = errors.Wrap(err, "write default config failed")
-	d.ErrorExit(err, 1)
+	ErrorExit(err, 1)
 
 	return viper.ReadInConfig()
 }

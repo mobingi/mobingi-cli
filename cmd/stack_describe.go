@@ -10,7 +10,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/alm"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/spf13/cobra"
 )
@@ -38,7 +37,7 @@ Examples:
 
 func describe(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.StackDescribeInput{
@@ -46,7 +45,7 @@ func describe(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.Describe(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	// we process `--fmt=raw` option first
@@ -63,7 +62,7 @@ func describe(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = ioutil.WriteFile(out, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
@@ -73,13 +72,13 @@ func describe(cmd *cobra.Command, args []string) {
 		// write to file option
 		if out != "" {
 			err = ioutil.WriteFile(out, []byte(js), 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 	default:
 		if pfmt == "min" || pfmt == "" {
 			var stacks []alm.DescribeStack
 			err = json.Unmarshal(body, &stacks)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")

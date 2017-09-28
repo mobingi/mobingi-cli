@@ -61,7 +61,7 @@ func login(cmd *cobra.Command, args []string) {
 
 	err := idsec.EnsureInput(false)
 	if err != nil {
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 
 	grant := cli.GetCliStringFlag(cmd, "grant-type")
@@ -88,12 +88,12 @@ func login(cmd *cobra.Command, args []string) {
 
 	// should not be nil when `grant_type` is valid
 	if p == nil {
-		d.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
+		cli.ErrorExit("Invalid argument(s). See `help` for more information.", 1)
 	}
 
 	cnf := cli.ReadCliConfig()
 	if cnf == nil {
-		d.ErrorExit("read config failed", 1)
+		cli.ErrorExit("read config failed", 1)
 	}
 
 	switch cli.GetCliStringFlag(cmd, "endpoints") {
@@ -115,7 +115,7 @@ func login(cmd *cobra.Command, args []string) {
 	default:
 		err = fmt.Errorf("endpoint value not supported")
 		err = errors.Wrap(err, "invalid flag")
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 
 	apiver := fmt.Sprint(fval(cmd, "apiver", cli.ApiVersion))
@@ -155,7 +155,7 @@ func login(cmd *cobra.Command, args []string) {
 			},
 		})
 
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	} else {
 		sess, err = session.New(&session.Config{
 			ClientId:        p.ClientId,
@@ -169,7 +169,7 @@ func login(cmd *cobra.Command, args []string) {
 			},
 		})
 
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 
 	// prefer to store credentials to native store (keychain, wincred)
@@ -198,11 +198,11 @@ func login(cmd *cobra.Command, args []string) {
 
 	cnf.AccessToken = sess.AccessToken
 	err = cnf.WriteToConfig()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	// reload updated config to viper
 	err = viper.ReadInConfig()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	d.Info("Login successful.")
 }
@@ -257,7 +257,7 @@ func fval(cmd *cobra.Command, flag string, defval interface{}) interface{} {
 			}
 		}
 	default:
-		d.ErrorExit("defval type not supported", 1)
+		cli.ErrorExit("defval type not supported", 1)
 	}
 
 	return ret

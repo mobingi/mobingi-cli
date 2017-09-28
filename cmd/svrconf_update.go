@@ -43,7 +43,7 @@ Example on how to input environment variables via --env option:
 func update(cmd *cobra.Command, args []string) {
 	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		d.ErrorExit("stack id cannot be empty", 1)
+		cli.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	// each parameter set is sent separately
@@ -58,7 +58,7 @@ func update(cmd *cobra.Command, args []string) {
 			if in != "" {
 				rm := json.RawMessage(in)
 				p, err := json.Marshal(&rm)
-				d.ErrorExit(err, 1)
+				cli.ErrorExit(err, 1)
 				payload = p
 			}
 
@@ -67,7 +67,7 @@ func update(cmd *cobra.Command, args []string) {
 				in := buildFilePathPayload(sid, val)
 				rm := json.RawMessage(in)
 				p, err := json.Marshal(&rm)
-				d.ErrorExit(err, 1)
+				cli.ErrorExit(err, 1)
 				payload = p
 			}
 		}

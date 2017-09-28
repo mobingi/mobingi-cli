@@ -44,16 +44,16 @@ Examples:
 
 func stackList(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	resp, body, err := svc.List()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	var stacks []alm.ListStack
 	err = json.Unmarshal(body, &stacks)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -64,7 +64,7 @@ func stackList(cmd *cobra.Command, args []string) {
 		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
@@ -76,7 +76,7 @@ func stackList(cmd *cobra.Command, args []string) {
 		f := cli.GetCliStringFlag(cmd, "out")
 		if f != "" {
 			err = ioutil.WriteFile(f, []byte(js), 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:

@@ -32,7 +32,7 @@ Example:
 
 func rbacAttach(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	name := cli.GetCliStringFlag(cmd, "user")
 	roleid := cli.GetCliStringFlag(cmd, "role-id")
@@ -43,7 +43,7 @@ func rbacAttach(cmd *cobra.Command, args []string) {
 
 	svc := rbac.New(sess)
 	resp, body, err := svc.AttachRoleToUser(&in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	indent := cli.GetCliIntFlag(cmd, "indent")

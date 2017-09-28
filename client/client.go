@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/mobingi/mobingi-cli/client/timeout"
+	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingi/mobingi-cli/pkg/cli/confmap"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -335,7 +336,7 @@ func respError(r *http.Response, b []byte) string {
 func exitOn401(resp *http.Response) {
 	if resp != nil {
 		if resp.StatusCode == 401 {
-			d.ErrorExit(fmt.Errorf(resp.Status), 1)
+			cli.ErrorExit(fmt.Errorf(resp.Status), 1)
 		}
 	}
 }

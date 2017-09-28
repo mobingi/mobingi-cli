@@ -33,11 +33,11 @@ Example:
 func deleteTag(cmd *cobra.Command, args []string) {
 	image := cli.GetCliStringFlag(cmd, "image")
 	if image == "" {
-		d.ErrorExit("image name cannot be empty", 1)
+		cli.ErrorExit("image name cannot be empty", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	ensureUserPass(cmd, sess)
 	svc := registry.New(sess)
@@ -46,7 +46,7 @@ func deleteTag(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.DeleteImage(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if resp.StatusCode/100 != 2 {

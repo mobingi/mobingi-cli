@@ -45,7 +45,7 @@ func rbacSample(cmd *cobra.Command, args []string) {
 	out := cli.GetCliStringFlag(cmd, "out")
 	if out != "" {
 		err := ioutil.WriteFile(out, []byte(str), 0644)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 		d.Info("sample written to", out)
 	}
 }

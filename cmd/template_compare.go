@@ -50,7 +50,7 @@ Examples:
 
 func tmplCompare(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.CompareTemplateInput{
@@ -63,14 +63,14 @@ func tmplCompare(cmd *cobra.Command, args []string) {
 	tb := cli.GetCliStringFlag(cmd, "tgt-body")
 	if tb != "" {
 		b, err := ioutil.ReadFile(tb)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		// set body from file
 		in.TargetBody = string(b)
 	}
 
 	resp, body, err := svc.CompareTemplate(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	out := cli.GetCliStringFlag(cmd, "out")
@@ -80,7 +80,7 @@ func tmplCompare(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = ioutil.WriteFile(out, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 	default:
 		if pfmt == "json" || pfmt == "" {
@@ -93,7 +93,7 @@ func tmplCompare(cmd *cobra.Command, args []string) {
 			} else {
 				var m map[string]json.RawMessage
 				err = json.Unmarshal(body, &m)
-				d.ErrorExit(err, 1)
+				cli.ErrorExit(err, 1)
 
 				diff, ok := m["diff"]
 				if ok {
@@ -108,7 +108,7 @@ func tmplCompare(cmd *cobra.Command, args []string) {
 			if out != "" {
 				if tofile != "" {
 					err = ioutil.WriteFile(out, []byte(tofile), 0644)
-					d.ErrorExit(err, 1)
+					cli.ErrorExit(err, 1)
 				} else {
 					d.Info("nothing to write to file")
 				}

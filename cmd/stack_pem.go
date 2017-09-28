@@ -34,7 +34,7 @@ Example:
 func getpem(cmd *cobra.Command, args []string) {
 	verbose := viper.GetBool(confmap.ConfigKey("verbose"))
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
 	in := &alm.GetPemInput{
@@ -68,6 +68,6 @@ func getpem(cmd *cobra.Command, args []string) {
 	out := cli.GetCliStringFlag(cmd, "out")
 	if out != "" {
 		err = ioutil.WriteFile(out, pem, 0644)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 	}
 }

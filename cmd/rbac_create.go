@@ -37,7 +37,7 @@ Example:
 
 func rbacCreate(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	var in rbac.CreateRoleInput
 
@@ -50,11 +50,11 @@ func rbacCreate(cmd *cobra.Command, args []string) {
 		}
 	} else {
 		b, err := ioutil.ReadFile(scope)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		var rr rbac.Role
 		err = json.Unmarshal(b, &rr)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		in = rbac.CreateRoleInput{
 			Name:  name,
@@ -64,7 +64,7 @@ func rbacCreate(cmd *cobra.Command, args []string) {
 
 	svc := rbac.New(sess)
 	resp, body, err := svc.CreateRole(&in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	indent := cli.GetCliIntFlag(cmd, "indent")

@@ -32,11 +32,11 @@ Valid format values: json (default), raw`,
 func show(cmd *cobra.Command, args []string) {
 	sid := cli.GetCliStringFlag(cmd, "id")
 	if sid == "" {
-		d.ErrorExit("stack id cannot be empty", 1)
+		cli.ErrorExit("stack id cannot be empty", 1)
 	}
 
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := svrconf.New(sess)
 	in := &svrconf.ServerConfigGetInput{
@@ -44,7 +44,7 @@ func show(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.Get(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	out := cli.GetCliStringFlag(cmd, "out")
@@ -53,7 +53,7 @@ func show(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = ioutil.WriteFile(out, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 
 		return
@@ -62,11 +62,11 @@ func show(cmd *cobra.Command, args []string) {
 	if pfmt == "json" || pfmt == "" {
 		var sc svrconf.ServerConfig
 		err = json.Unmarshal(body, &sc)
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(sc, "", pretty.Indent(indent))
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 
@@ -74,7 +74,7 @@ func show(cmd *cobra.Command, args []string) {
 		out := cli.GetCliStringFlag(cmd, "out")
 		if out != "" {
 			err = ioutil.WriteFile(out, mi, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 
 		// parse `updated` field for easier reading

@@ -30,7 +30,7 @@ Example:
 
 func rbacDelete(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := rbac.New(sess)
 
@@ -39,7 +39,7 @@ func rbacDelete(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, err := svc.DeleteRole(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	if resp.StatusCode/100 == 2 {

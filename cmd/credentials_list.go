@@ -10,7 +10,6 @@ import (
 	"github.com/mobingi/mobingi-cli/pkg/cli"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/credentials"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
-	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/pretty"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -38,7 +37,7 @@ Examples:
 
 func credsList(cmd *cobra.Command, args []string) {
 	creds, body, err := getCredsList(cmd)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
@@ -47,7 +46,7 @@ func credsList(cmd *cobra.Command, args []string) {
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		mi, err := json.MarshalIndent(creds, "", pretty.Indent(indent))
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		fmt.Println(string(mi))
 	default:

@@ -54,7 +54,7 @@ func token(cmd *cobra.Command, args []string) {
 		},
 	)
 
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {

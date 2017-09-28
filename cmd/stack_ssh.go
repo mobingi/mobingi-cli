@@ -38,7 +38,7 @@ Examples:
 
 func stackSsh(cmd *cobra.Command, args []string) {
 	sess, err := clisession()
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 
 	svc := sesha3.New(sess)
 	in := &sesha3.GetSessionUrlInput{
@@ -49,7 +49,7 @@ func stackSsh(cmd *cobra.Command, args []string) {
 	}
 
 	resp, body, u, err := svc.GetSessionUrl(in)
-	d.ErrorExit(err, 1)
+	cli.ErrorExit(err, 1)
 	exitOn401(resp)
 
 	out := cli.GetCliStringFlag(cmd, "out")
@@ -59,7 +59,7 @@ func stackSsh(cmd *cobra.Command, args []string) {
 		fmt.Println(string(body))
 		if out != "" {
 			err = ioutil.WriteFile(out, body, 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 	case "json":
 		indent := cli.GetCliIntFlag(cmd, "indent")
@@ -69,7 +69,7 @@ func stackSsh(cmd *cobra.Command, args []string) {
 		// write to file option
 		if out != "" {
 			err = ioutil.WriteFile(out, []byte(js), 0644)
-			d.ErrorExit(err, 1)
+			cli.ErrorExit(err, 1)
 		}
 	default:
 		if browser {
@@ -79,7 +79,7 @@ func stackSsh(cmd *cobra.Command, args []string) {
 		}
 
 		sshcli, err := sesha3.NewClient(&sesha3.SeshaClientInput{URL: u})
-		d.ErrorExit(err, 1)
+		cli.ErrorExit(err, 1)
 
 		err = sshcli.Run()
 		if err != nil {
