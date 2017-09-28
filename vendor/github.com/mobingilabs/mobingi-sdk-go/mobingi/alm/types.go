@@ -54,7 +54,7 @@ type ListStack struct {
 	CreateTime    string        `json:"create_time,omitempty"`
 	Nickname      string        `json:"nickname,omitempty"`
 	StackId       string        `json:"stack_id,omitempty"`
-	StackOutputs  []StackOutput `json:"stack_outputs,omitempty"`
+	StackOutputs  interface{}   `json:"stack_outputs,omitempty"`
 	StackStatus   string        `json:"stack_status,omitempty"`
 	UserId        string        `json:"user_id,omitempty"`
 }
