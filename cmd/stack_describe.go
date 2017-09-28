@@ -124,29 +124,30 @@ func describe(cmd *cobra.Command, args []string) {
 
 			d.Info("[instances]")
 			w.Flush()
-			fmt.Println()
 
 			// separate table for configurations, if any
 			if stack.Configuration.Configurations != nil {
 				w = tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 				fmt.Fprintf(w, "ROLE\tFLAG\tCONTAINER\n")
-
-				var (
-					cnfs   []alm.Configurations
-					contnr bool
-				)
-
+				var cnfs []alm.Configurations
 				err = json.Unmarshal(stack.Configuration.Configurations, &cnfs)
 				cli.ErrorExit(err, 1)
 
 				for _, inst := range cnfs {
+					var image string
 					if inst.Container != nil {
-						contnr = true
+						contmap := inst.Container.(map[string]interface{})
+						for k, v := range contmap {
+							if k == "image" {
+								image = fmt.Sprintf("%s", v)
+							}
+						}
 					}
 
-					fmt.Fprintf(w, "%s\t%s\t%v\n", inst.Role, inst.Flag, contnr)
+					fmt.Fprintf(w, "%s\t%s\t%s\n", inst.Role, inst.Flag, image)
 				}
 
+				fmt.Println()
 				d.Info("[configurations]")
 				w.Flush()
 			}
