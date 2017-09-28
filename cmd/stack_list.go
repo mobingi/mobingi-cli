@@ -90,8 +90,23 @@ func stackList(cmd *cobra.Command, args []string) {
 			}
 
 			platform := "?"
-			if s.Configuration.AWS != "" {
-				platform = "aws"
+			if s.Configuration.Vendor != nil {
+				var vm map[string]interface{}
+				err = json.Unmarshal(s.Configuration.Vendor, &vm)
+				cli.ErrorExit(err, 1)
+
+				for k, _ := range vm {
+					switch k {
+					case "aws", "alicloud":
+						platform = k
+					}
+				}
+			}
+
+			if platform == "?" {
+				if s.Configuration.AWS != "" {
+					platform = "aws"
+				}
 			}
 
 			type cnf_t struct {
