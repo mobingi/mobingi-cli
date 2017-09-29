@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
-	"github.com/mobingi/mobingi-cli/pkg/registry"
+	"github.com/mobingilabs/mobingi-sdk-go/mobingi/registry"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func RegistryToken() *cobra.Command {
@@ -36,25 +35,21 @@ Example:
 }
 
 func token(cmd *cobra.Command, args []string) {
-	userpass := userPass(cmd)
-	base := viper.GetString("api_url")
-	apiver := cli.GetCliStringFlag(cmd, "apiver")
-	svc := cli.GetCliStringFlag(cmd, "service")
+	service := cli.GetCliStringFlag(cmd, "service")
 	scope := cli.GetCliStringFlag(cmd, "scope")
-
-	body, token, err := registry.GetRegistryToken(
-		&registry.TokenParams{
-			Base:       base,
-			ApiVersion: apiver,
-			TokenCreds: &registry.TokenCredentials{
-				UserPass: userpass,
-				Service:  svc,
-				Scope:    scope,
-			},
-		},
-	)
-
+	sess, err := clisession()
 	cli.ErrorExit(err, 1)
+
+	ensureUserPass(cmd, sess)
+	svc := registry.New(sess)
+	in := &registry.GetRegistryTokenInput{
+		Service: service,
+		Scope:   scope,
+	}
+
+	resp, body, token, err := svc.GetRegistryToken(in)
+	cli.ErrorExit(err, 1)
+	exitOn401(resp)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
