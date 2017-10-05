@@ -86,7 +86,7 @@ func describe(cmd *cobra.Command, args []string) {
 			}
 
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
-			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
+			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC DNS\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
 			for _, inst := range stack.Instances {
 				instype := "on-demand"
 				if inst.InstanceLifecycle == "spot" {
@@ -113,10 +113,11 @@ func describe(cmd *cobra.Command, args []string) {
 					state = fmt.Sprintf("%s", inst.Status)
 				}
 
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
 					instype,
 					inst.InstanceType,
+					inst.PublicDnsName,
 					pubip,
 					inst.PrivateIpAddress,
 					strings.ToLower(state))
