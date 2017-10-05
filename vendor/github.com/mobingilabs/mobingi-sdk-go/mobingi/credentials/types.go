@@ -22,6 +22,12 @@ type AWSCredentials struct {
 	Secret string `json:"AWSSecretKeyId,omitempty"`
 }
 
+type AliCloudCredentials struct {
+	Name   string `json:"AliCloudAccountName,omitempty"`
+	KeyId  string `json:"AliCloudAccessKeyId,omitempty"`
+	Secret string `json:"AliCloudSecretKey,omitempty"`
+}
+
 type AddVendorCredentials struct {
 	Credentials AWSCredentials `json:"credentials,omitempty"`
 }

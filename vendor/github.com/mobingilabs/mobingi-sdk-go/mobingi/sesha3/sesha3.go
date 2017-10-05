@@ -142,6 +142,7 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 
 	var m map[string]string
 	err = json.Unmarshal(body, &m)
+
 	if err != nil {
 		return resp, body, u, errors.Wrap(err, "token reply unmarshal failed")
 	}

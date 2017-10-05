@@ -56,4 +56,6 @@ func TestParseToken(t *testing.T) {
 	if fmt.Sprintf("%s", u) != "user" {
 		t.Fatal("should be user")
 	}
+
+	log.Println(stoken)
 }

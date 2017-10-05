@@ -16,26 +16,34 @@ import (
 	"github.com/pkg/errors"
 )
 
-var rsainit bool
+var (
+	rsainit  bool
+	pubcache []byte
+	prvcache []byte
+	pempub   string
+	pemprv   string
+)
 
 func init() {
 	tmpdir := os.TempDir() + "/sesha3/rsa/"
 	debug.Info("tmp:", tmpdir)
-	pub := tmpdir + "token.pem.pub"
-	prv := tmpdir + "token.pem"
+	pempub = tmpdir + "token.pem.pub"
+	pemprv = tmpdir + "token.pem"
 
 	// create dir if necessary
 	if !private.Exists(tmpdir) {
 		err := os.MkdirAll(tmpdir, 0700)
 		if err != nil {
+			debug.Error(err)
 			return
 		}
 	}
 
 	// create public and private pem files
-	if !private.Exists(pub) || !private.Exists(prv) {
+	if !private.Exists(pempub) || !private.Exists(pemprv) {
 		priv, err := rsa.GenerateKey(rand.Reader, 2048)
 		if err != nil {
+			debug.Error(err)
 			return
 		}
 
@@ -43,25 +51,50 @@ func init() {
 		pubkey := priv.Public()
 		pubder, err := x509.MarshalPKIXPublicKey(pubkey)
 		if err != nil {
+			debug.Error(err)
 			return
 		}
 
 		pubblock := &pem.Block{Type: "RSA PUBLIC KEY", Bytes: pubder}
 		pemblock := &pem.Block{Type: "RSA PRIVATE KEY", Bytes: privder}
-		pubfile, err := os.OpenFile(pub, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+		pubfile, err := os.OpenFile(pempub, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 		if err != nil {
+			debug.Error(err)
 			return
 		}
 
 		defer pubfile.Close()
-		prvfile, err := os.OpenFile(prv, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+		prvfile, err := os.OpenFile(pemprv, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 		if err != nil {
+			debug.Error(err)
 			return
 		}
 
 		defer prvfile.Close()
-		pem.Encode(pubfile, pubblock)
-		pem.Encode(prvfile, pemblock)
+		err = pem.Encode(pubfile, pubblock)
+		if err != nil {
+			debug.Error(err)
+			return
+		}
+
+		err = pem.Encode(prvfile, pemblock)
+		if err != nil {
+			debug.Error(err)
+			return
+		}
+	}
+
+	var err error
+	pubcache, err = ioutil.ReadFile(pempub)
+	if err != nil {
+		debug.Error(err)
+		return
+	}
+
+	prvcache, err = ioutil.ReadFile(pemprv)
+	if err != nil {
+		debug.Error(err)
+		return
 	}
 
 	rsainit = true
@@ -121,20 +154,9 @@ func NewCtx() (*jwtctx, error) {
 	}
 
 	var ctx jwtctx
-	var err error
-
-	tmpdir := os.TempDir() + "/sesha3/rsa/"
-	ctx.PemPub = tmpdir + "token.pem.pub"
-	ctx.PemPrv = tmpdir + "token.pem"
-	ctx.Pub, err = ioutil.ReadFile(ctx.PemPub)
-	if err != nil {
-		return nil, errors.Wrap(err, "read public pem failed")
-	}
-
-	ctx.Prv, err = ioutil.ReadFile(ctx.PemPrv)
-	if err != nil {
-		return nil, errors.Wrap(err, "read private pem failed")
-	}
-
+	ctx.PemPub = pempub
+	ctx.PemPrv = pemprv
+	ctx.Pub = pubcache
+	ctx.Prv = prvcache
 	return &ctx, nil
 }

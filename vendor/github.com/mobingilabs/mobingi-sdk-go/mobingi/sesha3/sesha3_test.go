@@ -8,18 +8,6 @@ import (
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
 )
 
-func TestNewClient(t *testing.T) {
-	url := &SeshaClientInput{URL: "https://sesha3.labs.mobingi.com:8568/d3aiwuxow4mxnsgc4j7usvcpw0bjh27kg94c/"}
-	cli, err := NewClient(url)
-	if err != nil {
-		t.Fatal("expected nil error")
-	}
-
-	if cli == nil {
-		t.Fatal("expected a valid client object")
-	}
-}
-
 func TestNew(t *testing.T) {
 	svc := New(nil)
 	if svc != nil {
