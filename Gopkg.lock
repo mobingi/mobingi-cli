@@ -47,7 +47,7 @@
   branch = "master"
   name = "github.com/hashicorp/hcl"
   packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
-  revision = "68e816d1c783414e79bc65b3994d9ab6b0a722ab"
+  revision = "42e33e2d55a0ff1d6263f738896ea8c13571a8d0"
 
 [[projects]]
   name = "github.com/inconshreveable/mousetrap"
@@ -88,8 +88,8 @@
 [[projects]]
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/rbac","mobingi/registry","mobingi/sesha3","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "4a1f28f42dc13d4b13025eb5746e26a82c12a2bf"
-  version = "v0.1.5"
+  revision = "319528eb9dd6be72a035bd1a6d8f3eaf9f7e5104"
+  version = "v0.1.8"
 
 [[projects]]
   name = "github.com/moul/gotty-client"
@@ -119,7 +119,7 @@
   branch = "master"
   name = "github.com/spf13/afero"
   packages = [".","mem"]
-  revision = "3de492c3cda9570c77bc1f495857bfbf4b760efd"
+  revision = "e67d870304c4bca21331b02f414f970df13aa694"
 
 [[projects]]
   name = "github.com/spf13/cast"
@@ -131,7 +131,7 @@
   branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "d5bde60e022436203e377c47806e001418c16af3"
+  revision = "4d6af280c76ff7d266434f2dba207c4b75dfc076"
 
 [[projects]]
   branch = "master"
@@ -161,13 +161,13 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "314a259e304ff91bd6985da2a7149bbf91237993"
+  revision = "ebfc5b4631820b793c9010c87fd8fef0f39eb082"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "1cbadb444a806fd9430d14ad08967ed91da4fa0a"
+  revision = "825fc78a2fd6fa0a5447e300189e3219e05e1f25"
 
 [[projects]]
   branch = "v2"

@@ -3,8 +3,8 @@ package credentials
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
@@ -69,6 +69,18 @@ func (c *creds) AddVendorCredentials(in *AddVendorCredentialsInput) (*client.Res
 		return nil, nil, errors.New("acct name cannot be empty")
 	}
 
+	// get user details first
+	resp, body, err := c.User()
+	if err != nil {
+		return resp, body, errors.Wrap(err, "get user details failed")
+	}
+
+	var u UserDetails
+	err = json.Unmarshal(body, &u)
+	if err != nil {
+		return resp, body, errors.Wrap(err, "unmarshal failed")
+	}
+
 	var payload []byte
 	switch in.Vendor {
 	case "aws":
@@ -103,8 +115,6 @@ func (c *creds) AddVendorCredentials(in *AddVendorCredentialsInput) (*client.Res
 			},
 		}
 
-		log.Printf("%+v", creds)
-
 		b, err := json.Marshal(creds)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "marshal aws payload failed")
@@ -115,8 +125,14 @@ func (c *creds) AddVendorCredentials(in *AddVendorCredentialsInput) (*client.Res
 		return nil, nil, errors.New("vendor not supported")
 	}
 
+	v := url.Values{}
+	v.Set("vendor", in.Vendor)
+	v.Set("user_id", u.UserId)
+	v.Set("credentials", string(payload))
+	p := []byte(v.Encode())
 	ep := c.session.ApiEndpoint() + "/credentials/" + in.Vendor
-	req := c.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(payload))
+	req := c.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(p))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 	return c.client.Do(req)
 }
 

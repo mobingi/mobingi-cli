@@ -10,6 +10,12 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+type UserDetails struct {
+	UserId   string `json:"user_id,omitempty"`
+	Email    string `json:"email,omitempty"`
+	ApiToken string `json:"api_token,omitempty"`
+}
+
 type VendorCredentials struct {
 	Id           string `json:"id,omitempty"`
 	Account      string `json:"account,omitempty"`

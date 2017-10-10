@@ -1,6 +1,7 @@
 package credentials
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -39,8 +40,17 @@ func TestUserDevAcct(t *testing.T) {
 			t.Errorf("expecting nil error, received %v", err)
 		}
 
-		log.Println(resp, string(body))
-		// _, _ = resp, body
+		var u UserDetails
+		err = json.Unmarshal(body, &u)
+		if err != nil {
+			t.Fatal("error:", err)
+		}
+
+		if u.UserId == "" {
+			t.Fatal("user_id should at least be set")
+		}
+
+		_ = resp
 	}
 }
 

@@ -96,6 +96,7 @@ type Instance struct {
 	InstanceLifecycle     string          `json:"InstanceLifecycle,omitempty"`
 	SpotInstanceRequestId string          `json:"SpotInstanceRequestId,omitempty"`
 	KeyName               string          `json:"KeyName,omitempty"`
+	KeyPairName           string          `json:"KeyPairName,omitempty"`
 	LaunchTime            string          `json:"LaunchTime,omitempty"`
 	Monitoring            interface{}     `json:"Monitoring,omitempty"`
 	NetworkInterfaces     interface{}     `json:"NetworkInterfaces,omitempty"`
