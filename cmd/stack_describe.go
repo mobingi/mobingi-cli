@@ -86,7 +86,7 @@ func describe(cmd *cobra.Command, args []string) {
 			}
 
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
-			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC DNS\tPUBLIC IP\tPRIVATE IP\tSTATUS\n")
+			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC DNS\tPUBLIC IP\tPRIVATE IP\tFLAG\tSTATUS\n")
 			for _, inst := range stack.Instances {
 				instype := "on-demand"
 				if inst.InstanceLifecycle == "spot" {
@@ -108,18 +108,34 @@ func describe(cmd *cobra.Command, args []string) {
 					pubip = strings.Join(ips.IpAddress, ",")
 				}
 
+				// try to extract flag from key name
+				flag := inst.KeyName
+				if flag == "" {
+					flag = inst.KeyPairName
+				}
+
+				if flag != "" {
+					parts := strings.Split(flag, "-")
+					if len(parts) > 1 {
+						flag = parts[len(parts)-1]
+					} else {
+						flag = ""
+					}
+				}
+
 				state := inst.State.Name
 				if state == "" {
 					state = fmt.Sprintf("%s", inst.Status)
 				}
 
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 					inst.InstanceId,
 					instype,
 					inst.InstanceType,
 					inst.PublicDnsName,
 					pubip,
 					inst.PrivateIpAddress,
+					flag,
 					strings.ToLower(state))
 			}
 
