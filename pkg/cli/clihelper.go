@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	CliUrl   = "https://github.com/mobingi/mobingi-cli"
+	CliUrl   = "https://api.mobingi.com"
 	CliLabel = "mobingi-cli"
 )
 
