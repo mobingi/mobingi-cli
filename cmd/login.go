@@ -180,6 +180,9 @@ func login(cmd *cobra.Command, args []string) {
 		nsec += "|" + p.Password
 	}
 
+	// workaround/hack: remove our previous key
+	_ = nativestore.Del(cli.CliLabel, "https://github.com/mobingi/mobingi-cli")
+
 	err = nativestore.Set(cli.CliLabel, cli.CliUrl, nid, nsec)
 	if err != nil {
 		if cnf.Verbose {
