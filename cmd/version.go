@@ -12,7 +12,7 @@ func VersionCmd() *cobra.Command {
 		Short: "print the version",
 		Long:  `Print the version.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("v1.0.5")
+			fmt.Println("v1.0.7")
 		},
 	}
 }
