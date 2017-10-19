@@ -5,7 +5,7 @@
 
 # mobingi-cli
 
-mobingi-cli is the official command line interface for Mobingi API and services. 
+mobingi-cli is the official command line interface for [Mobingi](https://mobingi.co.jp/) API and services. 
 
 See the documentation on https://learn.mobingi.com/cli.
 
