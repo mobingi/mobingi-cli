@@ -188,10 +188,9 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 		return resp, body, sresp, errors.Wrap(err, "payload marshal failed")
 	}
 
+	s.session.AccessToken = token
 	ep := s.session.Sesha3Endpoint() + "/exec"
-	req, err := http.NewRequest(http.MethodGet, ep, bytes.NewBuffer(b))
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+token)
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
 	resp, body, err = s.client.Do(req)
 	if err != nil {
 		return resp, body, sresp, errors.Wrap(err, "client do failed")
@@ -297,10 +296,9 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 		return resp, body, u, errors.Wrap(err, "payload marshal failed")
 	}
 
+	s.session.AccessToken = token
 	ep := s.session.Sesha3Endpoint() + "/ttyurl"
-	req, err := http.NewRequest(http.MethodGet, ep, bytes.NewBuffer(b))
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+token)
+	req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
 	resp, body, err = s.client.Do(req)
 	if err != nil {
 		return resp, body, u, errors.Wrap(err, "client do failed")
