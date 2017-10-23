@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 )
 
 func TestNew(t *testing.T) {
@@ -523,5 +524,27 @@ func TestGetPemDevAcct(t *testing.T) {
 
 		// log.Println(resp, string(body), string(pem))
 		_, _, _ = resp, body, pem
+	}
+}
+
+func TestWalkerDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+		})
+
+		alm := New(sess)
+		in := WalkerCtx{
+			InstanceCallback: func(ls *ListStack, inst *Instance, err error) error {
+				debug.Info(ls.StackId, inst.PublicDnsName)
+				return nil
+			},
+		}
+
+		err := alm.Walker(&in)
+		if err != nil {
+			t.Error(err)
+		}
 	}
 }

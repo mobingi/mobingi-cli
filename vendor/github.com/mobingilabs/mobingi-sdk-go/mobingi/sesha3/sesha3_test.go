@@ -6,12 +6,33 @@ import (
 
 	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/session"
+	"github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
 )
 
 func TestNew(t *testing.T) {
 	svc := New(nil)
 	if svc != nil {
 		t.Fatal("expected nil")
+	}
+}
+
+func TestGetTokenDevAcct(t *testing.T) {
+	return
+	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
+		sess, _ := session.New(&session.Config{
+			BaseApiUrl: "https://apidev.mobingi.com",
+			HttpClientConfig: &client.Config{
+				Verbose: true,
+			},
+		})
+
+		svc := New(sess)
+		_, _, token, err := svc.GetToken()
+		if err != nil {
+			t.Errorf("expecting nil error, received %v", err)
+		}
+
+		debug.Info(token)
 	}
 }
 

@@ -88,8 +88,8 @@
 [[projects]]
   name = "github.com/mobingilabs/mobingi-sdk-go"
   packages = ["client","mobingi/alm","mobingi/alm/svrconf","mobingi/credentials","mobingi/rbac","mobingi/registry","mobingi/sesha3","mobingi/session","pkg/cmdline","pkg/debug","pkg/filetype","pkg/nativestore","pkg/pretty"]
-  revision = "319528eb9dd6be72a035bd1a6d8f3eaf9f7e5104"
-  version = "v0.1.8"
+  revision = "23090f80c23841bb9223c50bc0d6415b5fc4f006"
+  version = "v0.1.10"
 
 [[projects]]
   name = "github.com/moul/gotty-client"
