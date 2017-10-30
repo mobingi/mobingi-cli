@@ -89,7 +89,6 @@ func (s *sesha3) GetToken() (*client.Response, []byte, string, error) {
 }
 
 type ExecScriptInput struct {
-	StackId    string
 	Target     string
 	Script     string
 	ScriptName string
@@ -102,8 +101,20 @@ type ScriptRes struct {
 	Err string `json:"stderr"`
 }
 
+func getTargetMap(targets string) map[string]string {
+	result := make(map[string]string)
+	targetList := strings.Split(targets, ":")
+	for _, target := range targetList {
+		item := strings.Split(target, "|")
+		result[item[0]] = strings.Join(item[1:], ",")
+	}
+	return result
+}
+
 func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, ScriptRes, error) {
 	var sresp ScriptRes
+	var resp *client.Response
+	var body []byte
 
 	if in == nil {
 		return nil, nil, sresp, errors.New("input cannot be nil")
@@ -133,31 +144,34 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 
 	// get pem url from stack id
 	almsvc := alm.New(s.session)
-	inpem := alm.GetPemInput{
-		StackId: in.StackId,
-	}
+	targetmap := getTargetMap(in.Target)
+	pemurls := make(map[string]string)
+	for stackid := range targetmap {
+		inpem := alm.GetPemInput{
+			StackId: stackid,
+		}
 
-	if s.session.Config.ApiVersion >= 3 {
-		inpem.Flag = in.Flag
-	}
+		if s.session.Config.ApiVersion >= 3 {
+			inpem.Flag = in.Flag
+		}
 
-	resp, body, _, err := almsvc.GetPem(&inpem)
-	if err != nil {
-		return resp, body, sresp, errors.Wrap(err, "get pem failed")
-	}
+		resp, body, _, err := almsvc.GetPem(&inpem)
+		if err != nil {
+			return resp, body, sresp, errors.Wrap(err, "get pem failed")
+		}
+		type rsaurl struct {
+			Status string `json:"status"`
+			Data   string `json:"data"`
+		}
+		var ru rsaurl
+		err = json.Unmarshal(body, &ru)
+		if err != nil {
+			return resp, body, sresp, errors.Wrap(err, "url body unmarshal failed")
+		}
 
-	type rsaurl struct {
-		Status string `json:"status"`
-		Data   string `json:"data"`
+		pemurl := strings.Replace(ru.Data, "\\", "", -1)
+		pemurls[stackid] = pemurl
 	}
-
-	var ru rsaurl
-	err = json.Unmarshal(body, &ru)
-	if err != nil {
-		return resp, body, sresp, errors.Wrap(err, "url body unmarshal failed")
-	}
-
-	pemurl := strings.Replace(ru.Data, "\\", "", -1)
 
 	// get sesha3 token
 	_, _, token, err := s.GetToken()
@@ -166,18 +180,16 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 	}
 
 	type payload_t struct {
-		Pem        string `json:"pem"`
-		StackId    string `json:"stackid"`
-		Target     string `json:"target"`
-		Script     string `json:"script"`
-		ScriptName string `json:"script_name"`
-		User       string `json:"user"`
+		Target     map[string]string `json:"target"`
+		Pem        map[string]string `json:"stack_pem"`
+		Script     string            `json:"script"`
+		ScriptName string            `json:"script_name"`
+		User       string            `json:"user"`
 	}
 
 	payload := payload_t{
-		Pem:        pemurl,
-		StackId:    in.StackId,
-		Target:     in.Target,
+		Target:     targetmap,
+		Pem:        pemurls,
 		Script:     in.Script,
 		ScriptName: in.ScriptName,
 		User:       in.InstUser,
