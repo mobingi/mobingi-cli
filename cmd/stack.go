@@ -20,6 +20,7 @@ func StackCmd() *cobra.Command {
 		StackDeleteCmd(),
 		StackGetPemCmd(),
 		StackSshCmd(),
+		StackExecCmd(),
 	)
 
 	return cmd
