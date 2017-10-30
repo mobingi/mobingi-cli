@@ -15,8 +15,8 @@ import (
 func StackExecCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "exec",
-		Short: "execute a script to your instance",
-		Long: `execute a script to your instance.
+		Short: "execute a script in stack instance(s)",
+		Long: `Execute a script in stack instance(s).
 
 Examples:
 
@@ -47,12 +47,15 @@ func stackExec(cmd *cobra.Command, args []string) {
 		InstUser:   cli.GetCliStringFlag(cmd, "user"),
 		Flag:       cli.GetCliStringFlag(cmd, "flag"),
 	}
+
 	_, _, u, err := svc.ExecScript(in)
 	if err != nil {
 		d.Error("command execution failed", err)
 	}
+
 	if os.Stderr != nil {
 		d.Error("\n" + u.Err)
 	}
+
 	d.Info("\n" + u.Out)
 }
