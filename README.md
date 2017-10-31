@@ -31,6 +31,6 @@ $ ./mobingi-cli
 You can also install the binary to your `$GOPATH/bin` folder (`$GOPATH/bin` should be added to your `$PATH` environment variable). 
 
 ```
-$ go get -u github.com/mobingi/mobingi-cli
+$ go get -u -v github.com/mobingi/mobingi-cli
 $ mobingi-cli
 ```
