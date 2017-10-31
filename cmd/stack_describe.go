@@ -74,69 +74,67 @@ func describe(cmd *cobra.Command, args []string) {
 		if pfmt == "min" || pfmt == "" {
 			var stacks []alm.DescribeStack
 			var stack alm.DescribeStack
+			var mi map[string][]alm.Instance
 
 			switch sess.Config.ApiVersion {
 			case 3:
 				err = json.Unmarshal(body, &stack)
 				cli.ErrorExit(err, 1)
+
+				err = json.Unmarshal(stack.Instances, &mi)
+				cli.ErrorExit(err, 1)
 			default:
 				err = json.Unmarshal(body, &stacks)
 				cli.ErrorExit(err, 1)
+
+				// try to follow the v3 structure
 				stack = stacks[0]
+				mi = make(map[string][]alm.Instance)
+				var miv2 []alm.Instance
+				err = json.Unmarshal(stack.Instances, &miv2)
+				cli.ErrorExit(err, 1)
+				mi["-NA-"] = miv2
 			}
 
 			w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 			fmt.Fprintf(w, "INSTANCE ID\tINSTANCE TYPE\tINSTANCE MODEL\tPUBLIC DNS\tPUBLIC IP\tPRIVATE IP\tFLAG\tSTATUS\n")
-			for _, inst := range stack.Instances {
-				instype := "on-demand"
-				if inst.InstanceLifecycle == "spot" {
-					instype = inst.InstanceLifecycle
-				}
-
-				pubip := string(inst.PublicIpAddress)
-				pubip = strings.TrimLeft(pubip, "\"")
-				pubip = strings.TrimRight(pubip, "\"")
-
-				// try if ip is json (alicloud)
-				type pubip_t struct {
-					IpAddress []string
-				}
-
-				var ips pubip_t
-				err = json.Unmarshal(inst.PublicIpAddress, &ips)
-				if err == nil {
-					pubip = strings.Join(ips.IpAddress, ",")
-				}
-
-				// try to extract flag from key name
-				flag := inst.KeyName
-				if flag == "" {
-					flag = inst.KeyPairName
-				}
-
-				if flag != "" {
-					parts := strings.Split(flag, "-")
-					if len(parts) > 1 {
-						flag = parts[len(parts)-1]
-					} else {
-						flag = ""
+			for flag, insts := range mi {
+				for _, inst := range insts {
+					instype := "on-demand"
+					if inst.InstanceLifecycle == "spot" {
+						instype = inst.InstanceLifecycle
 					}
-				}
 
-				state := inst.State.Name
-				if state == "" {
-					state = fmt.Sprintf("%s", inst.Status)
-				}
+					pubip := string(inst.PublicIpAddress)
+					pubip = strings.TrimLeft(pubip, "\"")
+					pubip = strings.TrimRight(pubip, "\"")
 
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-					inst.InstanceId,
-					instype,
-					inst.InstanceType,
-					inst.PublicDnsName,
-					pubip,
-					inst.PrivateIpAddress,
-					flag,
-					strings.ToLower(state))
+					// try if ip is json (alicloud)
+					type pubip_t struct {
+						IpAddress []string
+					}
+
+					var ips pubip_t
+					err = json.Unmarshal(inst.PublicIpAddress, &ips)
+					if err == nil {
+						pubip = strings.Join(ips.IpAddress, ",")
+					}
+
+					state := inst.State.Name
+					if state == "" {
+						state = fmt.Sprintf("%s", inst.Status)
+					}
+
+					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+						inst.InstanceId,
+						instype,
+						inst.InstanceType,
+						inst.PublicDnsName,
+						pubip,
+						inst.PrivateIpAddress,
+						flag,
+						strings.ToLower(state))
+				}
 			}
 
 			d.Info("[instances]")
