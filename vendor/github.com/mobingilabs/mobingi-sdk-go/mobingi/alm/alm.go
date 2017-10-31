@@ -317,45 +317,34 @@ func (s *stack) Walker(ctx *WalkerCtx) error {
 		return errors.New("ctx cannot be nil")
 	}
 
-	_, body, err := s.List()
-	if err != nil {
-		return errors.Wrap(err, "list failed")
-	}
-
-	var stacks []ListStack
-	err = json.Unmarshal(body, &stacks)
-	if err != nil {
-		return errors.Wrap(err, "unmarshal failed")
-	}
-
-	for _, item := range stacks {
-		if ctx.StackCallback != nil {
-			err = ctx.StackCallback(&item)
-			if err != nil {
-				if ctx.StopOnError {
-					return err
-				}
-			}
+	/*
+		_, body, err := s.List()
+		if err != nil {
+			return errors.Wrap(err, "list failed")
 		}
 
-		_, body, err := s.Describe(&StackDescribeInput{
-			StackId: item.StackId,
-		})
-
+		var stacks []ListStack
+		err = json.Unmarshal(body, &stacks)
 		if err != nil {
-			if ctx.InstanceCallback != nil {
-				err = ctx.InstanceCallback(&item, nil, err)
+			return errors.Wrap(err, "unmarshal failed")
+		}
+
+		for _, item := range stacks {
+			if ctx.StackCallback != nil {
+				err = ctx.StackCallback(&item)
 				if err != nil {
 					if ctx.StopOnError {
 						return err
 					}
 				}
 			}
-		} else {
-			if ctx.InstanceCallback != nil {
-				var ds DescribeStack
-				err = json.Unmarshal(body, &ds)
-				if err != nil {
+
+			_, body, err := s.Describe(&StackDescribeInput{
+				StackId: item.StackId,
+			})
+
+			if err != nil {
+				if ctx.InstanceCallback != nil {
 					err = ctx.InstanceCallback(&item, nil, err)
 					if err != nil {
 						if ctx.StopOnError {
@@ -363,18 +352,31 @@ func (s *stack) Walker(ctx *WalkerCtx) error {
 						}
 					}
 				}
-
-				for _, inst := range ds.Instances {
-					err = ctx.InstanceCallback(&item, &inst, nil)
+			} else {
+				if ctx.InstanceCallback != nil {
+					var ds DescribeStack
+					err = json.Unmarshal(body, &ds)
 					if err != nil {
-						if ctx.StopOnError {
-							return err
+						err = ctx.InstanceCallback(&item, nil, err)
+						if err != nil {
+							if ctx.StopOnError {
+								return err
+							}
+						}
+					}
+
+					for _, inst := range ds.Instances {
+						err = ctx.InstanceCallback(&item, &inst, nil)
+						if err != nil {
+							if ctx.StopOnError {
+								return err
+							}
 						}
 					}
 				}
 			}
 		}
-	}
+	*/
 
 	return nil
 }

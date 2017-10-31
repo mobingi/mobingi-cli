@@ -6,7 +6,7 @@ clone_folder: c:\gopath\src\github.com\mobingilabs\mobingi-sdk-go
 
 environment:
   GOPATH: c:\gopath
-  GOVERSION: 1.9
+  GOVERSION: 1.9.2
 
 install:  
   - rmdir c:\go /s /q

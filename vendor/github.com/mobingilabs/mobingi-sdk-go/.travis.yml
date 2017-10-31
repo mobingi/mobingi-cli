@@ -5,7 +5,7 @@ os:
 language: go
 
 go:
-  - 1.9
+  - 1.9.2
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then

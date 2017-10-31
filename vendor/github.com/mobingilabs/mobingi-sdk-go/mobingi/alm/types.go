@@ -120,16 +120,18 @@ type Instance struct {
 	EnaSupport            string          `json:"enaSupport,omitempty"`
 }
 
+// 2017-10-31:
+//   - Instances changed from array to 'tag' key, then array obj as the tag value.
 type DescribeStack struct {
-	AuthToken     string        `json:"auth_token,omitempty"`
-	Configuration Configuration `json:"configuration,omitempty"`
-	CreateTime    string        `json:"create_time,omitempty"`
-	Instances     []Instance    `json:"Instances,omitempty"`
-	Nickname      string        `json:"nickname,omitempty"`
-	StackId       string        `json:"stack_id,omitempty"`
-	StackOutputs  interface{}   `json:"stack_outputs,omitempty"`
-	StackStatus   string        `json:"stack_status,omitempty"`
-	UserId        string        `json:"user_id,omitempty"`
+	AuthToken     string          `json:"auth_token,omitempty"`
+	Configuration Configuration   `json:"configuration,omitempty"`
+	CreateTime    string          `json:"create_time,omitempty"`
+	Instances     json.RawMessage `json:"instances,omitempty"`
+	Nickname      string          `json:"nickname,omitempty"`
+	StackId       string          `json:"stack_id,omitempty"`
+	StackOutputs  interface{}     `json:"stack_outputs,omitempty"`
+	StackStatus   string          `json:"stack_status,omitempty"`
+	UserId        string          `json:"user_id,omitempty"`
 }
 
 type AlmTemplateVersion struct {
