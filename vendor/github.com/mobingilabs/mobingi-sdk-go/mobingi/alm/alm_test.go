@@ -528,7 +528,7 @@ func TestGetPemDevAcct(t *testing.T) {
 }
 
 func TestWalkerDevAcct(t *testing.T) {
-	// return
+	return
 	if os.Getenv("MOBINGI_CLIENT_ID") != "" && os.Getenv("MOBINGI_CLIENT_SECRET") != "" {
 		sess, _ := session.New(&session.Config{
 			BaseApiUrl: "https://apidev.mobingi.com",
