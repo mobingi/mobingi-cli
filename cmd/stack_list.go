@@ -84,6 +84,7 @@ func stackList(cmd *cobra.Command, args []string) {
 		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 		fmt.Fprintf(w, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
 
+		// we don't need instance walking here, only stack
 		in := alm.WalkerCtx{
 			Data: w,
 			StackCallback: func(i int, data interface{}, body []byte, ls *alm.ListStack) error {
