@@ -47,13 +47,14 @@ func stackList(cmd *cobra.Command, args []string) {
 	cli.ErrorExit(err, 1)
 
 	svc := alm.New(sess)
-	resp, body, err := svc.List()
-	cli.ErrorExit(err, 1)
-	exitOn401(resp)
 
 	pfmt := cli.GetCliStringFlag(cmd, "fmt")
 	switch pfmt {
 	case "raw":
+		resp, body, err := svc.List()
+		cli.ErrorExit(err, 1)
+		exitOn401(resp)
+
 		fmt.Println(string(body))
 
 		// write to file option
@@ -64,6 +65,10 @@ func stackList(cmd *cobra.Command, args []string) {
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	case "json":
+		resp, body, err := svc.List()
+		cli.ErrorExit(err, 1)
+		exitOn401(resp)
+
 		indent := cli.GetCliIntFlag(cmd, "indent")
 		js := pretty.JSON(string(body), indent)
 		fmt.Println(js)
@@ -76,84 +81,90 @@ func stackList(cmd *cobra.Command, args []string) {
 			d.Info(fmt.Sprintf("Output written to %s.", f))
 		}
 	default:
-		var stacks []alm.ListStack
-		err = json.Unmarshal(body, &stacks)
-		cli.ErrorExit(err, 1)
-
 		w := tabwriter.NewWriter(os.Stdout, 0, 10, 5, ' ', 0)
 		fmt.Fprintf(w, "STACK ID\tSTACK NAME\tPLATFORM\tSTATUS\tREGION\tLAUNCHED\n")
-		for i, s := range stacks {
-			timestr := s.CreateTime
-			t, err := time.Parse(time.RFC3339, s.CreateTime)
-			if err == nil {
-				timestr = t.Format(time.RFC1123)
-			}
 
-			platform := "?"
-			if s.Configuration.Vendor != nil {
-				var vm map[string]interface{}
-				err = json.Unmarshal(s.Configuration.Vendor, &vm)
-				cli.ErrorExit(err, 1)
-
-				for k, _ := range vm {
-					switch k {
-					case "aws", "alicloud":
-						platform = k
-					}
-				}
-			}
-
-			if platform == "?" {
-				if s.Configuration.AWS != "" {
-					platform = "aws"
-				}
-			}
-
-			type cnf_t struct {
-				Configuration json.RawMessage `json:"configuration"`
-			}
-
-			// if still invalid, find via regexp
-			if platform == "?" {
-				var cnfs []cnf_t
-				err = json.Unmarshal(body, &cnfs)
+		in := alm.WalkerCtx{
+			Data: w,
+			StackCallback: func(i int, data interface{}, body []byte, ls *alm.ListStack) error {
+				pw := data.(*tabwriter.Writer)
+				timestr := ls.CreateTime
+				t, err := time.Parse(time.RFC3339, ls.CreateTime)
 				if err == nil {
-					re := regexp.MustCompile(`"vendor":\{"aws":`)
-					pltfm := re.FindString(string(cnfs[i].Configuration))
-					if pltfm != "" {
-						platform = "aws"
-					}
+					timestr = t.Format(time.RFC1123)
 				}
-			}
 
-			region := s.Configuration.Region
+				platform := "?"
+				if ls.Configuration.Vendor != nil {
+					var vm map[string]interface{}
+					err = json.Unmarshal(ls.Configuration.Vendor, &vm)
+					cli.ErrorExit(err, 1)
 
-			// if empty, extract the `"region:"xxxxxx"` part via regexp
-			if region == "" {
-				var cnfs []cnf_t
-				err = json.Unmarshal(body, &cnfs)
-				if err == nil {
-					re := regexp.MustCompile(`"region":\s*".+"`)
-					mi := pretty.JSON(cnfs[i].Configuration, 2)
-					if mi != "" {
-						rgn := re.FindString(mi)
-						rgnkv := strings.Split(rgn, ":")
-						if len(rgnkv) == 2 {
-							r1 := strings.TrimSpace(rgnkv[1])
-							region = strings.TrimRight(strings.TrimPrefix(r1, "\""), "\"")
+					for k, _ := range vm {
+						switch k {
+						case "aws", "alicloud":
+							platform = k
 						}
 					}
 				}
-			}
 
-			fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-				s.StackId,
-				s.Nickname,
-				platform,
-				s.StackStatus,
-				region,
-				timestr)
+				if platform == "?" {
+					if ls.Configuration.AWS != "" {
+						platform = "aws"
+					}
+				}
+
+				type cnf_t struct {
+					Configuration json.RawMessage `json:"configuration"`
+				}
+
+				// if still invalid, find via regexp
+				if platform == "?" {
+					var cnfs []cnf_t
+					err = json.Unmarshal(body, &cnfs)
+					if err == nil {
+						re := regexp.MustCompile(`"vendor":\{"aws":`)
+						pltfm := re.FindString(string(cnfs[i].Configuration))
+						if pltfm != "" {
+							platform = "aws"
+						}
+					}
+				}
+
+				region := ls.Configuration.Region
+
+				// if empty, extract the `"region:"xxxxxx"` part via regexp
+				if region == "" {
+					var cnfs []cnf_t
+					err = json.Unmarshal(body, &cnfs)
+					if err == nil {
+						re := regexp.MustCompile(`"region":\s*".+"`)
+						mi := pretty.JSON(cnfs[i].Configuration, 2)
+						if mi != "" {
+							rgn := re.FindString(mi)
+							rgnkv := strings.Split(rgn, ":")
+							if len(rgnkv) == 2 {
+								r1 := strings.TrimSpace(rgnkv[1])
+								region = strings.TrimRight(strings.TrimPrefix(r1, "\""), "\"")
+							}
+						}
+					}
+				}
+
+				fmt.Fprintf(pw, "%s\t%s\t%s\t%s\t%s\t%s\n",
+					ls.StackId,
+					ls.Nickname,
+					platform,
+					ls.StackStatus,
+					region,
+					timestr)
+
+				return nil
+			},
 		}
+
+		err = svc.Walker(&in)
+		cli.ErrorExit(err, 1)
 
 		w.Flush()
 	}
