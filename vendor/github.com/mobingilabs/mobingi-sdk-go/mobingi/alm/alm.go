@@ -307,8 +307,9 @@ func (s *stack) GetPem(in *GetPemInput) (*client.Response, []byte, []byte, error
 }
 
 type WalkerCtx struct {
-	StackCallback    func(*ListStack) error
-	InstanceCallback func(*ListStack, *Instance, error) error
+	Data             interface{} // generic data to be passed to callbacks
+	StackCallback    func(interface{}, *ListStack) error
+	InstanceCallback func(interface{}, *ListStack, string, *Instance, error) error
 	StopOnError      bool // stop walk when any callback fails
 }
 
@@ -317,56 +318,67 @@ func (s *stack) Walker(ctx *WalkerCtx) error {
 		return errors.New("ctx cannot be nil")
 	}
 
-	/*
-		_, body, err := s.List()
-		if err != nil {
-			return errors.Wrap(err, "list failed")
+	_, body, err := s.List()
+	if err != nil {
+		return errors.Wrap(err, "list failed")
+	}
+
+	var stacks []ListStack
+	err = json.Unmarshal(body, &stacks)
+	if err != nil {
+		return errors.Wrap(err, "unmarshal failed")
+	}
+
+	for _, item := range stacks {
+		if ctx.StackCallback != nil {
+			err = ctx.StackCallback(ctx.Data, &item)
+			if err != nil {
+				if ctx.StopOnError {
+					return err
+				}
+			}
 		}
 
-		var stacks []ListStack
-		err = json.Unmarshal(body, &stacks)
-		if err != nil {
-			return errors.Wrap(err, "unmarshal failed")
-		}
+		_, body, err := s.Describe(&StackDescribeInput{
+			StackId: item.StackId,
+		})
 
-		for _, item := range stacks {
-			if ctx.StackCallback != nil {
-				err = ctx.StackCallback(&item)
+		if err != nil {
+			if ctx.InstanceCallback != nil {
+				err = ctx.InstanceCallback(ctx.Data, &item, "", nil, err)
 				if err != nil {
 					if ctx.StopOnError {
 						return err
 					}
 				}
 			}
-
-			_, body, err := s.Describe(&StackDescribeInput{
-				StackId: item.StackId,
-			})
-
-			if err != nil {
-				if ctx.InstanceCallback != nil {
-					err = ctx.InstanceCallback(&item, nil, err)
+		} else {
+			if ctx.InstanceCallback != nil {
+				var ds DescribeStack
+				err = json.Unmarshal(body, &ds)
+				if err != nil {
+					err = ctx.InstanceCallback(ctx.Data, &item, "", nil, err)
 					if err != nil {
 						if ctx.StopOnError {
 							return err
 						}
 					}
 				}
-			} else {
-				if ctx.InstanceCallback != nil {
-					var ds DescribeStack
-					err = json.Unmarshal(body, &ds)
+
+				var mi map[string][]Instance
+				err = json.Unmarshal(ds.Instances, &mi)
+				if err != nil {
+					err = ctx.InstanceCallback(ctx.Data, &item, "", nil, err)
 					if err != nil {
-						err = ctx.InstanceCallback(&item, nil, err)
-						if err != nil {
-							if ctx.StopOnError {
-								return err
-							}
+						if ctx.StopOnError {
+							return err
 						}
 					}
+				}
 
-					for _, inst := range ds.Instances {
-						err = ctx.InstanceCallback(&item, &inst, nil)
+				for flag, insts := range mi {
+					for _, inst := range insts {
+						err = ctx.InstanceCallback(ctx.Data, &item, flag, &inst, nil)
 						if err != nil {
 							if ctx.StopOnError {
 								return err
@@ -376,7 +388,7 @@ func (s *stack) Walker(ctx *WalkerCtx) error {
 				}
 			}
 		}
-	*/
+	}
 
 	return nil
 }

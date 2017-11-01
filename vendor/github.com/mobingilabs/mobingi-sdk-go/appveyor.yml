@@ -15,6 +15,8 @@ install:
   - set Path=c:\go\bin;c:\gopath\bin;%Path%
   - go version
   - go env
+  - go get -u -v github.com/golang/dep/...
+  - dep ensure -v
 
 build: false
 
