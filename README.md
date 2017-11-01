@@ -21,7 +21,7 @@ If you want to try the latest version, you can build mobingi-cli from the master
 
 ### Building mobingi-cli
 
-```
+```bash
 $ git clone https://github.com/mobingi/mobingi-cli
 $ cd mobingi-cli
 $ go build -v
@@ -30,7 +30,7 @@ $ ./mobingi-cli
 
 You can also install the binary to your `$GOPATH/bin` folder (`$GOPATH/bin` should be added to your `$PATH` environment variable). 
 
-```
+```bash
 $ go get -u -v github.com/mobingi/mobingi-cli
 $ mobingi-cli
 ```
