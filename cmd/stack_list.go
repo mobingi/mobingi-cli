@@ -18,6 +18,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var details bool
+
 func StackListCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
@@ -39,6 +41,8 @@ Examples:
 		Run: stackList,
 	}
 
+	cmd.Flags().SortFlags = false
+	cmd.Flags().BoolVar(&details, "details", false, "describe all stacks")
 	return cmd
 }
 

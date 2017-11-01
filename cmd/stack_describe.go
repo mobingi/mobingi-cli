@@ -33,6 +33,7 @@ Examples:
 		Run: describe,
 	}
 
+	cmd.Flags().SortFlags = false
 	cmd.Flags().String("id", "", "stack id")
 	return cmd
 }
