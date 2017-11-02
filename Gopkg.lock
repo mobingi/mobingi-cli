@@ -167,7 +167,7 @@
   branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
-  revision = "3cfc6c0d6bf80d724d98c26c4822f4a35d37598e"
+  revision = "7d4e23b25beca3bc3b804ab134f0b12b4ca909d1"
 
 [[projects]]
   branch = "v2"
