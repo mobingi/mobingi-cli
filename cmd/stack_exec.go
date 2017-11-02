@@ -55,5 +55,6 @@ func stackExec(cmd *cobra.Command, args []string) {
 	err = json.Unmarshal(body, &res)
 	cli.ErrorExit(err, 1)
 
+	d.Info(string(body))
 	d.Info(string(res[0].Outputs[0].CmdOut))
 }
