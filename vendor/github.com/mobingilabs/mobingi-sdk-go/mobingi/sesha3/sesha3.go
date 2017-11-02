@@ -96,11 +96,6 @@ type ExecScriptInput struct {
 	Flag       string
 }
 
-type ScriptRes struct {
-	Out string `json:"stdout"`
-	Err string `json:"stderr"`
-}
-
 func getTargetMap(targets string) map[string]string {
 	result := make(map[string]string)
 	targetList := strings.Split(targets, ":")
@@ -108,38 +103,38 @@ func getTargetMap(targets string) map[string]string {
 		item := strings.Split(target, "|")
 		result[item[0]] = strings.Join(item[1:], ",")
 	}
+
 	return result
 }
 
-func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, ScriptRes, error) {
-	var sresp ScriptRes
+func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, error) {
 	var resp *client.Response
 	var body []byte
 
 	if in == nil {
-		return nil, nil, sresp, errors.New("input cannot be nil")
+		return nil, nil, errors.New("input cannot be nil")
 	}
 
 	if in.Target == "" {
-		return nil, nil, sresp, errors.New("target cannot be empty")
+		return nil, nil, errors.New("target cannot be empty")
 	}
 
 	if in.Script == "" {
-		return nil, nil, sresp, errors.New("script cannot be empty")
+		return nil, nil, errors.New("script cannot be empty")
 	}
 
 	if in.ScriptName == "" {
-		return nil, nil, sresp, errors.New("script cannot be empty")
+		return nil, nil, errors.New("script name cannot be empty")
 	}
 
 	if s.session.Config.ApiVersion >= 3 {
 		if in.Flag == "" {
-			return nil, nil, sresp, errors.New("flag cannot be empty")
+			return nil, nil, errors.New("flag cannot be empty")
 		}
 	}
 
 	if in.InstUser == "" {
-		return nil, nil, sresp, errors.New("instance username cannot be empty")
+		return nil, nil, errors.New("instance username cannot be empty")
 	}
 
 	// get pem url from stack id
@@ -157,16 +152,18 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 
 		resp, body, _, err := almsvc.GetPem(&inpem)
 		if err != nil {
-			return resp, body, sresp, errors.Wrap(err, "get pem failed")
+			return resp, body, errors.Wrap(err, "get pem failed")
 		}
+
 		type rsaurl struct {
 			Status string `json:"status"`
 			Data   string `json:"data"`
 		}
+
 		var ru rsaurl
 		err = json.Unmarshal(body, &ru)
 		if err != nil {
-			return resp, body, sresp, errors.Wrap(err, "url body unmarshal failed")
+			return resp, body, errors.Wrap(err, "url body unmarshal failed")
 		}
 
 		pemurl := strings.Replace(ru.Data, "\\", "", -1)
@@ -176,7 +173,7 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 	// get sesha3 token
 	_, _, token, err := s.GetToken()
 	if err != nil {
-		return resp, body, sresp, errors.Wrap(err, "get token failed")
+		return resp, body, errors.Wrap(err, "get token failed")
 	}
 
 	type payload_t struct {
@@ -197,7 +194,7 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 
 	b, err := json.Marshal(payload)
 	if err != nil {
-		return resp, body, sresp, errors.Wrap(err, "payload marshal failed")
+		return resp, body, errors.Wrap(err, "payload marshal failed")
 	}
 
 	s.session.AccessToken = token
@@ -205,15 +202,10 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, Scri
 	req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
 	resp, body, err = s.client.Do(req)
 	if err != nil {
-		return resp, body, sresp, errors.Wrap(err, "client do failed")
+		return resp, body, errors.Wrap(err, "client do failed")
 	}
 
-	err = json.Unmarshal(body, &sresp)
-	if err != nil {
-		return resp, body, sresp, errors.Wrap(err, "reply unmarshal failed")
-	}
-
-	return resp, body, sresp, nil
+	return resp, body, nil
 }
 
 type GetSessionUrlInput struct {

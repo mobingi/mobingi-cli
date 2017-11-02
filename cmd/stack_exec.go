@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"encoding/json"
 	"io/ioutil"
-	"os"
 	"path"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
@@ -48,14 +48,12 @@ func stackExec(cmd *cobra.Command, args []string) {
 		Flag:       cli.GetCliStringFlag(cmd, "flag"),
 	}
 
-	_, _, u, err := svc.ExecScript(in)
-	if err != nil {
-		d.Error("command execution failed", err)
-	}
+	_, body, err := svc.ExecScript(in)
+	cli.ErrorExit(err, 1)
 
-	if os.Stderr != nil {
-		d.Error("\n" + u.Err)
-	}
+	var res []sesha3.ExecScriptStackResponse
+	err = json.Unmarshal(body, &res)
+	cli.ErrorExit(err, 1)
 
-	d.Info("\n" + u.Out)
+	d.Info(string(res[0].Outputs[0].CmdOut))
 }
