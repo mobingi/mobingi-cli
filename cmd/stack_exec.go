@@ -19,22 +19,17 @@ func StackExecCmd() *cobra.Command {
 		Short: "execute a script in stack instance(s)",
 		Long: `Execute a script in stack instance(s). You can use the --target flag more than once.
 
-Format for --target flag:
-
-  stack-id|ip1,ip2,...:flag
-
-The format above will work if multiple ip's have the same flag. If not, you can use the format below:
-
-  --target stack-id|ip1:flag1 --target stack-id|ip2:flag2
-
 Examples:
 
-  $ ` + cmdline.Args0() + ` stack exec --target "stackid|ip1,ip2:flag" --script /path/to/script`,
+  $ ` + cmdline.Args0() + ` stack exec --target "stackid|ip:flag" --script /path/to/script
+  $ ` + cmdline.Args0() + ` stack exec --target "stackid|ip1:flag1" \
+      --target "stackid|ip2:flag2" \
+      --script /path/to/script`,
 		Run: stackExec,
 	}
 
 	cmd.Flags().SortFlags = false
-	cmd.Flags().StringSliceVar(&targets, "target", targets, "`fmt`: stackid|ip1,ip2,...:flag")
+	cmd.Flags().StringSliceVar(&targets, "target", targets, "`fmt`: stackid|ip:flag")
 	cmd.Flags().String("script", "", "your script path")
 	return cmd
 }
