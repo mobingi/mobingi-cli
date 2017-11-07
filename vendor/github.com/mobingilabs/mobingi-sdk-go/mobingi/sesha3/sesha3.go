@@ -93,6 +93,15 @@ type ExecScriptInput struct {
 	// Format: stack-id|user@ip:flag
 	Targets []string
 
+	// OutputCallback is the client callback function that is called for each target's output.
+	// Parameter description:
+	//   int - index in the provided `Targets`.
+	//   *client.Response - http response object.
+	//   []byte - http response body for easy access.
+	//   *TargetHeader - object version of the indexed `Target`.
+	//   error - operation error
+	OutputCallback func(int, *client.Response, []byte, *TargetHeader, error)
+
 	// Script is the script contents that will be executed to all targets.
 	Script []byte
 }
@@ -105,32 +114,17 @@ type TargetHeader struct {
 	PemUrl  string `json:"pem_url"`
 }
 
-// ExecScriptPayload is the payload we send to sesha3 server.
+// ExecScriptPayload is the payload we send to sesha3 server. It will be formed from
+// ExecScriptInput struct.
 type ExecScriptPayload struct {
-	// Targets is the list of targets (with details) where we will run the script.
-	Targets []TargetHeader `json:"targets"`
+	// Target is a description of the script's run target.
+	Target TargetHeader `json:"target"`
 
 	// Script is the script contents that will be executed to all targets.
 	Script []byte `json:"script"`
 }
 
-/*
-func getTargetMap(targets string) map[string]string {
-	result := make(map[string]string)
-	targetList := strings.Split(targets, ":")
-	for _, target := range targetList {
-		item := strings.Split(target, "|")
-		result[item[0]] = strings.Join(item[1:], ",")
-	}
-
-	return result
-}
-*/
-
 func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, error) {
-	// var resp *client.Response
-	// var body []byte
-
 	if in == nil {
 		return nil, nil, errors.New("input cannot be nil")
 	}
@@ -144,9 +138,7 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, erro
 	}
 
 	almsvc := alm.New(s.session)
-	payload := ExecScriptPayload{
-		Script: in.Script,
-	}
+	var thdrs []TargetHeader
 
 	// our pem url list
 	for _, target := range in.Targets {
@@ -204,42 +196,8 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, erro
 			PemUrl:  pemurl,
 		}
 
-		payload.Targets = append(payload.Targets, targethdr)
+		thdrs = append(thdrs, targethdr)
 	}
-
-	// get pem url from stack id
-	// targetmap := getTargetMap(in.Target)
-	// pemurls := make(map[string]string)
-	/*
-		for stackid := range targetmap {
-			inpem := alm.GetPemInput{
-				StackId: stackid,
-			}
-
-			if s.session.Config.ApiVersion >= 3 {
-				inpem.Flag = in.Flag
-			}
-
-			resp, body, _, err := almsvc.GetPem(&inpem)
-			if err != nil {
-				return resp, body, errors.Wrap(err, "get pem failed")
-			}
-
-			type rsaurl struct {
-				Status string `json:"status"`
-				Data   string `json:"data"`
-			}
-
-			var ru rsaurl
-			err = json.Unmarshal(body, &ru)
-			if err != nil {
-				return resp, body, errors.Wrap(err, "url body unmarshal failed")
-			}
-
-			pemurl := strings.Replace(ru.Data, "\\", "", -1)
-			pemurls[stackid] = pemurl
-		}
-	*/
 
 	// get sesha3 token
 	resp, body, token, err := s.GetToken()
@@ -247,39 +205,37 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, erro
 		return resp, body, errors.Wrap(err, "get token failed")
 	}
 
-	/*
-		type payload_t struct {
-			Target     map[string]string `json:"target"`
-			Pem        map[string]string `json:"stack_pem"`
-			Script     string            `json:"script"`
-			ScriptName string            `json:"script_name"`
-			User       string            `json:"user"`
-		}
-
-		payload := payload_t{
-			Target:     targetmap,
-			Pem:        pemurls,
-			Script:     in.Script,
-			ScriptName: in.ScriptName,
-			User:       in.InstUser,
-		}
-	*/
-
-	b, err := json.Marshal(payload)
-	if err != nil {
-		return resp, body, errors.Wrap(err, "payload marshal failed")
-	}
-
 	s.session.AccessToken = token
 	// TODO: change endpoint to POST
 	ep := s.session.Sesha3Endpoint() + "/exec"
-	req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
-	resp, body, err = s.client.Do(req)
-	if err != nil {
-		return resp, body, errors.Wrap(err, "client do failed")
+
+	for i, thdr := range thdrs {
+		payload := ExecScriptPayload{
+			Target: thdr,
+			Script: in.Script,
+		}
+
+		b, err := json.Marshal(payload)
+		if err != nil {
+			if in.OutputCallback != nil {
+				in.OutputCallback(i, resp, body, &thdr, errors.Wrap(err, "payload marshal failed"))
+			}
+		}
+
+		req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
+		resp, body, err = s.client.Do(req)
+		if err != nil {
+			if in.OutputCallback != nil {
+				in.OutputCallback(i, resp, body, &thdr, errors.Wrap(err, "client do failed"))
+			}
+		} else {
+			if in.OutputCallback != nil {
+				in.OutputCallback(i, resp, body, &thdr, nil)
+			}
+		}
 	}
 
-	return resp, body, nil
+	return nil, nil, nil
 }
 
 type GetSessionUrlInput struct {

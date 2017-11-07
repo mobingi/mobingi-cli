@@ -10,8 +10,8 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/xml/xmlutil","service/sns","service/sqs","service/sts"]
-  revision = "d46843b92a3a8e377d7fe24b4d70fca37f923d00"
-  version = "v1.12.22"
+  revision = "b9e9981b543687c6fbfd064eaa0f7b69f5fdefd7"
+  version = "v1.12.23"
 
 [[projects]]
   branch = "master"
@@ -88,13 +88,13 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "ca1fcd4ab4c10bc58852a894bcf195fab2229efe"
+  revision = "687d4b818545e443c8ba223cbef20b1721afd4db"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "8eb05f94d449fdf134ec24630ce69ada5b469c1c"
+  revision = "d4266bc12aae0b4128952c889b769442fce5d2f1"
 
 [[projects]]
   branch = "v2"

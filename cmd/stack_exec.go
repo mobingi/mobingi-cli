@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/mobingi/mobingi-cli/pkg/cli"
+	"github.com/mobingilabs/mobingi-sdk-go/client"
 	"github.com/mobingilabs/mobingi-sdk-go/mobingi/sesha3"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/cmdline"
 	d "github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
@@ -45,16 +47,19 @@ func stackExec(cmd *cobra.Command, args []string) {
 
 	in := &sesha3.ExecScriptInput{
 		Targets: targets,
-		Script:  scriptdata,
+		OutputCallback: func(idx int, cr *client.Response, body []byte, th *sesha3.TargetHeader, err error) {
+			d.Info("output:", th.StackId+",", "instance:", th.VmUser+"@"+th.Ip+",", "flag:", th.Flag)
+			var res sesha3.ExecScriptStackResponse
+			err = json.Unmarshal(body, &res)
+			if err != nil {
+				d.Error(err)
+			}
+
+			fmt.Println(string(res.Outputs[0].CmdOut))
+		},
+		Script: scriptdata,
 	}
 
-	_, body, err := svc.ExecScript(in)
+	_, _, err = svc.ExecScript(in)
 	cli.ErrorExit(err, 1)
-
-	var res []sesha3.ExecScriptStackResponse
-	err = json.Unmarshal(body, &res)
-	cli.ErrorExit(err, 1)
-
-	d.Info(string(body))
-	d.Info(string(res[0].Outputs[0].CmdOut))
 }
