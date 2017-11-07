@@ -48,7 +48,7 @@ func stackExec(cmd *cobra.Command, args []string) {
 	in := &sesha3.ExecScriptInput{
 		Targets: targets,
 		OutputCallback: func(idx int, cr *client.Response, body []byte, th *sesha3.TargetHeader, err error) {
-			d.Info("output:", th.StackId+",", "instance:", th.VmUser+"@"+th.Ip+",", "flag:", th.Flag)
+			d.Info("["+fmt.Sprintf("%d", idx)+"]output:", th.StackId+",", "instance:", th.VmUser+"@"+th.Ip+",", "flag:", th.Flag)
 			var res sesha3.ExecScriptStackResponse
 			err = json.Unmarshal(body, &res)
 			if err != nil {
