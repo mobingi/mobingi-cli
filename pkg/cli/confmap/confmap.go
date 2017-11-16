@@ -4,6 +4,7 @@ var cfm = map[string]string{
 	"token":   "access_token",
 	"url":     "api_url",
 	"rurl":    "registry_url",
+	"surl":    "sesha3_url",
 	"apiver":  "api_version",
 	"indent":  "indent",
 	"timeout": "timeout",

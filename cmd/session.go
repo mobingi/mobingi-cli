@@ -71,6 +71,7 @@ func clisession() (*session.Session, error) {
 				ApiVersion:      v,
 				BaseApiUrl:      viper.GetString(confmap.ConfigKey("url")),
 				BaseRegistryUrl: viper.GetString(confmap.ConfigKey("rurl")),
+				Sesha3Url:       viper.GetString(confmap.ConfigKey("surl")),
 				HttpClientConfig: &client.Config{
 					Timeout: time.Second * time.Duration(viper.GetInt64(confmap.ConfigKey("timeout"))),
 					Verbose: verbose,
