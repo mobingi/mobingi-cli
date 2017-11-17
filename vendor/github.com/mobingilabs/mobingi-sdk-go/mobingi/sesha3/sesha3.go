@@ -66,7 +66,7 @@ func (s *sesha3) GetToken() (*client.Response, []byte, string, error) {
 	}
 
 	ep := s.session.Sesha3Endpoint() + "/token"
-	req, err := http.NewRequest(http.MethodGet, ep, bytes.NewBuffer(b))
+	req, err := http.NewRequest(http.MethodPost, ep, bytes.NewBuffer(b))
 	req.Header.Add("Content-Type", "application/json")
 	resp, body, err := s.client.Do(req)
 	if err != nil {
@@ -222,7 +222,7 @@ func (s *sesha3) ExecScript(in *ExecScriptInput) (*client.Response, []byte, erro
 			}
 		}
 
-		req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
+		req := s.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(b))
 		resp, body, err = s.client.Do(req)
 		if err != nil {
 			if in.OutputCallback != nil {
@@ -332,7 +332,7 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 
 	s.session.AccessToken = token
 	ep := s.session.Sesha3Endpoint() + "/ttyurl"
-	req := s.session.SimpleAuthRequest(http.MethodGet, ep, bytes.NewBuffer(b))
+	req := s.session.SimpleAuthRequest(http.MethodPost, ep, bytes.NewBuffer(b))
 	resp, body, err = s.client.Do(req)
 	if err != nil {
 		return resp, body, u, errors.Wrap(err, "client do failed")
