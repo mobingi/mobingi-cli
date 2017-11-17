@@ -312,6 +312,7 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 	type payload_t struct {
 		Pem     string `json:"pem"`
 		StackId string `json:"stackid"`
+		Flag    string `json:"flag"`
 		Ip      string `json:"ip"`
 		User    string `json:"user"`
 		Timeout string `json:"timeout"`
@@ -320,6 +321,7 @@ func (s *sesha3) GetSessionUrl(in *GetSessionUrlInput) (*client.Response, []byte
 	payload := payload_t{
 		Pem:     pemurl,
 		StackId: in.StackId,
+		Flag:    in.Flag,
 		Ip:      in.IpAddr,
 		User:    in.InstUser,
 		Timeout: fmt.Sprintf("%v", in.Timeout),
