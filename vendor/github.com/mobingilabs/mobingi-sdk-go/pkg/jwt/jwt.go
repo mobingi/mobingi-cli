@@ -1,10 +1,6 @@
 package jwt
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,93 +8,8 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/mobingilabs/mobingi-sdk-go/pkg/debug"
-	"github.com/mobingilabs/mobingi-sdk-go/pkg/private"
 	"github.com/pkg/errors"
 )
-
-var (
-	rsainit  bool
-	pubcache []byte
-	prvcache []byte
-	pempub   string
-	pemprv   string
-)
-
-func init() {
-	tmpdir := os.TempDir() + "/sesha3/rsa/"
-	debug.Info("tmp:", tmpdir)
-	pempub = tmpdir + "token.pem.pub"
-	pemprv = tmpdir + "token.pem"
-
-	// create dir if necessary
-	if !private.Exists(tmpdir) {
-		err := os.MkdirAll(tmpdir, 0700)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-	}
-
-	// create public and private pem files
-	if !private.Exists(pempub) || !private.Exists(pemprv) {
-		priv, err := rsa.GenerateKey(rand.Reader, 2048)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-
-		privder := x509.MarshalPKCS1PrivateKey(priv)
-		pubkey := priv.Public()
-		pubder, err := x509.MarshalPKIXPublicKey(pubkey)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-
-		pubblock := &pem.Block{Type: "RSA PUBLIC KEY", Bytes: pubder}
-		pemblock := &pem.Block{Type: "RSA PRIVATE KEY", Bytes: privder}
-		pubfile, err := os.OpenFile(pempub, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-
-		defer pubfile.Close()
-		prvfile, err := os.OpenFile(pemprv, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-
-		defer prvfile.Close()
-		err = pem.Encode(pubfile, pubblock)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-
-		err = pem.Encode(prvfile, pemblock)
-		if err != nil {
-			debug.Error(err)
-			return
-		}
-	}
-
-	var err error
-	pubcache, err = ioutil.ReadFile(pempub)
-	if err != nil {
-		debug.Error(err)
-		return
-	}
-
-	prvcache, err = ioutil.ReadFile(pemprv)
-	if err != nil {
-		debug.Error(err)
-		return
-	}
-
-	rsainit = true
-}
 
 type WrapperClaims struct {
 	Data map[string]interface{}
@@ -110,6 +21,7 @@ type jwtctx struct {
 	Prv    []byte
 	PemPub string
 	PemPrv string
+	init   bool
 }
 
 func (j *jwtctx) GenerateToken(data map[string]interface{}) (*jwt.Token, string, error) {
@@ -148,15 +60,32 @@ func (j *jwtctx) ParseToken(token string) (*jwt.Token, error) {
 	})
 }
 
+// NewCtx initializes our jwt context. For now, it is expected that the pem files
+// (private and public) are already in os.TempDir() + "/jwt/rsa/".
 func NewCtx() (*jwtctx, error) {
-	if !rsainit {
-		return nil, errors.New("failed in rsa init")
+	// TODO: transfer this to authd service
+	tmpdir := os.TempDir() + "/jwt/rsa/"
+	pempub := tmpdir + "token.pem.pub"
+	pemprv := tmpdir + "token.pem"
+
+	pubcache, err := ioutil.ReadFile(pempub)
+	if err != nil {
+		debug.Error(err)
+		return nil, errors.Wrap(err, "pub readfile failed")
 	}
 
-	var ctx jwtctx
-	ctx.PemPub = pempub
-	ctx.PemPrv = pemprv
-	ctx.Pub = pubcache
-	ctx.Prv = prvcache
+	prvcache, err := ioutil.ReadFile(pemprv)
+	if err != nil {
+		debug.Error(err)
+		return nil, errors.Wrap(err, "prv readfile failed")
+	}
+
+	ctx := jwtctx{
+		PemPub: pempub,
+		PemPrv: pemprv,
+		Pub:    pubcache,
+		Prv:    prvcache,
+	}
+
 	return &ctx, nil
 }

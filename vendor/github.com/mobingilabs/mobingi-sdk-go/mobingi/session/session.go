@@ -15,7 +15,7 @@ import (
 const (
 	BASE_API_URL      = "https://api.mobingi.com"
 	BASE_REGISTRY_URL = "https://registry.mobingi.com"
-	SESHA3_URL        = "https://sesha3.demo.labs.mobingi.com"
+	SESHA3_URL        = "https://sesha3.mobingi.com"
 )
 
 type authPayload struct {
