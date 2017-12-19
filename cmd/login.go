@@ -100,18 +100,24 @@ func login(cmd *cobra.Command, args []string) {
 	case "dev":
 		cnf.BaseApiUrl = cli.DevelopmentBaseApiUrl
 		cnf.BaseRegistryUrl = cli.DevelopmentBaseRegistryUrl
+		cnf.BaseSesha3Url = cli.Sesha3DevBaseApiUrl
 		viper.Set(confmap.ConfigKey("url"), cli.DevelopmentBaseApiUrl)
 		viper.Set(confmap.ConfigKey("rurl"), cli.DevelopmentBaseRegistryUrl)
+		viper.Set(confmap.ConfigKey("surl"), cli.Sesha3DevBaseApiUrl)
 	case "qa":
 		cnf.BaseApiUrl = cli.TestBaseApiUrl
 		cnf.BaseRegistryUrl = cli.TestBaseRegistryUrl
+		cnf.BaseSesha3Url = cli.Sesha3BaseApiUrl
 		viper.Set(confmap.ConfigKey("url"), cli.TestBaseApiUrl)
 		viper.Set(confmap.ConfigKey("rurl"), cli.TestBaseRegistryUrl)
+		viper.Set(confmap.ConfigKey("surl"), cli.Sesha3BaseApiUrl)
 	case "prod":
 		cnf.BaseApiUrl = cli.ProductionBaseApiUrl
 		cnf.BaseRegistryUrl = cli.ProductionBaseRegistryUrl
+		cnf.BaseSesha3Url = cli.Sesha3BaseApiUrl
 		viper.Set(confmap.ConfigKey("url"), cli.ProductionBaseApiUrl)
 		viper.Set(confmap.ConfigKey("rurl"), cli.ProductionBaseRegistryUrl)
+		viper.Set(confmap.ConfigKey("surl"), cli.Sesha3BaseApiUrl)
 	default:
 		err = fmt.Errorf("endpoint value not supported")
 		err = errors.Wrap(err, "invalid flag")

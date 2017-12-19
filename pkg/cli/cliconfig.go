@@ -21,6 +21,7 @@ type CliConfig struct {
 	AccessToken     string `yaml:"access_token"`
 	BaseApiUrl      string `yaml:"api_url"`
 	BaseRegistryUrl string `yaml:"registry_url"`
+	BaseSesha3Url   string `yaml:"sesha3_url"`
 	ApiVersion      string `yaml:"api_version"`
 	Indent          int    `yaml:"indent"`
 	Timeout         int64  `yaml:"timeout"`

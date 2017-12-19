@@ -12,12 +12,14 @@ const (
 	DevelopmentBaseRegistryUrl = "https://dockereg2.labs.mobingi.com" // dev Docker Registry base url
 
 	// v3 base
-	AlmBaseApiUrl      = "https://alm.mobingi.com"     // production API base url for ALM
-	WaveBaseApiUrl     = "https://wave.mobingi.com"    // production API base url for Wave
-	AlmDevBaseApiUrl   = "https://almdev.mobingi.com"  // dev API base url for ALM
-	WaveDevBaseApiUrl  = "https://wavedev.mobingi.com" // dev API base url for Wave
-	AlmTestBaseApiUrl  = "https://almqa.mobingi.com"   // test API base url for ALM
-	WaveTestBaseApiUrl = "https://waveqamobingi.com"   // test API base url for Wave
+	AlmBaseApiUrl       = "https://alm.mobingi.com"              // production API base url for ALM
+	WaveBaseApiUrl      = "https://wave.mobingi.com"             // production API base url for Wave
+	Sesha3BaseApiUrl    = "https://sesha3.mobingi.com"           // production API base url for sesha3
+	AlmDevBaseApiUrl    = "https://almdev.mobingi.com"           // dev API base url for ALM
+	WaveDevBaseApiUrl   = "https://wavedev.mobingi.com"          // dev API base url for Wave
+	Sesha3DevBaseApiUrl = "https://sesha3.demo.labs.mobingi.com" // dev API base url for sesha3
+	AlmTestBaseApiUrl   = "https://almqa.mobingi.com"            // test API base url for ALM
+	WaveTestBaseApiUrl  = "https://waveqamobingi.com"            // test API base url for Wave
 
 	ApiVersion       = "v3" // Mobingi API version
 	DockerApiVersion = "v2" // Docker API version
