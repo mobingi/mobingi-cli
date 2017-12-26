@@ -21,7 +21,7 @@ script:
 - go test -v $(go list ./... | grep -v /vendor/) -cover
 - if [[ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]]; then
     echo "Build with version ${TRAVIS_TAG}";
-    go build -v -ldflags "-X github.com/mobingi/mobingi-cli/cmd.version=v${TRAVIS_TAG}";
+    go build -v -ldflags "-X github.com/mobingi/mobingi-cli/cmd.version=${TRAVIS_TAG}";
   else
     echo "Start unversioned build";
     go build -v;
