@@ -1,34 +1,40 @@
 os:
-  - linux
-  - osx
+- linux
+- osx
 
 language: go
 
 go:
-  - 1.9.2
+- 1.9.2
 
 addons:
   apt:
     packages:
-      - libsecret-1-dev
+    - libsecret-1-dev
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      sudo apt-get update -q && sudo apt-get install pkg-config -y;
-    fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    sudo apt-get update -q && sudo apt-get install pkg-config -y;
+  fi
 
 script:
 - go test -v $(go list ./... | grep -v /vendor/) -cover
-- go build -v
+- if [[ "$TRAVIS_BRANCH" == "$TRAVIS_TAG" ]]; then
+    echo "Build with version ${TRAVIS_TAG}";
+    go build -v -ldflags "-X github.com/mobingi/mobingi-cli/cmd.version=v${TRAVIS_TAG}";
+  else
+    echo "Start unversioned build";
+    go build -v;
+  fi
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-darwin-amd64.tar.gz;
-    else
-      export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-amd64.tar.gz;
-    fi
-  - tar cvzf ${FILE_TO_UPLOAD} mobingi-cli
-  - ls -laF
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-darwin-amd64.tar.gz;
+  else
+    export FILE_TO_UPLOAD=mobingi-cli-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-amd64.tar.gz;
+  fi
+- tar cvzf ${FILE_TO_UPLOAD} mobingi-cli
+- ls -laF
 
 deploy:
   provider: releases
