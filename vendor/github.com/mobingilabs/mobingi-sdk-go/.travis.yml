@@ -1,23 +1,23 @@
 os:
-  - linux
+- linux
 
 language: go
 
 go:
-  - 1.9.2
+- 1.9.2
 
 before_install:
-  - go get -u -v github.com/golang/dep/...
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      sudo apt-get update -q && sudo apt-get install pkg-config -y && sudo apt-get install libsecret-1-dev -y;
-    fi
+- go get -u -v github.com/golang/dep/...
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    sudo apt-get update -q && sudo apt-get install pkg-config -y && sudo apt-get install libsecret-1-dev -y;
+  fi
 
 install:
-  - $GOPATH/bin/dep ensure -v
+- $GOPATH/bin/dep ensure -v
 
 script:
-  # 'vendor' is not included here
-  - go test -v ./...
+# 'vendor' is not included here
+- go test -v ./...
 
 notifications:
   slack:

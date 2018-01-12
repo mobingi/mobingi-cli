@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -62,11 +63,18 @@ func (j *jwtctx) ParseToken(token string) (*jwt.Token, error) {
 
 // NewCtx initializes our jwt context. For now, it is expected that the pem files
 // (private and public) are already in os.TempDir() + "/jwt/rsa/".
-func NewCtx() (*jwtctx, error) {
+func NewCtx(pemdir ...string) (*jwtctx, error) {
 	// TODO: transfer this to authd service
+
+	// Note: sesha3 uses /var/lib/sesha3 folder so calls to `NewCtx` from sesha3 should
+	// provide the correct pemdir value.
 	tmpdir := os.TempDir() + "/jwt/rsa/"
-	pempub := tmpdir + "token.pem.pub"
-	pemprv := tmpdir + "token.pem"
+	if len(pemdir) > 0 {
+		tmpdir = pemdir[0]
+	}
+
+	pempub := filepath.Join(tmpdir, "token.pem.pub")
+	pemprv := filepath.Join(tmpdir, "token.pem")
 
 	pubcache, err := ioutil.ReadFile(pempub)
 	if err != nil {
