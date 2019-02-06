@@ -1,5 +1,7 @@
 **Deprecated: We recommend you to use [mobingi](https://github.com/mobingi/mobingi) instead.**
 
+----
+
 [![Build Status](https://travis-ci.org/mobingi/mobingi-cli.svg?branch=master)](https://travis-ci.org/mobingi/mobingi-cli)
 [![Build status](https://ci.appveyor.com/api/projects/status/k7tmyr3l4dws4usd/branch/master?svg=true)](https://ci.appveyor.com/project/flowerinthenight/mobingi-cli/branch/master)
 
