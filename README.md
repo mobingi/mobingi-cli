@@ -1,3 +1,5 @@
+**Deprecated: We recommend you to use [mobingi](https://github.com/mobingi/mobingi) instead.**
+
 [![logo](./logos/mobingi-205x119.png)](https://mobingi.co.jp/)
 
 [![Build Status](https://travis-ci.org/mobingi/mobingi-cli.svg?branch=master)](https://travis-ci.org/mobingi/mobingi-cli)
